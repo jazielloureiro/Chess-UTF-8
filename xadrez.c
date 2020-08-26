@@ -2,88 +2,107 @@
 
 #define TAM 8
 
+//Constantes para identificar cada peça
+#define BISPO 'B'
+#define CAVALO 'C'
+#define DAMA 'D'
+#define PEAO 'P'
+#define REI 'R'
+#define TORRE 'T'
+
+//Constante para identificar a cor de cada peça
+#define BRANCO 'B'
+#define PRETO 'P'
+
+//Quando a casa estiver vazia essa constante será usada para identificá-la
+#define NULO 'N'
+
 typedef struct{
-	char imagem[7];
-	char peca[7];
-	char cor[7];
+	char imagem[7]; //Como os caracteres especiais ocupam mais de um byte, é necessário usar um vetor para guardar eles
+	char peca;      //Aqui será guardado o nome de cada peça
+	char cor;       //E aqui será guradado a cor
 } casa;
 
 void inicializa_tabuleiro(casa tabuleiro[TAM][TAM]){
 	int i, j;
 	
+	//Inicializando cada peça preta com a cor preto
 	for(i = 0; i < 2; i++)
 		for(j = 0; j < TAM; j++)
-			sprintf(tabuleiro[i][j].cor, "Preto");
-	
+			tabuleiro[i][j].cor = PRETO;
+			
+	//Como cada caractere especial é guardado em um vetor, é necessário usar essa função
 	sprintf(tabuleiro[0][0].imagem, "♜");
-	sprintf(tabuleiro[0][0].peca, "Torre");
+	tabuleiro[0][0].peca = TORRE;
 
 	sprintf(tabuleiro[0][1].imagem, "♞");
-	sprintf(tabuleiro[0][1].peca, "Cavalo");
+	tabuleiro[0][1].peca = CAVALO;
 	
 	sprintf(tabuleiro[0][2].imagem, "♝");
-	sprintf(tabuleiro[0][2].peca, "Bispo");
+	tabuleiro[0][2].peca = BISPO;
 	
 	sprintf(tabuleiro[0][3].imagem, "♛");
-	sprintf(tabuleiro[0][3].peca, "Dama");
+	tabuleiro[0][3].peca = DAMA;
 	
 	sprintf(tabuleiro[0][4].imagem, "♚");
-	sprintf(tabuleiro[0][4].peca, "Rei");
+	tabuleiro[0][4].peca = REI;
 	
 	sprintf(tabuleiro[0][5].imagem, "♝");
-	sprintf(tabuleiro[0][5].peca, "Bispo");
+	tabuleiro[0][5].peca = BISPO;
 
 	sprintf(tabuleiro[0][6].imagem, "♞");
-	sprintf(tabuleiro[0][6].peca, "Cavalo");
+	tabuleiro[0][6].peca = CAVALO;
 	
 	sprintf(tabuleiro[0][7].imagem, "♜");
-	sprintf(tabuleiro[0][7].peca, "Torre");
+	tabuleiro[0][7].peca = TORRE;
 	
 	for(i = 0; i < TAM; i++){
 		sprintf(tabuleiro[1][i].imagem, "♟︎");
-		sprintf(tabuleiro[1][i].peca, "Peao");
+		tabuleiro[1][i].peca = PEAO;
 	}
 	
+	//Inicializando as casas vazias do meio do tabuleiro
 	for(i = 2; i < 6; i++){
 		for(j = 0; j < TAM; j++){
 			sprintf(tabuleiro[i][j].imagem, " ");
-			sprintf(tabuleiro[i][j].peca, "Nulo");
-			sprintf(tabuleiro[i][j].cor, "Nulo");
+			tabuleiro[i][j].peca = NULO;
+			tabuleiro[i][j].peca = NULO;
 		}
 	}
 	
+	//Inicializando cada peça branca com a cor branco
 	for(i = 6; i < TAM; i++)
 		for(j = 0; j < TAM; j++)
-			sprintf(tabuleiro[i][j].cor, "Branco");
+			tabuleiro[i][j].cor = BRANCO;
 	
 	for(i = 0; i < TAM; i++){
 		sprintf(tabuleiro[6][i].imagem, "♙");
-		sprintf(tabuleiro[6][i].peca, "Peao");
+		tabuleiro[6][i].peca = PEAO;
 	}
 	
 	sprintf(tabuleiro[7][0].imagem, "♖");
-	sprintf(tabuleiro[7][0].peca, "Torre");
+	tabuleiro[7][0].peca = TORRE;
 
 	sprintf(tabuleiro[7][1].imagem, "♘");
-	sprintf(tabuleiro[7][1].peca, "Cavalo");
+	tabuleiro[7][1].peca = CAVALO;
 	
 	sprintf(tabuleiro[7][2].imagem, "♗");
-	sprintf(tabuleiro[7][2].peca, "Bispo");
+	tabuleiro[7][2].peca = BISPO;
 	
 	sprintf(tabuleiro[7][3].imagem, "♕");
-	sprintf(tabuleiro[7][3].peca, "Dama");
+	tabuleiro[7][3].peca = DAMA;
 	
 	sprintf(tabuleiro[7][4].imagem, "♔");
-	sprintf(tabuleiro[7][4].peca, "Rei");
+	tabuleiro[7][4].peca = REI;
 	
 	sprintf(tabuleiro[7][5].imagem, "♗");
-	sprintf(tabuleiro[7][5].peca, "Bispo");
+	tabuleiro[7][5].peca = BISPO;
 
 	sprintf(tabuleiro[7][6].imagem, "♘");
-	sprintf(tabuleiro[7][6].peca, "Cavalo");
+	tabuleiro[7][6].peca = CAVALO;
 	
 	sprintf(tabuleiro[7][7].imagem, "♖");
-	sprintf(tabuleiro[7][7].peca, "Torre");
+	tabuleiro[7][7].peca = TORRE;
 }
 
 void imprime_tabuleiro(casa tabuleiro[TAM][TAM]){
