@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #define TAM 8
 
@@ -129,8 +130,99 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM]){
 	       "    a   b   c   d   e   f   g   h\n");
 }
 
-void movimentar_peca(casa tabuleiro[TAM][TAM]){
-	
+void movimentar_peca(casa tabuleiro[TAM][TAM]){ // posteriormente adicionar os casos de uso
+	casa salvarpeca; // instancia da peca a ser movida
+	int line, pieceline, piececolumn;
+	char column;
+	printf("\n\tDigite as coordenadas da peça que deseja mover:");
+	printf("\n\tLinhas 1-8:");
+	scanf("%d",&line);
+	printf("\n\tColunas a-h:");
+	scanf(" %c",&column);
+	// definição da linha final
+	pieceline = line -1;
+	// definição da coluna final
+	switch (column)
+	{
+	case 'a':
+		piececolumn = 0;
+		break;
+	case 'b':
+		piececolumn = 1;
+		break;
+	case 'c':
+		piececolumn = 2;
+		break;
+	case 'd':
+		piececolumn = 3;
+		break;
+	case 'e':
+		piececolumn = 4;
+		break;
+	case 'f':
+		piececolumn = 5;
+		break;
+	case 'g':
+		piececolumn = 6;
+		break;
+	case 'h':
+		piececolumn = 7;
+		break;
+	default:
+		piececolumn = -1;
+		break;
+	}
+
+	int tomoveline, tomovecolumn;
+	printf("\n\tDigite para onde deseja mover tal peça:");
+	printf("\n\tLinhas 1-8:");
+	scanf("%d",&line);
+	printf("\n\tColunas a-h:");
+	scanf(" %c",&column);
+	// definição da linha final
+	tomoveline = line -1;
+	// definição da coluna final
+	switch (column)
+	{
+	case 'a':
+		tomovecolumn = 0;
+		break;
+	case 'b':
+		tomovecolumn = 1;
+		break;
+	case 'c':
+		tomovecolumn = 2;
+		break;
+	case 'd':
+		tomovecolumn = 3;
+		break;
+	case 'e':
+		tomovecolumn = 4;
+		break;
+	case 'f':
+		tomovecolumn = 5;
+		break;
+	case 'g':
+		tomovecolumn = 6;
+		break;
+	case 'h':
+		tomovecolumn = 7;
+		break;
+	default:
+		tomovecolumn = -1;
+		break;
+	}
+
+	// atribuindo os valores atuais do tabuleiro na instancia da peca
+	salvarpeca.peca = tabuleiro[pieceline][piececolumn].peca;
+	salvarpeca.cor = tabuleiro[pieceline][piececolumn].cor;
+	salvarpeca.imagem[7] = tabuleiro[pieceline][piececolumn].imagem[7];
+
+	// retornando ao tabuleiro os valores atualizados
+	tabuleiro[pieceline][piececolumn].peca = NULO;
+	tabuleiro[tomoveline][tomovecolumn] = salvarpeca;
+	system("cls");
+	imprime_tabuleiro(tabuleiro);
 }
 
 int main(){
