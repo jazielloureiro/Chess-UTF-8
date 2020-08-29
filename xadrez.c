@@ -20,13 +20,34 @@
 //Quando a casa estiver vazia essa constante será usada para identificá-la
 #define NULO 'N'
 
-bool rodando = true;
-
+//Estrutura para armazenar as informações de cada casa do tabuleiro
 typedef struct{
 	char imagem[7]; //Como os caracteres especiais ocupam mais de um byte, é necessário usar um vetor para guardar eles
 	char peca;      //Aqui será guardado o nome de cada peça
 	char cor;       //E aqui será guardado a cor
 } casa;
+	
+//Estrutura para armazenar as entradas do usurário
+typedef struct{
+	char linha_origem;
+	char coluna_origem;
+	char linha_destino;
+	char coluna_destino;
+} entradas;
+
+/*----------Funções Auxiliares----------*/
+//Essa função deve funcionar tanto no Linux como no Windows
+void limpa_tela(){
+	system("clear || cls");
+}
+
+//Função usada para limpar o lixo que fica no buffer após alguma leitura
+void limpa_buffer(){
+	char buffer;
+	
+	while((buffer = getchar()) != '\n' && buffer != EOF);
+}
+/*--------------------------------------*/
 
 void inicializa_tabuleiro(casa tabuleiro[TAM][TAM]){
 	int i, j;
@@ -131,187 +152,145 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM]){
 	       "    a   b   c   d   e   f   g   h\n");
 }
 
-void movimentar_peca(casa tabuleiro[TAM][TAM]){ // posteriormente adicionar os casos de uso
-	casa salvarpeca; // instancia da peca a ser movida
-	int line, pieceline, piececolumn;
-	char column;
-	printf("\n\tDigite as coordenadas da peça que deseja mover:");
-	printf("\n\tLinhas 1-8:");
-	scanf("%d",&line);
-	printf("\n\tColunas a-h:");
-	scanf(" %c",&column);
-	// definição da linha final
-	//pieceline = line -1;
-	switch (line)
-	{
-	case 8:
-		pieceline = 0;
-		break;
-	case 7:
-		pieceline = 1;
-		break;
-	case 6:
-		pieceline = 2;
-		break;
-	case 5:
-		pieceline = 3;
-		break;
-	case 4:
-		pieceline = 4;
-		break;
-	case 3:
-		pieceline = 5;
-		break;
-	case 2:
-		pieceline = 6;
-		break;
-	case 1:
-		pieceline = 7;
-		break;
-	default:
-		pieceline = -1;
-		break;
-	}
-	// definição da coluna final
-	switch (column)
-	{
-	case 'a':
-		piececolumn = 0;
-		break;
-	case 'b':
-		piececolumn = 1;
-		break;
-	case 'c':
-		piececolumn = 2;
-		break;
-	case 'd':
-		piececolumn = 3;
-		break;
-	case 'e':
-		piececolumn = 4;
-		break;
-	case 'f':
-		piececolumn = 5;
-		break;
-	case 'g':
-		piececolumn = 6;
-		break;
-	case 'h':
-		piececolumn = 7;
-		break;
-	default:
-		piececolumn = -1;
-		break;
-	}
-
-	int tomoveline, tomovecolumn;
-	printf("\n\tDigite para onde deseja mover tal peça:");
-	printf("\n\tLinhas 1-8:");
-	scanf("%d",&line);
-	printf("\n\tColunas a-h:");
-	scanf(" %c",&column);
-	// definição da linha final
-	//tomoveline = line -1;
-	// definição da coluna final
-	switch (line)
-	{
-	case 8:
-		tomoveline = 0;
-		break;
-	case 7:
-		tomoveline = 1;
-		break;
-	case 6:
-		tomoveline = 2;
-		break;
-	case 5:
-		tomoveline = 3;
-		break;
-	case 4:
-		tomoveline = 4;
-		break;
-	case 3:
-		tomoveline = 5;
-		break;
-	case 2:
-		tomoveline = 6;
-		break;
-	case 1:
-		tomoveline = 7;
-		break;
-	default:
-		tomoveline = -1;
-		break;
-	}
-	switch (column)
-	{
-	case 'a':
-		tomovecolumn = 0;
-		break;
-	case 'b':
-		tomovecolumn = 1;
-		break;
-	case 'c':
-		tomovecolumn = 2;
-		break;
-	case 'd':
-		tomovecolumn = 3;
-		break;
-	case 'e':
-		tomovecolumn = 4;
-		break;
-	case 'f':
-		tomovecolumn = 5;
-		break;
-	case 'g':
-		tomovecolumn = 6;
-		break;
-	case 'h':
-		tomovecolumn = 7;
-		break;
-	default:
-		tomovecolumn = -1;
-		break;
-	}
+void recebe_entradas_usuario(entradas *usuario){
+	printf("\nDigite as coordenadas da peça que deseja mover: ");
 	
-	strcpy(tabuleiro[tomoveline][tomovecolumn].imagem, tabuleiro[pieceline][piececolumn].imagem);
-	tabuleiro[tomoveline][tomovecolumn].peca = tabuleiro[pieceline][piececolumn].peca;
-	tabuleiro[tomoveline][tomovecolumn].cor = tabuleiro[pieceline][piececolumn].cor;
-
-	sprintf(tabuleiro[pieceline][piececolumn].imagem, " ");
-	tabuleiro[pieceline][piececolumn].peca = NULO;
-	tabuleiro[pieceline][piececolumn].cor = NULO;
+	//Recebe a coluna da peça que ele deseja mover
+	usuario->coluna_origem = getchar();
 	
-	/*/ atribuindo os valores atuais do tabuleiro na instancia da peca
-	salvarpeca.peca = tabuleiro[pieceline][piececolumn].peca;
-	salvarpeca.cor = tabuleiro[pieceline][piececolumn].cor;
-	sprintf(salvarpeca.imagem[7], tabuleiro[pieceline][piececolumn].imagem[7]);
-
-	// retornando ao tabuleiro os valores atualizados
+	//Recebe a linha da peça que ele deseja mover
+	usuario->linha_origem = getchar();
 	
-	sprintf(tabuleiro[tomoveline][tomovecolumn].imagem[7], salvarpeca.imagem[7]);
-	tabuleiro[tomoveline][tomovecolumn].peca = salvarpeca.peca;
-	tabuleiro[tomoveline][tomovecolumn].cor = salvarpeca.cor;*/
+	//Limpa o lixo no buffer
+	limpa_buffer();
 	
-	system("clear || cls");
-	imprime_tabuleiro(tabuleiro);
+	//Checa se o usuário digitou algum valor errado
+	while(usuario->coluna_origem < 'a' || usuario->coluna_origem > 'h' || usuario->linha_origem < '1' || usuario->linha_origem > '8'){
+		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
+	
+		usuario->coluna_origem = getchar();
+	
+		usuario->linha_origem = getchar();
+	
+		limpa_buffer();
+	}
+	//O loop irá se repetir até o usuário entrar com uma coordenada válida
+	
+	//Agora é fazer a mesma coisa para receber as coordenadas para onde ele quer mover
+	printf("\nDigite para você onde deseja mover tal peça: ");
+	
+	usuario->coluna_destino = getchar();
+	
+	usuario->linha_destino = getchar();
+	
+	limpa_buffer();
+	
+	//Checa se o usuário digitou algum valor errado
+	while(usuario->coluna_destino < 'a' || usuario->coluna_destino > 'h' || usuario->linha_destino < '1' || usuario->linha_destino > '8'){
+		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
+	
+		usuario->coluna_destino = getchar();
+	
+		usuario->linha_destino = getchar();
+	
+		limpa_buffer();
+	}
 }
 
-int main(){
+void tratamento_entradas_usuario(entradas *usuario){
+	//Converte a linha de origem
+	switch(usuario->linha_origem){
+		case '8': usuario->linha_origem = 0; break;
+		case '7': usuario->linha_origem = 1; break;
+		case '6': usuario->linha_origem = 2; break;
+		case '5': usuario->linha_origem = 3; break;
+		case '4': usuario->linha_origem = 4; break;
+		case '3': usuario->linha_origem = 5; break;
+		case '2': usuario->linha_origem = 6; break;
+		case '1': usuario->linha_origem = 7; break;
+	}
+	
+	//Converte a coluna de origem
+	usuario->coluna_origem -= 'a';
+	
+	//Converte a linha de destino
+	switch(usuario->linha_destino){
+		case '8': usuario->linha_destino = 0; break;
+		case '7': usuario->linha_destino = 1; break;
+		case '6': usuario->linha_destino = 2; break;
+		case '5': usuario->linha_destino = 3; break;
+		case '4': usuario->linha_destino = 4; break;
+		case '3': usuario->linha_destino = 5; break;
+		case '2': usuario->linha_destino = 6; break;
+		case '1': usuario->linha_destino = 7; break;
+	}
+	
+	//Converte a coluna de destino
+	usuario->coluna_destino -= 'a';
+}
+
+void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario){
+	//Copia a imagem da peça da casa de origem para a casa destino
+	strcpy(tabuleiro[usuario->linha_destino][usuario->coluna_destino].imagem, tabuleiro[usuario->linha_origem][usuario->coluna_origem].imagem);
+	
+	//Copia o nome da peça da casa de origem para a casa destino
+	tabuleiro[usuario->linha_destino][usuario->coluna_destino].peca = tabuleiro[usuario->linha_origem][usuario->coluna_origem].peca;
+	
+	//Copia a cor da peça da casa de origem para a casa destino
+	tabuleiro[usuario->linha_destino][usuario->coluna_destino].cor = tabuleiro[usuario->linha_origem][usuario->coluna_origem].cor;
+
+	//Anula a imagem na casa de origem
+	strcpy(tabuleiro[usuario->linha_origem][usuario->coluna_origem].imagem, " \0");
+
+	//Anula o nome da peça na casa de origem
+	tabuleiro[usuario->linha_origem][usuario->coluna_origem].peca = NULO;
+
+	//Anula a cor da peça na casa de origem
+	tabuleiro[usuario->linha_origem][usuario->coluna_origem].cor = NULO;
+}
+
+/*----------Funções do Menu----------*/
+void jogar(){
+	//Declaração da matriz do tabuleiro
 	casa tabuleiro[TAM][TAM];
 
+	//Declaração da estrutura que armazenará as entradas do usuário
+	entradas usuario;
+	
+	bool rodando = true;
+
 	inicializa_tabuleiro(tabuleiro);
-	imprime_tabuleiro(tabuleiro);
-	/*
-	 Para movimentar uma peça precisamos da posição atual da qual a peça está, o que é definido por suas coordenadas, para realizar a movimentação da peça o usuário terá que digitar as coordenadas atuais da peça e para onde quer movê-la. 
-	 Como realizar isto:
-	 O tabuleiro se manterá intácto e abaixo dele aparecerá um chat para escrever a posição e para onde quer mover, quando finalizado a tela atualizará, o tabuleiro se manterá no mesmo lugar porém com a peça atualizada e as perguntas resetarão.
-	 O movimento começa pelas brancas e as pretas em sequência.
-	*/
-	while (rodando)
-	{
-		movimentar_peca(tabuleiro);
-	}
+	
+	do{
+		limpa_tela();
+		imprime_tabuleiro(tabuleiro);
+		
+		//Irá receber as coordenadas da peça que irá se mover e para onde ela vai
+		recebe_entradas_usuario(&usuario);
+		
+		//Converte os valores que o usuário digitou em valores válidos para a matriz. Exemplo: 'a' vai virar 0, e assim por diante
+		tratamento_entradas_usuario(&usuario);
+		
+		//Realizará o movimento
+		movimenta_peca(tabuleiro, &usuario);
+	}while(rodando);
+}
+/*-----------------------------------*/
+
+int main(){
+	char escolha;
+	
+	//Imprimindo o menu
+	do{
+		limpa_tela();
+		
+		printf("\tXadrez UTF-8\n1. Jogar\n0. Sair\n\n> ");
+		escolha = getchar();
+		limpa_buffer();
+	
+		if(escolha == '1')
+			jogar();
+	}while(escolha != '0');
 	
 	return 0;
 }
