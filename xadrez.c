@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define TAM 8
 
@@ -140,7 +141,37 @@ void movimentar_peca(casa tabuleiro[TAM][TAM]){ // posteriormente adicionar os c
 	printf("\n\tColunas a-h:");
 	scanf(" %c",&column);
 	// definição da linha final
-	pieceline = line -1;
+	//pieceline = line -1;
+	switch (line)
+	{
+	case 8:
+		pieceline = 0;
+		break;
+	case 7:
+		pieceline = 1;
+		break;
+	case 6:
+		pieceline = 2;
+		break;
+	case 5:
+		pieceline = 3;
+		break;
+	case 4:
+		pieceline = 4;
+		break;
+	case 3:
+		pieceline = 5;
+		break;
+	case 2:
+		pieceline = 6;
+		break;
+	case 1:
+		pieceline = 7;
+		break;
+	default:
+		pieceline = -1;
+		break;
+	}
 	// definição da coluna final
 	switch (column)
 	{
@@ -180,8 +211,38 @@ void movimentar_peca(casa tabuleiro[TAM][TAM]){ // posteriormente adicionar os c
 	printf("\n\tColunas a-h:");
 	scanf(" %c",&column);
 	// definição da linha final
-	tomoveline = line -1;
+	//tomoveline = line -1;
 	// definição da coluna final
+	switch (line)
+	{
+	case 8:
+		tomoveline = 0;
+		break;
+	case 7:
+		tomoveline = 1;
+		break;
+	case 6:
+		tomoveline = 2;
+		break;
+	case 5:
+		tomoveline = 3;
+		break;
+	case 4:
+		tomoveline = 4;
+		break;
+	case 3:
+		tomoveline = 5;
+		break;
+	case 2:
+		tomoveline = 6;
+		break;
+	case 1:
+		tomoveline = 7;
+		break;
+	default:
+		tomoveline = -1;
+		break;
+	}
 	switch (column)
 	{
 	case 'a':
@@ -212,16 +273,27 @@ void movimentar_peca(casa tabuleiro[TAM][TAM]){ // posteriormente adicionar os c
 		tomovecolumn = -1;
 		break;
 	}
+	
+	strcpy(tabuleiro[tomoveline][tomovecolumn].imagem, tabuleiro[pieceline][piececolumn].imagem);
+	tabuleiro[tomoveline][tomovecolumn].peca = tabuleiro[pieceline][piececolumn].peca;
+	tabuleiro[tomoveline][tomovecolumn].cor = tabuleiro[pieceline][piececolumn].cor;
 
-	// atribuindo os valores atuais do tabuleiro na instancia da peca
+	sprintf(tabuleiro[pieceline][piececolumn].imagem, " ");
+	tabuleiro[pieceline][piececolumn].peca = NULO;
+	tabuleiro[pieceline][piececolumn].cor = NULO;
+	
+	/*/ atribuindo os valores atuais do tabuleiro na instancia da peca
 	salvarpeca.peca = tabuleiro[pieceline][piececolumn].peca;
 	salvarpeca.cor = tabuleiro[pieceline][piececolumn].cor;
-	salvarpeca.imagem[7] = tabuleiro[pieceline][piececolumn].imagem[7];
+	sprintf(salvarpeca.imagem[7], tabuleiro[pieceline][piececolumn].imagem[7]);
 
 	// retornando ao tabuleiro os valores atualizados
-	tabuleiro[pieceline][piececolumn].peca = NULO;
-	tabuleiro[tomoveline][tomovecolumn] = salvarpeca;
-	system("cls");
+	
+	sprintf(tabuleiro[tomoveline][tomovecolumn].imagem[7], salvarpeca.imagem[7]);
+	tabuleiro[tomoveline][tomovecolumn].peca = salvarpeca.peca;
+	tabuleiro[tomoveline][tomovecolumn].cor = salvarpeca.cor;*/
+	
+	system("clear || cls");
 	imprime_tabuleiro(tabuleiro);
 }
 
