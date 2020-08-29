@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #define TAM 8
 
@@ -17,10 +18,12 @@
 //Quando a casa estiver vazia essa constante será usada para identificá-la
 #define NULO 'N'
 
+bool rodando = true;
+
 typedef struct{
 	char imagem[7]; //Como os caracteres especiais ocupam mais de um byte, é necessário usar um vetor para guardar eles
 	char peca;      //Aqui será guardado o nome de cada peça
-	char cor;       //E aqui será guradado a cor
+	char cor;       //E aqui será guardado a cor
 } casa;
 
 void inicializa_tabuleiro(casa tabuleiro[TAM][TAM]){
@@ -126,11 +129,25 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM]){
 	       "    a   b   c   d   e   f   g   h\n");
 }
 
+void movimentar_peca(casa tabuleiro[TAM][TAM]){
+	
+}
+
 int main(){
 	casa tabuleiro[TAM][TAM];
 
 	inicializa_tabuleiro(tabuleiro);
 	imprime_tabuleiro(tabuleiro);
-
+	/*
+	 Para movimentar uma peça precisamos da posição atual da qual a peça está, o que é definido por suas coordenadas, para realizar a movimentação da peça o usuário terá que digitar as coordenadas atuais da peça e para onde quer movê-la. 
+	 Como realizar isto:
+	 O tabuleiro se manterá intácto e abaixo dele aparecerá um chat para escrever a posição e para onde quer mover, quando finalizado a tela atualizará, o tabuleiro se manterá no mesmo lugar porém com a peça atualizada e as perguntas resetarão.
+	 O movimento começa pelas brancas e as pretas em sequência.
+	*/
+	while (rodando)
+	{
+		movimentar_peca(tabuleiro);
+	}
+	
 	return 0;
 }
