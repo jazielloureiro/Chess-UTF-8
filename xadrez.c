@@ -57,7 +57,7 @@ void inicializa_tabuleiro(casa tabuleiro[TAM][TAM]){
 	tabuleiro[0][7].peca = TORRE;
 	
 	for(i = 0; i < TAM; i++){
-		sprintf(tabuleiro[1][i].imagem, "♟︎");
+		sprintf(tabuleiro[1][i].imagem, "♟");
 		tabuleiro[1][i].peca = PEAO;
 	}
 	
