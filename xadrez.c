@@ -22,9 +22,15 @@
 
 //Estrutura para armazenar as informações de cada casa do tabuleiro
 typedef struct{
-	char imagem[7]; //Como os caracteres especiais ocupam mais de um byte, é necessário usar um vetor para guardar eles
-	char peca;      //Aqui será guardado o nome de cada peça
-	char cor;       //E aqui será guardado a cor
+	/*Aqui será guardado a imagem de cada peça.
+	  Como os caracteres especiais ocupam mais de um byte, é necessário usar um vetor para guardar eles*/
+	char imagem[7];
+	
+	//Aqui será guardado o nome de cada peça
+	char peca;
+	
+	//Aqui será guardado a cor de cada peça
+	char cor;
 } casa;
 	
 //Estrutura para armazenar as entradas do usurário
@@ -49,39 +55,48 @@ void limpa_buffer(){
 }
 /*--------------------------------------*/
 
+//Essa função inicia a matriz do tabuleiro colocando cada peça no seu devido lugar
 void inicializa_tabuleiro(casa tabuleiro[TAM][TAM]){
 	int i, j;
 	
-	//Inicializando cada peça preta com a cor preto
+	//Inicializando todas as peças pretas com a cor preto
 	for(i = 0; i < 2; i++)
 		for(j = 0; j < TAM; j++)
 			tabuleiro[i][j].cor = PRETO;
-			
-	//Como cada caractere especial é guardado em um vetor, é necessário usar essa função
+	
+	//Inicializando a torre preta da coluna a, com imagem e nome
 	sprintf(tabuleiro[0][0].imagem, "♜");
 	tabuleiro[0][0].peca = TORRE;
 
+	//Inicializando o cavalo preto da coluna b, com imagem e nome
 	sprintf(tabuleiro[0][1].imagem, "♞");
 	tabuleiro[0][1].peca = CAVALO;
 	
+	//Inicializando o bispo preto da coluna c, com imagem e nome
 	sprintf(tabuleiro[0][2].imagem, "♝");
 	tabuleiro[0][2].peca = BISPO;
 	
+	//Inicializando a dama preta, com imagem e nome
 	sprintf(tabuleiro[0][3].imagem, "♛");
 	tabuleiro[0][3].peca = DAMA;
 	
+	//Inicializando o rei preto, com imagem e nome
 	sprintf(tabuleiro[0][4].imagem, "♚");
 	tabuleiro[0][4].peca = REI;
 	
+	//Inicializando o bispo preto da coluna f, com imagem e nome
 	sprintf(tabuleiro[0][5].imagem, "♝");
 	tabuleiro[0][5].peca = BISPO;
 
+	//Inicializando o cavalo preto da coluna g, com imagem e nome
 	sprintf(tabuleiro[0][6].imagem, "♞");
 	tabuleiro[0][6].peca = CAVALO;
 	
+	//Inicializando a torre petra da coluna h, com imagem e nome
 	sprintf(tabuleiro[0][7].imagem, "♜");
 	tabuleiro[0][7].peca = TORRE;
 	
+	//Inicializando todos os peões pretos, com imagem e nome
 	for(i = 0; i < TAM; i++){
 		sprintf(tabuleiro[1][i].imagem, "♟");
 		tabuleiro[1][i].peca = PEAO;
@@ -96,62 +111,82 @@ void inicializa_tabuleiro(casa tabuleiro[TAM][TAM]){
 		}
 	}
 	
-	//Inicializando cada peça branca com a cor branco
+	//Inicializando todas as peças brancas com a cor branco
 	for(i = 6; i < TAM; i++)
 		for(j = 0; j < TAM; j++)
 			tabuleiro[i][j].cor = BRANCO;
 	
+	//Inicializando todos os peões brancos, com imagem e nome
 	for(i = 0; i < TAM; i++){
 		sprintf(tabuleiro[6][i].imagem, "♙");
 		tabuleiro[6][i].peca = PEAO;
 	}
 	
+	//Inicializando a torre branca da coluna a, com imagem e nome
 	sprintf(tabuleiro[7][0].imagem, "♖");
 	tabuleiro[7][0].peca = TORRE;
 
+	//Inicializando o cavalo branco da coluna b, com imagem e nome
 	sprintf(tabuleiro[7][1].imagem, "♘");
 	tabuleiro[7][1].peca = CAVALO;
 	
+	//Inicializando o bispo branco da coluna c, com imagem e nome
 	sprintf(tabuleiro[7][2].imagem, "♗");
 	tabuleiro[7][2].peca = BISPO;
 	
+	//Inicializando a dama branca, com imagem e nome
 	sprintf(tabuleiro[7][3].imagem, "♕");
 	tabuleiro[7][3].peca = DAMA;
 	
+	//Inicializando o rei branco, com imagem e nome
 	sprintf(tabuleiro[7][4].imagem, "♔");
 	tabuleiro[7][4].peca = REI;
 	
+	//Inicializando o bispo branco da coluna f, com imagem e nome
 	sprintf(tabuleiro[7][5].imagem, "♗");
 	tabuleiro[7][5].peca = BISPO;
 
+	//Inicializando o cavalo branco da coluna g, com imagem e nome
 	sprintf(tabuleiro[7][6].imagem, "♘");
 	tabuleiro[7][6].peca = CAVALO;
 	
+	//Inicializando a torre branca da coluna h, com imagem e nome
 	sprintf(tabuleiro[7][7].imagem, "♖");
 	tabuleiro[7][7].peca = TORRE;
 }
 
+//Essa função imprime a situação atual do tabuleiro
 void imprime_tabuleiro(casa tabuleiro[TAM][TAM]){
+	//O i será usado para acessar as linhas da matriz
+	//O j será usado para acessar as colunas da matriz
+	//O k será usado para mostrar o número de cada linha do tabuleiro, semelhante ao a, b, c... Que ficam embaixo do tabuleiro
 	int i, j, k = 8;
 
+	//Imprime a parte de cima do tabuleiro
 	printf("  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 	
 	for(i = 0; i < TAM; i++){
+		//Imprime o número da linha do tabuleiro
 		printf("%d │", k--);
 	
+		//Imprime todas as imagens das casas da linha i do tabuleiro
 		for(j = 0; j < TAM; j++)
 			printf(" %s │", tabuleiro[i][j].imagem);
 			
+		//Pula de linha
 		putchar('\n');
 		
+		//Imprime a separação de cada linha
 		if(i < TAM - 1)
 			printf("  ├───┼───┼───┼───┼───┼───┼───┼───┤\n");
 	}
 	
+	//Imprime a parte de baixo do tabuleiro
 	printf("  └───┴───┴───┴───┴───┴───┴───┴───┘\n"
 	       "    a   b   c   d   e   f   g   h\n");
 }
 
+/*----------Funções de Movimentação----------*/
 void recebe_entradas_usuario(entradas *usuario){
 	printf("\nDigite as coordenadas da peça que deseja mover: ");
 	
@@ -248,6 +283,7 @@ void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario){
 	//Anula a cor da peça na casa de origem
 	tabuleiro[usuario->linha_origem][usuario->coluna_origem].cor = NULO;
 }
+/*-----------------------------------*/
 
 /*----------Funções do Menu----------*/
 void jogar(){

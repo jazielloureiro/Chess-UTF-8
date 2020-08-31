@@ -1,4 +1,11 @@
-# Esboço da função de movimentação
+# Notas Importantes sobre o Projeto
+---
+1. Acabo de revisar e documentar as funções `inicializa_tabuleiro` e `imprime_tabuleiro`, elas estão funcionando bem e não possuem necessidade de serem alteradas.
+2. Os caracteres especiais responsáveis pelas imagens das peças devem ser armazenados em vetores. Porque, eles ocupam mais de um byte, lembrem-se disso quando forem manipulá-los. De preferência usem a função `strcpy` da `string.h` para fazer isso.
+3. Analisando o código, vocês podem perceber que é usado variáveis do tipo char para armazenar valores inteiros em alguns momentos, isso não está errado, faz parte da própria linguagem C, e é muito útil e versátil para nosso projeto.
+4. O código possui alguns padrões como nome variáveis e de funções em português, e também `esse_tipo_de_sintaxe_nas_variaveis`, não é obrigatório manté-los, mas é bom fazer assim para evitar confusões enquanto estivermos lendo e escrevendo o código.
+
+## Esboço da função de movimentação
 ---
 Aqui eu vou apresentar um esboço básico da função de movimentação, perceba que ela é uma das bases do nosso projeto, e todas as outras funções que cuidarão dos movimentos especiais provavelmente estarão contidas dentro dela. Para deixar claro isso é só um esboço e deve ser alterado no decorrer do projeto.
 
