@@ -187,50 +187,6 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM]){
 }
 
 /*----------Funções de Movimentação----------*/
-void recebe_entradas_usuario(entradas *usuario){
-	printf("\nDigite as coordenadas da peça que deseja mover: ");
-	
-	//Recebe a coluna da peça que ele deseja mover
-	usuario->coluna_origem = getchar();
-	
-	//Recebe a linha da peça que ele deseja mover
-	usuario->linha_origem = getchar();
-	
-	//Limpa o lixo no buffer
-	limpa_buffer();
-	
-	//Checa se o usuário digitou algum valor errado
-	while(usuario->coluna_origem < 'a' || usuario->coluna_origem > 'h' || usuario->linha_origem < '1' || usuario->linha_origem > '8'){
-		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
-	
-		usuario->coluna_origem = getchar();
-	
-		usuario->linha_origem = getchar();
-	
-		limpa_buffer();
-	}
-	//O loop irá se repetir até o usuário entrar com uma coordenada válida
-	
-	//Agora é fazer a mesma coisa para receber as coordenadas para onde ele quer mover
-	printf("\nDigite para você onde deseja mover tal peça: ");
-	
-	usuario->coluna_destino = getchar();
-	
-	usuario->linha_destino = getchar();
-	
-	limpa_buffer();
-	
-	//Checa se o usuário digitou algum valor errado
-	while(usuario->coluna_destino < 'a' || usuario->coluna_destino > 'h' || usuario->linha_destino < '1' || usuario->linha_destino > '8'){
-		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
-	
-		usuario->coluna_destino = getchar();
-	
-		usuario->linha_destino = getchar();
-	
-		limpa_buffer();
-	}
-}
 
 void tratamento_entradas_usuario(entradas *usuario){
 	//Converte a linha de origem
@@ -258,10 +214,65 @@ void tratamento_entradas_usuario(entradas *usuario){
 		case '3': usuario->linha_destino = 5; break;
 		case '2': usuario->linha_destino = 6; break;
 		case '1': usuario->linha_destino = 7; break;
+		default: usuario->linha_destino = 8; break;
 	}
 	
 	//Converte a coluna de destino
 	usuario->coluna_destino -= 'a';
+}
+
+void recebe_entradas_usuario(entradas *usuario, casa tabuleiro[TAM][TAM]){
+	entradas checkUsuario;
+	checkUsuario = *usuario;
+	printf("\nDigite as coordenadas da peça que deseja mover: ");
+	
+	//Recebe a coluna da peça que ele deseja mover
+	usuario->coluna_origem = getchar();
+	checkUsuario.coluna_origem = usuario->coluna_origem;
+	//Recebe a linha da peça que ele deseja mover
+	usuario->linha_origem = getchar();
+	checkUsuario.linha_origem = usuario->linha_origem;
+	
+	//Limpa o lixo no buffer
+	limpa_buffer();
+	
+	//Checa se o usuário digitou algum valor errado
+	tratamento_entradas_usuario(&checkUsuario);
+	
+
+	while(usuario->coluna_origem < 'a' || usuario->coluna_origem > 'h' || usuario->linha_origem < '1' || usuario->linha_origem > '8' || tabuleiro[checkUsuario.linha_origem][checkUsuario.coluna_origem].peca == NULO){
+		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
+	
+		usuario->coluna_origem = getchar();
+		checkUsuario.coluna_origem = usuario->coluna_origem;
+	
+		usuario->linha_origem = getchar();
+		checkUsuario.linha_origem = usuario->linha_origem;
+		tratamento_entradas_usuario(&checkUsuario);
+
+		limpa_buffer();
+	}
+	//O loop irá se repetir até o usuário entrar com uma coordenada válida
+	
+	//Agora é fazer a mesma coisa para receber as coordenadas para onde ele quer mover
+	printf("\nDigite para você onde deseja mover tal peça: ");
+	
+	usuario->coluna_destino = getchar();
+	
+	usuario->linha_destino = getchar();
+	
+	limpa_buffer();
+	
+	//Checa se o usuário digitou algum valor errado
+	while(usuario->coluna_destino < 'a' || usuario->coluna_destino > 'h' || usuario->linha_destino < '1' || usuario->linha_destino > '8'){
+		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
+	
+		usuario->coluna_destino = getchar();
+	
+		usuario->linha_destino = getchar();
+	
+		limpa_buffer();
+	}
 }
 
 void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario){
@@ -294,6 +305,8 @@ void jogar(){
 	entradas usuario;
 	
 	bool rodando = true;
+	
+	system("chcp 65001"); // Comando para suporte em Windows cmd
 
 	inicializa_tabuleiro(tabuleiro);
 	
@@ -302,7 +315,7 @@ void jogar(){
 		imprime_tabuleiro(tabuleiro);
 		
 		//Irá receber as coordenadas da peça que irá se mover e para onde ela vai
-		recebe_entradas_usuario(&usuario);
+		recebe_entradas_usuario(&usuario, tabuleiro);
 		
 		//Converte os valores que o usuário digitou em valores válidos para a matriz. Exemplo: 'a' vai virar 0, e assim por diante
 		tratamento_entradas_usuario(&usuario);
