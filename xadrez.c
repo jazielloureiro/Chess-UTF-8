@@ -182,7 +182,7 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], entrada
 			break;
 		case 4:
 			putchar('\t');	putchar('\t');
-			printf("| Peça selecionada: %s (%c%c)|", peca, usuario->coluna_origem, usuario->linha_origem);
+			printf("| Peça selecionada: %s (%c%d)|", peca, (usuario->coluna_origem + 'a'), (int) usuario->linha_origem);
 		default:
 			break;
 		}
@@ -201,110 +201,53 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], entrada
 }
 
 /*----------Funções de Movimentação----------*/
-
-void tratamento_entradas_usuario(entradas *usuario){
-	//Converte a linha de origem
-	switch(usuario->linha_origem){
-		case '8': usuario->linha_origem = 0; break;
-		case '7': usuario->linha_origem = 1; break;
-		case '6': usuario->linha_origem = 2; break;
-		case '5': usuario->linha_origem = 3; break;
-		case '4': usuario->linha_origem = 4; break;
-		case '3': usuario->linha_origem = 5; break;
-		case '2': usuario->linha_origem = 6; break;
-		case '1': usuario->linha_origem = 7; break;
+void tratamento_entrada_usuario(char *linha, char *coluna){
+	switch(*linha){
+		case '8': *linha = 0; break;
+		case '7': *linha = 1; break;
+		case '6': *linha = 2; break;
+		case '5': *linha = 3; break;
+		case '4': *linha = 4; break;
+		case '3': *linha = 5; break;
+		case '2': *linha = 6; break;
+		case '1': *linha = 7; break;
 	}
 	
-	//Converte a coluna de origem
-	usuario->coluna_origem -= 'a';
-	
-	//Converte a linha de destino
-	switch(usuario->linha_destino){
-		case '8': usuario->linha_destino = 0; break;
-		case '7': usuario->linha_destino = 1; break;
-		case '6': usuario->linha_destino = 2; break;
-		case '5': usuario->linha_destino = 3; break;
-		case '4': usuario->linha_destino = 4; break;
-		case '3': usuario->linha_destino = 5; break;
-		case '2': usuario->linha_destino = 6; break;
-		case '1': usuario->linha_destino = 7; break;
-		default: usuario->linha_destino = 8; break;
-	}
-	
-	//Converte a coluna de destino
-	usuario->coluna_destino -= 'a';
+	*coluna -= 'a';
 }
 
-void recebe_entradas_usuario(entradas *usuario, casa tabuleiro[TAM][TAM], char vez, char peca[7]){
+void recebe_entrada_usuario(char *linha, char *coluna){
+	//Recebe a coluna
+	*coluna = getchar();
 
-	// variavel para checagem do input do usuario
-	entradas checkUsuario;
-	checkUsuario = *usuario;
-
-	printf("\nDigite as coordenadas da peça que deseja mover: ");
-	
-	//Recebe a coluna da peça que ele deseja mover
-	usuario->coluna_origem = getchar();
-	checkUsuario.coluna_origem = usuario->coluna_origem;
-
-	//Recebe a linha da peça que ele deseja mover
-	usuario->linha_origem = getchar();
-	checkUsuario.linha_origem = usuario->linha_origem;
+	//Recebe a linha
+	*linha = getchar();
 	
 	//Limpa o lixo no buffer
 	limpa_buffer();
-	
-	//Converte valores para a checagem no loop while 
-	tratamento_entradas_usuario(&checkUsuario);
-	
 
-	while(usuario->coluna_origem < 'a' || usuario->coluna_origem > 'h' || usuario->linha_origem < '1' || usuario->linha_origem > '8' || tabuleiro[checkUsuario.linha_origem][checkUsuario.coluna_origem].peca == NULO || tabuleiro[checkUsuario.linha_origem][checkUsuario.coluna_origem].cor != vez){
+	//Valida casa
+	while(*coluna < 'a' || *coluna > 'h' || *linha < '1' || *linha > '8'){
 		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
 	
-		usuario->coluna_origem = getchar();
-		checkUsuario.coluna_origem = usuario->coluna_origem;
+		*coluna = getchar();
 	
-		usuario->linha_origem = getchar();
-		checkUsuario.linha_origem = usuario->linha_origem;
-		tratamento_entradas_usuario(&checkUsuario);
-
-		limpa_buffer();
-	}
-	//O loop irá se repetir até o usuário entrar com uma coordenada válida
-
-	// Atualizacao do tabuleiro com a peca selecionada 
-	peca = tabuleiro[checkUsuario.linha_origem][checkUsuario.coluna_origem].imagem;
-	limpa_tela();
-	imprime_tabuleiro(tabuleiro, vez, peca, usuario);
-	
-	//Agora é fazer a mesma coisa para receber as coordenadas para onde ele quer mover
-	printf("\nDigite para você onde deseja mover tal peça: ");
-	
-	usuario->coluna_destino = getchar();
-	checkUsuario.coluna_destino = usuario->coluna_destino;
-	
-	usuario->linha_destino = getchar();
-	checkUsuario.linha_destino = usuario->linha_destino;
-
-	tratamento_entradas_usuario(&checkUsuario);
-	
-	limpa_buffer();
-	
-	//Checa se o usuário digitou algum valor errado
-	while(usuario->coluna_destino < 'a' || usuario->coluna_destino > 'h' || usuario->linha_destino < '1' || usuario->linha_destino > '8' || tabuleiro[checkUsuario.linha_destino][checkUsuario.coluna_destino].peca != NULO && tabuleiro[checkUsuario.linha_destino][checkUsuario.coluna_destino].cor == vez){
-		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
-	
-		usuario->coluna_destino = getchar();
-		checkUsuario.coluna_destino = usuario->coluna_destino;
-
-		usuario->linha_destino = getchar();
-		checkUsuario.linha_destino = usuario->linha_destino;
-
-		tratamento_entradas_usuario(&checkUsuario);
+		*linha = getchar();
 
 		limpa_buffer();
 	}
 }
+
+/*void valida_movimento(){
+	if(peca == TORRE){
+		//a1
+		//a7
+		
+	}
+
+}
+
+void checa_colisao()*/
 
 void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario){
 	//Copia a imagem da peça da casa de origem para a casa destino
@@ -344,33 +287,45 @@ void jogar(){
 	char pecaSelecionada[7] = "\u25A0";
 
 	// Comando para suporte em Windows cmd
-	system("chcp 65001");
+	//system("chcp 65001");
 
 	inicializa_tabuleiro(tabuleiro);
 	
 	do{
-		limpa_tela();
-		imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada, &usuario);
+		do{
+			limpa_tela();
+			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada, &usuario);
 		
-		//Irá receber as coordenadas da peça que irá se mover e para onde ela vai
-		recebe_entradas_usuario(&usuario, tabuleiro, vezAtual, pecaSelecionada);
+			//Recebe as coordenadas da peça que irá se mover
+			printf("\nDigite as coordenadas da peça que deseja mover: ");
+			recebe_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
+			
+			//Converte os valores que o usuário digitou em valores válidos para a matriz.
+			tratamento_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
+		}while(tabuleiro[usuario.linha_origem][usuario.coluna_origem].cor != vezAtual);
 		
-		//Converte os valores que o usuário digitou em valores válidos para a matriz. Exemplo: 'a' vai virar 0, e assim por diante
-		tratamento_entradas_usuario(&usuario);
+		strcpy(pecaSelecionada, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
+		
+		do{
+			limpa_tela();
+			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada, &usuario);
+		
+			//Recebe as coordenadas de para onde a peça irá se mover
+			printf("\nDigite para você onde deseja mover tal peça: ");
+			recebe_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
+			
+			//Converte os valores que o usuário digitou em valores válidos para a matriz.
+			tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
+		}while(tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual ||
+		       tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == NULO);
+		
+		//valida_movimento();
 		
 		//Realizará o movimento
 		movimenta_peca(tabuleiro, &usuario);
 
 		// Inversao da vez atual no tabuleiro
-		switch (vezAtual)
-		{
-		case 'B':
-			vezAtual = 'P';
-			break;
-		case 'P':
-			vezAtual = 'B';
-			break;
-		}
+		vezAtual == 'B'? (vezAtual = 'P') : (vezAtual = 'B');
 	}while(rodando);
 }
 /*-----------------------------------*/
