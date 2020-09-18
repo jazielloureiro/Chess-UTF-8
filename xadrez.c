@@ -156,7 +156,7 @@ void inicializa_tabuleiro(casa tabuleiro[TAM][TAM]){
 }
 
 //Essa função imprime a situação atual do tabuleiro
-void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], entradas *usuario){
+void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7]){
 	//O i será usado para acessar as linhas da matriz
 	//O j será usado para acessar as colunas da matriz
 	//O k será usado para mostrar o número de cada linha do tabuleiro, semelhante ao a, b, c... Que ficam embaixo do tabuleiro
@@ -182,7 +182,7 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], entrada
 			break;
 		case 4:
 			putchar('\t');	putchar('\t');
-			printf("| Peça selecionada: %s (%c%d)|", peca, (usuario->coluna_origem + 'a'), (int) usuario->linha_origem);
+			printf("| Peça selecionada: %s|", peca);
 		default:
 			break;
 		}
@@ -294,7 +294,7 @@ void jogar(){
 	do{
 		do{
 			limpa_tela();
-			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada, &usuario);
+			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada);
 		
 			//Recebe as coordenadas da peça que irá se mover
 			printf("\nDigite as coordenadas da peça que deseja mover: ");
@@ -308,7 +308,7 @@ void jogar(){
 		
 		do{
 			limpa_tela();
-			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada, &usuario);
+			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada);
 		
 			//Recebe as coordenadas de para onde a peça irá se mover
 			printf("\nDigite para você onde deseja mover tal peça: ");
@@ -318,8 +318,6 @@ void jogar(){
 			tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
 		}while(tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual ||
 		       tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == NULO);
-		
-		//valida_movimento();
 		
 		//Realizará o movimento
 		movimenta_peca(tabuleiro, &usuario);
