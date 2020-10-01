@@ -182,7 +182,7 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7]){
 			break;
 		case 4:
 			putchar('\t');	putchar('\t');
-			printf("| Peça selecionada: %s|", peca);
+			printf("| Peça selecionada: %s |", peca);
 		default:
 			break;
 		}
@@ -300,16 +300,10 @@ bool valida_movimento_bispo(entradas usuario){
 	return false;
 }
 
-/*void valida_movimento(){
-	if(peca == TORRE){
-		//a1
-		//a7
-		
-	}
+void valida_movimento_cavalo(){
+	
 
 }
-
-void checa_colisao()*/
 
 void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario){
 	//Copia a imagem da peça da casa de origem para a casa destino
@@ -347,9 +341,6 @@ void jogar(){
 
 	// Declaração da String Peça selecionada
 	char pecaSelecionada[7] = "\u25A0";
-
-	// Comando para suporte em Windows cmd
-	//system("chcp 65001");
 
 	inicializa_tabuleiro(tabuleiro);
 	
