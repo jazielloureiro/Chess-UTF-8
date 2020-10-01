@@ -238,6 +238,68 @@ void recebe_entrada_usuario(char *linha, char *coluna){
 	}
 }
 
+bool valida_movimento_bispo(entradas usuario){
+	int i, j;
+	
+	i = usuario.linha_origem;
+	j = usuario.coluna_origem;
+	
+	while(i > 0 || j > 0){
+		if(i > 0)
+			i--;
+		
+		if(j > 0)
+			j--;
+			
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+	}
+	
+	i = usuario.linha_origem;
+	j = usuario.coluna_origem;
+	
+	while(i > 0 || j < 7){
+		if(i > 0)
+			i--;
+			
+		if(j < 7)
+			j++;
+			
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+	}
+	
+	i = usuario.linha_origem;
+	j = usuario.coluna_origem;
+	
+	while(i < 7 || j > 0){
+		if(i < 7)
+			i++;
+			
+		if(j > 0)
+			j--;
+			
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+	}
+	
+	i = usuario.linha_origem;
+	j = usuario.coluna_origem;
+	
+	while(i < 7 || j < 7){
+		if(i < 7)
+			i++;
+			
+		if(j < 7)
+			j++;
+			
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+	}
+	
+	return false;
+}
+
 /*void valida_movimento(){
 	if(peca == TORRE){
 		//a1
@@ -316,8 +378,7 @@ void jogar(){
 			
 			//Converte os valores que o usuário digitou em valores válidos para a matriz.
 			tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
-		}while(tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual ||
-		       tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == NULO);
+		}while(tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual);
 		
 		//Realizará o movimento
 		movimenta_peca(tabuleiro, &usuario);
