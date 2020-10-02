@@ -510,7 +510,7 @@ void jogar()
 
 			//Converte os valores que o usuário digitou em valores válidos para a matriz.
 			tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
-		} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual || !valida_movimento(pecaselecionada, usuario, vezAtual);
+		} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual || !valida_movimento(pecaselecionada, usuario, vezAtual));
 
 		//Valida o movimento
 		//valida_movimento(pecaselecionada, usuario);
