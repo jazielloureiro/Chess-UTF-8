@@ -371,23 +371,26 @@ bool valida_movimento_cavalo(entradas usuario)
 	}
 }
 
-bool valida_movimento_peao(entradas usuario, char cor)
+bool valida_movimento_peao(entradas usuario, char vez)
 {
 }
 
-bool valida_movimento(char pecaselec, entradas usuario, char cor)
+bool valida_movimento(char pecaselec, entradas usuario, char vez)
 {
 
 	switch (pecaselec)
 	{
 		case PEAO:
-			return valida_movimento_peao(usuario, cor);
+			return valida_movimento_peao(usuario, vez);
 			break;
 		case TORRE:
 			return valida_movimento_torre(usuario);
 			break;
 		case DAMA:
-
+			if(valida_movimento_torre(usuario) == true)
+				return true;
+			if(valida_movimento_bispo(usuario) == true)
+				return true;
 			break;
 		case CAVALO:
 			return valida_movimento_cavalo(usuario);
@@ -398,6 +401,27 @@ bool valida_movimento(char pecaselec, entradas usuario, char cor)
 		case BISPO:
 			return valida_movimento_bispo(usuario);
 	}
+}
+
+bool checa_colisao(casa tabuleiro[TAM][TAM], entradas usuario){
+	int i = usuario.linha_origem, j = usuario.coluna_origem;
+	
+	while(i != usuario.linha_destino || j != usuario.coluna_destino){
+		if(i < usuario.linha_destino)
+			i++;
+		else if(i > usuario.linha_destino)
+			i--;
+			
+		if(j < usuario.coluna_destino)
+			j++;
+		else if(j > usuario.coluna_destino)
+			j--;
+			
+		if(tabuleiro[i][j].peca != NULO)
+			return true;
+	}
+	
+	return false;
 }
 
 /*
@@ -486,7 +510,7 @@ void jogar()
 
 			//Converte os valores que o usuário digitou em valores válidos para a matriz.
 			tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
-		} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual || !valida_movimento(pecaselecionada, usuario, tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor));
+		} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual || !valida_movimento(pecaselecionada, usuario, vezAtual);
 
 		//Valida o movimento
 		//valida_movimento(pecaselecionada, usuario);
