@@ -55,8 +55,7 @@ void limpa_buffer()
 {
 	char buffer;
 
-	while ((buffer = getchar()) != '\n' && buffer != EOF)
-		;
+	while ((buffer = getchar()) != '\n' && buffer != EOF);
 }
 /*--------------------------------------*/
 
@@ -116,7 +115,7 @@ void inicializa_tabuleiro(casa tabuleiro[TAM][TAM])
 		{
 			sprintf(tabuleiro[i][j].imagem, " ");
 			tabuleiro[i][j].peca = NULO;
-			tabuleiro[i][j].peca = NULO;
+			tabuleiro[i][j].cor = NULO;
 		}
 	}
 
@@ -188,17 +187,12 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7])
 		// Menu ao lado do tabuleiro, vez do participante atual e Peca selecionada
 		switch (k)
 		{
-		case 6:
-			putchar('\t');
-			putchar('\t');
-			printf("| Vez das peças %s |", (vez == 'B') ? "Brancas" : "Pretas");
-			break;
-		case 4:
-			putchar('\t');
-			putchar('\t');
-			printf("| Peça selecionada: %s |", peca);
-		default:
-			break;
+			case 6:
+				printf("\t\t| Vez das peças %s |", (vez == 'B') ? "Brancas" : "Pretas");
+				break;
+			case 4:
+				printf("\t\t| Peça selecionada: %s |", peca);
+				break;
 		}
 
 		//Pula de linha
@@ -219,30 +213,29 @@ void tratamento_entrada_usuario(char *linha, char *coluna)
 {
 	switch (*linha)
 	{
-	case '8':
-		*linha = 0;
-		break;
-	case '7':
-		*linha = 1;
-		break;
-	case '6':
-		*linha = 2;
-		break;
-	case '5':
-		*linha = 3;
-		break;
-	case '4':
-		*linha = 4;
-		break;
-	case '3':
-		*linha = 5;
-		break;
-	case '2':
-		*linha = 6;
-		break;
-	case '1':
-		*linha = 7;
-		break;
+		case '8':
+			*linha = 0;
+			break;
+		case '7':
+			*linha = 1;
+			break;
+		case '6':
+			*linha = 2;
+			break;
+		case '5':
+			*linha = 3;
+			break;
+		case '4':
+			*linha = 4;
+			break;
+		case '3':
+			*linha = 5;
+			break;
+		case '2':
+			*linha = 6;
+			break;
+		case '1':
+			*linha = 7;
 	}
 
 	*coluna -= 'a';
@@ -387,26 +380,23 @@ bool valida_movimento(char pecaselec, entradas usuario, char cor)
 
 	switch (pecaselec)
 	{
-	case PEAO:
-		return valida_movimento_peao(usuario, cor);
-		break;
-	case TORRE:
-		return valida_movimento_torre(usuario);
-		break;
-	case DAMA:
+		case PEAO:
+			return valida_movimento_peao(usuario, cor);
+			break;
+		case TORRE:
+			return valida_movimento_torre(usuario);
+			break;
+		case DAMA:
 
-		break;
-	case CAVALO:
-		return valida_movimento_cavalo(usuario);
-		break;
-	case REI:
+			break;
+		case CAVALO:
+			return valida_movimento_cavalo(usuario);
+			break;
+		case REI:
 
-		break;
-	case BISPO:
-		return valida_movimento_bispo(usuario);
-		break;
-	default:
-		break;
+			break;
+		case BISPO:
+			return valida_movimento_bispo(usuario);
 	}
 }
 
@@ -459,8 +449,6 @@ void jogar()
 	//Declaração da estrutura que armazenará as entradas do usuário
 	entradas usuario;
 
-	bool rodando = true;
-
 	// Declaração da vez atual no tabuleiro, inicia com Branco
 	char vezAtual = 'B';
 
@@ -508,7 +496,7 @@ void jogar()
 
 		// Inversao da vez atual no tabuleiro
 		vezAtual == 'B' ? (vezAtual = 'P') : (vezAtual = 'B');
-	} while (rodando);
+	} while (true);
 }
 /*-----------------------------------*/
 
