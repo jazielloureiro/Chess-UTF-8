@@ -381,7 +381,7 @@ bool valida_movimento(char pecaselec, entradas usuario, char vez)
 	switch (pecaselec)
 	{
 		case PEAO:
-			return valida_movimento_peao(usuario, vez);
+			//return valida_movimento_peao(usuario, vez);
 			break;
 		case TORRE:
 			return valida_movimento_torre(usuario);
@@ -401,6 +401,9 @@ bool valida_movimento(char pecaselec, entradas usuario, char vez)
 		case BISPO:
 			return valida_movimento_bispo(usuario);
 	}
+	
+	//FIXME: Quando todas as funções de validação estiverem prontas, mudar para false
+	return true;
 }
 
 bool checa_colisao(casa tabuleiro[TAM][TAM], entradas usuario){
@@ -474,7 +477,7 @@ void jogar()
 	entradas usuario;
 
 	// Declaração da vez atual no tabuleiro, inicia com Branco
-	char vezAtual = 'B';
+	char vezAtual = BRANCO;
 
 	// Declaração da String Peça selecionada
 	char pecaselecionadaIm[7] = "\u25A0", pecaselecionada = NULO;
@@ -485,32 +488,38 @@ void jogar()
 	{
 		do
 		{
-			limpa_tela();
-			imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
+			do
+			{
+				limpa_tela();
+				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
 
-			//Recebe as coordenadas da peça que irá se mover
-			printf("\nDigite as coordenadas da peça que deseja mover: ");
-			recebe_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
+				//Recebe as coordenadas da peça que irá se mover
+				printf("\nDigite as coordenadas da peça que deseja mover: ");
+				recebe_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
 
-			//Converte os valores que o usuário digitou em valores válidos para a matriz.
-			tratamento_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
-		} while (tabuleiro[usuario.linha_origem][usuario.coluna_origem].cor != vezAtual);
+				//Converte os valores que o usuário digitou em valores válidos para a matriz.
+				tratamento_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
+			} while (tabuleiro[usuario.linha_origem][usuario.coluna_origem].cor != vezAtual);
 
-		pecaselecionada = tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca;
-		strcpy(pecaselecionadaIm, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
+			pecaselecionada = tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca;
+			strcpy(pecaselecionadaIm, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
 
-		do
-		{
-			limpa_tela();
-			imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
+			do
+			{
+				limpa_tela();
+				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
 
-			//Recebe as coordenadas de para onde a peça irá se mover
-			printf("\nDigite para você onde deseja mover tal peça: ");
-			recebe_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
+				//Recebe as coordenadas de para onde a peça irá se mover
+				printf("\nDigite para você onde deseja mover tal peça: ");
+				recebe_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
 
-			//Converte os valores que o usuário digitou em valores válidos para a matriz.
-			tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
-		} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual || !valida_movimento(pecaselecionada, usuario, vezAtual));
+				//Converte os valores que o usuário digitou em valores válidos para a matriz.
+				tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
+			} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual);
+			
+			if(!valida_movimento(pecaselecionada, usuario, vezAtual))
+				continue;
+		}while(checa_colisao(tabuleiro, usuario) && pecaselecionada != CAVALO);
 
 		//Valida o movimento
 		//valida_movimento(pecaselecionada, usuario);
@@ -519,7 +528,7 @@ void jogar()
 		movimenta_peca(tabuleiro, &usuario);
 
 		// Inversao da vez atual no tabuleiro
-		vezAtual == 'B' ? (vezAtual = 'P') : (vezAtual = 'B');
+		vezAtual == BRANCO ? (vezAtual = PRETO) : (vezAtual = BRANCO);
 	} while (true);
 }
 /*-----------------------------------*/
