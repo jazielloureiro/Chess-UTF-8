@@ -309,11 +309,64 @@ bool valida_movimento_bispo(entradas usuario){
 	return false;
 }
 
-bool valida_movimento_cavalo(){
+bool valida_movimento_cavalo(entradas usuario){
+	int difLin, difCol, lin, col, linf, colf;
+
+	lin = usuario.linha_origem;
+	col = usuario.coluna_origem;
+	linf = usuario.linha_destino;
+	colf = usuario.coluna_destino;
+
+	difLin = lin - linf;
+	difCol = col - colf;
+	
+	if (difLin == 2 && difCol == 1 ||
+		difLin == 2 && difCol == -1 ||
+		difLin == -2 && difCol == 1 ||
+		difLin == -2 && difCol == -1 ||
+		difCol == 2 && difLin == 1 ||
+		difCol == 2 && difLin == -1 ||
+		difCol == -2 && difLin == 1 ||
+		difCol == -2 && difLin == -1)
+	{
+		return true;
+	} else {
+		return false;
+	}
+	
 	
 
 }
 
+bool valida_movimento(char pecaselec, entradas usuario){
+
+	switch (pecaselec)
+	{
+	case PEAO:
+		
+		break;
+	case TORRE:
+		return valida_movimento_torre(usuario);
+		break;
+	case DAMA:
+	
+		break;
+	case CAVALO:
+		return valida_movimento_cavalo(usuario);
+		break;
+	case REI:
+
+		break;
+	case BISPO:
+		return valida_movimento_bispo(usuario);
+		break;
+	default:
+		break;
+	}
+
+}
+
+/*
 bool valida_movimento(entradas usuario, char peca){
 	if(peca == TORRE)
 		return valida_movimento_torre(usuario);
@@ -329,7 +382,7 @@ bool valida_movimento(entradas usuario, char peca){
 	}
 	
 	return false;
-}
+}*/
 
 void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario){
 	//Copia a imagem da peça da casa de origem para a casa destino
@@ -366,14 +419,14 @@ void jogar(){
 	char vezAtual = 'B';
 
 	// Declaração da String Peça selecionada
-	char pecaSelecionada[7] = "\u25A0";
+	char pecaselecionadaIm[7] = "\u25A0", pecaselecionada = NULO;
 
 	inicializa_tabuleiro(tabuleiro);
 	
 	do{
 		do{
 			limpa_tela();
-			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada);
+			imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
 		
 			//Recebe as coordenadas da peça que irá se mover
 			printf("\nDigite as coordenadas da peça que deseja mover: ");
@@ -383,11 +436,12 @@ void jogar(){
 			tratamento_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
 		}while(tabuleiro[usuario.linha_origem][usuario.coluna_origem].cor != vezAtual);
 		
-		strcpy(pecaSelecionada, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
+		pecaselecionada = tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca;
+		strcpy(pecaselecionadaIm, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
 		
 		do{
 			limpa_tela();
-			imprime_tabuleiro(tabuleiro, vezAtual, pecaSelecionada);
+			imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
 		
 			//Recebe as coordenadas de para onde a peça irá se mover
 			printf("\nDigite para você onde deseja mover tal peça: ");
@@ -395,10 +449,10 @@ void jogar(){
 			
 			//Converte os valores que o usuário digitou em valores válidos para a matriz.
 			tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
-		}while(tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual);
+		}while(tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual || !valida_movimento(pecaselecionada, usuario)); 
 		
 		//Valida o movimento
-		valida_movimento(usuario, tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca);
+		//valida_movimento(pecaselecionada, usuario);
 		
 		//Realizará o movimento
 		movimenta_peca(tabuleiro, &usuario);
