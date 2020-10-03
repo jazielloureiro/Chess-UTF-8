@@ -350,18 +350,18 @@ bool valida_movimento_cavalo(entradas usuario)
 	col = usuario.coluna_origem;
 	linf = usuario.linha_destino;
 	colf = usuario.coluna_destino;
-
+	
 	difLin = lin - linf;
 	difCol = col - colf;
 
-	if (difLin == 2 && difCol == 1 ||
-		difLin == 2 && difCol == -1 ||
-		difLin == -2 && difCol == 1 ||
-		difLin == -2 && difCol == -1 ||
-		difCol == 2 && difLin == 1 ||
-		difCol == 2 && difLin == -1 ||
-		difCol == -2 && difLin == 1 ||
-		difCol == -2 && difLin == -1)
+	if (difLin == 2  && difCol == 1  ||
+	    difLin == 2  && difCol == -1 ||
+	    difLin == -2 && difCol == 1  ||
+	    difLin == -2 && difCol == -1 ||
+	    difCol == 2  && difLin == 1  ||
+	    difCol == 2  && difLin == -1 ||
+	    difCol == -2 && difLin == 1  ||
+	    difCol == -2 && difLin == -1)
 	{
 		return true;
 	}
@@ -406,22 +406,24 @@ bool valida_movimento(char pecaselec, entradas usuario, char vez)
 	return true;
 }
 
-bool checa_colisao(casa tabuleiro[TAM][TAM], entradas usuario){
+bool checa_colisao(char peca, casa tabuleiro[TAM][TAM], entradas usuario){
 	int i = usuario.linha_origem, j = usuario.coluna_origem;
 	
-	while(i != usuario.linha_destino || j != usuario.coluna_destino){
-		if(i < usuario.linha_destino)
-			i++;
-		else if(i > usuario.linha_destino)
-			i--;
+	if(peca != CAVALO){
+		while(i != usuario.linha_destino || j != usuario.coluna_destino){
+			if(i < usuario.linha_destino)
+				i++;
+			else if(i > usuario.linha_destino)
+				i--;
 			
-		if(j < usuario.coluna_destino)
-			j++;
-		else if(j > usuario.coluna_destino)
-			j--;
+			if(j < usuario.coluna_destino)
+				j++;
+			else if(j > usuario.coluna_destino)
+				j--;
 			
-		if(tabuleiro[i][j].peca != NULO)
-			return true;
+			if(tabuleiro[i][j].peca != NULO)
+				return true;
+		}
 	}
 	
 	return false;
@@ -517,9 +519,7 @@ void jogar()
 				tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
 			} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual);
 			
-			if(!valida_movimento(pecaselecionada, usuario, vezAtual))
-				continue;
-		}while(checa_colisao(tabuleiro, usuario) && pecaselecionada != CAVALO);
+		}while(!valida_movimento(pecaselecionada, usuario, vezAtual) || checa_colisao(pecaselecionada, tabuleiro, usuario));
 
 		//Valida o movimento
 		//valida_movimento(pecaselecionada, usuario);
