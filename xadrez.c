@@ -13,12 +13,16 @@
 #define REI 'R'
 #define TORRE 'T'
 
-//Constante para identificar a cor de cada peça
+//Constantes para identificar a cor de cada peça
 #define BRANCO 'B'
 #define PRETO 'P'
 
 //Quando a casa estiver vazia essa constante será usada para identificá-la
 #define NULO 'N'
+
+//Constantes para identificar o fim de jogo
+#define FIM_DE_JOGO 'F'
+#define CONTINUA 'C'
 
 //Estrutura para armazenar as informações de cada casa do tabuleiro
 typedef struct
@@ -56,6 +60,12 @@ void limpa_buffer()
 	char buffer;
 
 	while ((buffer = getchar()) != '\n' && buffer != EOF);
+}
+
+void pausa_tela(){
+	puts("\nPressione Enter para continuar");
+	
+	while(getchar() != '\n');
 }
 /*--------------------------------------*/
 
@@ -209,6 +219,63 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7])
 }
 
 /*----------Funções de Movimentação----------*/
+//Ler as coordenadas de uma casa
+void ler_casa(char *linha, char *coluna){
+	//Recebe a coluna
+	*coluna = getchar();
+
+	//Recebe a linha
+	*linha = getchar();
+
+	//Limpa o lixo no buffer
+	limpa_buffer();
+}
+
+char realiza_acoes_usuario(char acao, char vez){
+	char escolha;
+	
+	if(acao == 'd')
+		printf("Você deseja desistir da partida? [s/n] ");
+	else
+		printf("O jogador de %s ofereceu um empate, o jogador de %s aceita? [s/n] ",
+		       vez == BRANCO? "Brancas" : "Negras",
+		       vez == BRANCO? "Negras"  : "Brancas");
+
+	do{
+		escolha = getchar();
+		limpa_buffer();
+	}while(escolha != 's' && escolha != 'n');
+	
+	if(escolha == 's'){
+		if(acao == 'd')
+			printf("Fim da partida! O jogador de %s desistiu da partida!\n",
+			       vez == BRANCO? "Brancas" : "Negras");
+		else
+			printf("Fim da partida! Ambos os jogadores concordaram em um empate!\n");
+			
+		pausa_tela();
+			       
+		return FIM_DE_JOGO;
+	}
+	
+	return CONTINUA;
+}
+
+char verifica_acoes_usuario(char linha, char coluna, char vez){
+	if(coluna == ':' && (linha == 'e' || linha == 'd'))
+		return realiza_acoes_usuario(linha, vez);
+		
+	return CONTINUA;
+}
+
+//verifica se as coordenadas lidas são válidas
+void valida_casa(char *linha, char *coluna){
+	while(*coluna < 'a' || *coluna > 'h' || *linha < '1' || *linha > '8'){
+		printf("\nVocê digitou uma coordenada inválida! Digite novamente: ");
+		ler_casa(linha, coluna);
+	}
+}
+
 void tratamento_entrada_usuario(char *linha, char *coluna)
 {
 	switch (*linha)
@@ -241,7 +308,7 @@ void tratamento_entrada_usuario(char *linha, char *coluna)
 	*coluna -= 'a';
 }
 
-void recebe_entrada_usuario(char *linha, char *coluna)
+/*void recebe_entrada_usuario(char *linha, char *coluna)
 {
 	//Recebe a coluna
 	*coluna = getchar();
@@ -251,6 +318,10 @@ void recebe_entrada_usuario(char *linha, char *coluna)
 
 	//Limpa o lixo no buffer
 	limpa_buffer();
+	
+	if(*coluna == ':' && (*linha == 'e' || *linha == 'd'))
+		if(acoes_usuario(*linha, BRANCO) == FIM_DE_JOGO)
+			exit(1);
 
 	//Valida casa
 	while (*coluna < 'a' || *coluna > 'h' || *linha < '1' || *linha > '8')
@@ -263,7 +334,7 @@ void recebe_entrada_usuario(char *linha, char *coluna)
 
 		limpa_buffer();
 	}
-}
+}*/
 
 bool valida_movimento_torre(entradas usuario)
 {
@@ -497,7 +568,16 @@ void jogar()
 
 				//Recebe as coordenadas da peça que irá se mover
 				printf("\nDigite as coordenadas da peça que deseja mover: ");
-				recebe_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
+				ler_casa(&usuario.linha_origem, &usuario.coluna_origem);
+				
+				//Verifica se um dos jogadores pediu empate ou desistiu da partida
+				if(verifica_acoes_usuario(usuario.linha_origem,
+							   usuario.coluna_origem,
+							   vezAtual) == FIM_DE_JOGO)
+					return;
+				
+				//Verifica se a casa lida é válida
+				valida_casa(&usuario.linha_origem, &usuario.coluna_origem);
 
 				//Converte os valores que o usuário digitou em valores válidos para a matriz.
 				tratamento_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
@@ -513,7 +593,13 @@ void jogar()
 
 				//Recebe as coordenadas de para onde a peça irá se mover
 				printf("\nDigite para você onde deseja mover tal peça: ");
-				recebe_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
+				ler_casa(&usuario.linha_destino, &usuario.coluna_destino);
+				
+				//Verifica se um dos jogadores pediu empate ou desistiu da partida
+				if(verifica_acoes_usuario(usuario.linha_destino,
+							   usuario.coluna_destino,
+							   vezAtual) == FIM_DE_JOGO)
+					return;
 
 				//Converte os valores que o usuário digitou em valores válidos para a matriz.
 				tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
@@ -531,6 +617,15 @@ void jogar()
 		vezAtual == BRANCO ? (vezAtual = PRETO) : (vezAtual = BRANCO);
 	} while (true);
 }
+
+void ajuda(){
+	limpa_tela();
+
+	puts("Para pedir um empate durante a partida digite :e\n"
+	     "Para desistir da partida digite :d");
+	     
+	pausa_tela();
+}
 /*-----------------------------------*/
 
 int main()
@@ -542,12 +637,14 @@ int main()
 	{
 		limpa_tela();
 
-		printf("\tXadrez UTF-8\n1. Jogar\n0. Sair\n\n> ");
+		printf("\tXadrez UTF-8\n1. Jogar\n2. Ajuda\n0. Sair\n\n> ");
 		escolha = getchar();
 		limpa_buffer();
 
 		if (escolha == '1')
 			jogar();
+		else if(escolha == '2')
+			ajuda();
 	} while (escolha != '0');
 
 	return 0;
