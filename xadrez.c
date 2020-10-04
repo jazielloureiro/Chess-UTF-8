@@ -446,6 +446,17 @@ bool valida_movimento_peao(entradas usuario, char vez)
 {
 }
 
+bool valida_movimento_rei(entradas usuario){
+	int i, j;
+	
+	for(i = usuario.linha_origem - 1; i <= usuario.linha_origem + 1; i++)
+		for(j = usuario.coluna_origem - 1; j <= usuario.coluna_origem + 1; j++)
+			if(i == usuario.linha_destino && j == usuario.coluna_destino)
+				return true;
+
+	return false;
+}
+
 bool valida_movimento(char pecaselec, entradas usuario, char vez)
 {
 
@@ -456,21 +467,17 @@ bool valida_movimento(char pecaselec, entradas usuario, char vez)
 			break;
 		case TORRE:
 			return valida_movimento_torre(usuario);
-			break;
+		case CAVALO:
+			return valida_movimento_cavalo(usuario);
+		case BISPO:
+			return valida_movimento_bispo(usuario);
+		case REI:
+			return valida_movimento_rei(usuario);
 		case DAMA:
 			if(valida_movimento_torre(usuario) == true)
 				return true;
 			if(valida_movimento_bispo(usuario) == true)
 				return true;
-			break;
-		case CAVALO:
-			return valida_movimento_cavalo(usuario);
-			break;
-		case REI:
-
-			break;
-		case BISPO:
-			return valida_movimento_bispo(usuario);
 	}
 	
 	//FIXME: Quando todas as funções de validação estiverem prontas, mudar para false
@@ -478,10 +485,10 @@ bool valida_movimento(char pecaselec, entradas usuario, char vez)
 }
 
 bool checa_colisao(char peca, casa tabuleiro[TAM][TAM], entradas usuario){
-	int i = usuario.linha_origem, j = usuario.coluna_origem;
-	
 	if(peca != CAVALO){
-		while(i != usuario.linha_destino || j != usuario.coluna_destino){
+		int i = usuario.linha_origem, j = usuario.coluna_origem;
+		
+		do{
 			if(i < usuario.linha_destino)
 				i++;
 			else if(i > usuario.linha_destino)
@@ -492,9 +499,9 @@ bool checa_colisao(char peca, casa tabuleiro[TAM][TAM], entradas usuario){
 			else if(j > usuario.coluna_destino)
 				j--;
 			
-			if(tabuleiro[i][j].peca != NULO)
+			if(tabuleiro[i][j].peca != NULO && (i != usuario.linha_destino || j != usuario.coluna_destino))
 				return true;
-		}
+		}while(i != usuario.linha_destino || j != usuario.coluna_destino);
 	}
 	
 	return false;
