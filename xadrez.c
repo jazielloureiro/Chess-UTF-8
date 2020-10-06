@@ -336,6 +336,10 @@ void tratamento_entrada_usuario(char *linha, char *coluna)
 	}
 }*/
 
+bool valida_movimento_peao(entradas usuario, char vez)
+{
+}
+
 bool valida_movimento_torre(entradas usuario)
 {
 	if (usuario.linha_origem == usuario.linha_destino)
@@ -346,84 +350,12 @@ bool valida_movimento_torre(entradas usuario)
 	return false;
 }
 
-bool valida_movimento_bispo(entradas usuario)
-{
-	int i, j;
-
-	i = usuario.linha_origem;
-	j = usuario.coluna_origem;
-
-	while (i > 0 || j > 0)
-	{
-		if (i > 0)
-			i--;
-
-		if (j > 0)
-			j--;
-
-		if (i == usuario.linha_destino && j == usuario.coluna_destino)
-			return true;
-	}
-
-	i = usuario.linha_origem;
-	j = usuario.coluna_origem;
-
-	while (i > 0 || j < 7)
-	{
-		if (i > 0)
-			i--;
-
-		if (j < 7)
-			j++;
-
-		if (i == usuario.linha_destino && j == usuario.coluna_destino)
-			return true;
-	}
-
-	i = usuario.linha_origem;
-	j = usuario.coluna_origem;
-
-	while (i < 7 || j > 0)
-	{
-		if (i < 7)
-			i++;
-
-		if (j > 0)
-			j--;
-
-		if (i == usuario.linha_destino && j == usuario.coluna_destino)
-			return true;
-	}
-
-	i = usuario.linha_origem;
-	j = usuario.coluna_origem;
-
-	while (i < 7 || j < 7)
-	{
-		if (i < 7)
-			i++;
-
-		if (j < 7)
-			j++;
-
-		if (i == usuario.linha_destino && j == usuario.coluna_destino)
-			return true;
-	}
-
-	return false;
-}
-
 bool valida_movimento_cavalo(entradas usuario)
 {
-	int difLin, difCol, lin, col, linf, colf;
-
-	lin = usuario.linha_origem;
-	col = usuario.coluna_origem;
-	linf = usuario.linha_destino;
-	colf = usuario.coluna_destino;
+	int difLin, difCol;
 	
-	difLin = lin - linf;
-	difCol = col - colf;
+	difLin = usuario.linha_origem  - usuario.linha_destino;
+	difCol = usuario.coluna_origem - usuario.coluna_destino;
 
 	if (difLin == 2  && difCol == 1  ||
 	    difLin == 2  && difCol == -1 ||
@@ -442,17 +374,80 @@ bool valida_movimento_cavalo(entradas usuario)
 	}
 }
 
-bool valida_movimento_peao(entradas usuario, char vez)
+bool valida_movimento_bispo(entradas usuario)
 {
+	int i, j;
+
+	// Checando a diagonal superior esquerda
+	for(i = usuario.linha_origem - 1, j = usuario.coluna_origem - 1;
+	    i >= 0 && j >= 0;
+	    i--, j--)
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+
+	// Checando a diagonal superior direita
+	for(i = usuario.linha_origem - 1, j = usuario.coluna_origem + 1;
+	    i >= 0 && j <= 7;
+	    i--, j++)
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+
+	// Checando a diagonal inferior esquerda
+	for(i = usuario.linha_origem + 1, j = usuario.coluna_origem - 1;
+	    i <= 7 && j >= 0;
+	    i++, j--)
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+
+	// Checando a diagonal inferior direita
+	for(i = usuario.linha_origem + 1, j = usuario.coluna_origem + 1;
+	    i <= 7 && i <= 7;
+	    i++, j++)
+		if (i == usuario.linha_destino && j == usuario.coluna_destino)
+			return true;
+
+	return false;
 }
 
 bool valida_movimento_rei(entradas usuario){
-	int i, j;
+	int lo = usuario.linha_origem,
+	    co = usuario.coluna_origem,
+	    ld = usuario.linha_destino,
+	    cd = usuario.coluna_destino;
 	
-	for(i = usuario.linha_origem - 1; i <= usuario.linha_origem + 1; i++)
-		for(j = usuario.coluna_origem - 1; j <= usuario.coluna_origem + 1; j++)
-			if(i == usuario.linha_destino && j == usuario.coluna_destino)
+	if(lo - 1 >= 0){
+		if(co - 1 >= 0)
+			if(lo - 1 == ld && co - 1 == cd)
 				return true;
+				
+		if(lo - 1 == ld && co == cd)
+			return true;
+			
+		if(co + 1 <= 7)
+			if(lo - 1 == ld && co + 1 == cd)
+				return true;
+	}
+	
+	if(co - 1 >= 0)
+		if(lo == ld && co - 1 == cd)
+			return true;
+			
+	if(co + 1 <= 7)
+		if(lo == ld && co + 1 == cd)
+			return true;
+			
+	if(lo + 1 <= 7){
+		if(co - 1 >= 0)
+			if(lo + 1 == ld && co - 1 == cd)
+				return true;
+				
+		if(lo + 1 == ld && co == cd)
+			return true;
+			
+		if(co + 1 <= 7)
+			if(lo + 1 == ld && co + 1 == cd)
+				return true;
+	}
 
 	return false;
 }
@@ -528,13 +523,16 @@ bool valida_movimento(entradas usuario, char peca){
 void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario)
 {
 	//Copia a imagem da peça da casa de origem para a casa destino
-	strcpy(tabuleiro[usuario->linha_destino][usuario->coluna_destino].imagem, tabuleiro[usuario->linha_origem][usuario->coluna_origem].imagem);
+	strcpy(tabuleiro[usuario->linha_destino][usuario->coluna_destino].imagem,
+	       tabuleiro[usuario->linha_origem][usuario->coluna_origem].imagem);
 
 	//Copia o nome da peça da casa de origem para a casa destino
-	tabuleiro[usuario->linha_destino][usuario->coluna_destino].peca = tabuleiro[usuario->linha_origem][usuario->coluna_origem].peca;
+	tabuleiro[usuario->linha_destino][usuario->coluna_destino].peca = 
+	tabuleiro[usuario->linha_origem][usuario->coluna_origem].peca;
 
 	//Copia a cor da peça da casa de origem para a casa destino
-	tabuleiro[usuario->linha_destino][usuario->coluna_destino].cor = tabuleiro[usuario->linha_origem][usuario->coluna_origem].cor;
+	tabuleiro[usuario->linha_destino][usuario->coluna_destino].cor = 
+	tabuleiro[usuario->linha_origem][usuario->coluna_origem].cor;
 
 	//Anula a imagem na casa de origem
 	strcpy(tabuleiro[usuario->linha_origem][usuario->coluna_origem].imagem, " \0");
