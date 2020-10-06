@@ -403,51 +403,19 @@ bool valida_movimento_bispo(entradas usuario)
 	for(i = usuario.linha_origem + 1, j = usuario.coluna_origem + 1;
 	    i <= 7 && i <= 7;
 	    i++, j++)
-		if (i == usuario.linha_destino && j == usuario.coluna_destino)
+		if(i == usuario.linha_destino && j == usuario.coluna_destino)
 			return true;
 
 	return false;
 }
 
 bool valida_movimento_rei(entradas usuario){
-	int lo = usuario.linha_origem,
-	    co = usuario.coluna_origem,
-	    ld = usuario.linha_destino,
-	    cd = usuario.coluna_destino;
-	
-	if(lo - 1 >= 0){
-		if(co - 1 >= 0)
-			if(lo - 1 == ld && co - 1 == cd)
+	int i, j;
+
+	for(i = usuario.linha_origem - 1; i <= usuario.linha_origem + 1; i++)
+		for(j = usuario.coluna_origem - 1; j <= usuario.coluna_origem + 1; j++)
+			if(i == usuario.linha_destino && j == usuario.coluna_destino)
 				return true;
-				
-		if(lo - 1 == ld && co == cd)
-			return true;
-			
-		if(co + 1 <= 7)
-			if(lo - 1 == ld && co + 1 == cd)
-				return true;
-	}
-	
-	if(co - 1 >= 0)
-		if(lo == ld && co - 1 == cd)
-			return true;
-			
-	if(co + 1 <= 7)
-		if(lo == ld && co + 1 == cd)
-			return true;
-			
-	if(lo + 1 <= 7){
-		if(co - 1 >= 0)
-			if(lo + 1 == ld && co - 1 == cd)
-				return true;
-				
-		if(lo + 1 == ld && co == cd)
-			return true;
-			
-		if(co + 1 <= 7)
-			if(lo + 1 == ld && co + 1 == cd)
-				return true;
-	}
 
 	return false;
 }
