@@ -491,6 +491,42 @@ void movimenta_peca(casa tabuleiro[TAM][TAM], entradas *usuario)
 	//Anula a cor da peça na casa de origem
 	tabuleiro[usuario->linha_origem][usuario->coluna_origem].cor = NULO;
 }
+
+void promocao(casa *promocao, char vez){
+	char escolha;
+
+	puts("\nPara qual peça você deseja promover?");
+	
+	if(vez == BRANCO)
+		puts("1. ♕\n2. ♖\n3. ♗\n4. ♘\n");
+	else
+		puts("1. ♛\n2. ♜\n3. ♝\n4. ♞\n");
+	       
+	do{
+		printf("> ");
+		escolha = getchar();
+		limpa_buffer();
+	}while(escolha < '1' || escolha > '4');
+	       
+	switch(escolha){
+		case '1':
+			sprintf(promocao->imagem, vez == BRANCO? "♕" : "♛");
+			promocao->peca = DAMA;
+			break;
+		case '2':
+			sprintf(promocao->imagem, vez == BRANCO? "♖" : "♜");
+			promocao->peca = TORRE;
+			break;
+		case '3':
+			sprintf(promocao->imagem, vez == BRANCO? "♗" : "♝");
+			promocao->peca = BISPO;
+			break;
+		case '4':
+			sprintf(promocao->imagem, vez == BRANCO? "♘" : "♞");
+			promocao->peca = CAVALO;
+			break;
+	}       
+}
 /*-----------------------------------*/
 
 /*----------Funções do Menu----------*/
@@ -562,6 +598,10 @@ void jogar()
 
 		//Realizará o movimento
 		movimenta_peca(tabuleiro, &usuario);
+		
+		// Promoção do peão
+		if(pecaselecionada == PEAO && (usuario.linha_destino == 0 || usuario.linha_destino == 7))
+			promocao(&tabuleiro[usuario.linha_destino][usuario.coluna_destino], vezAtual);
 
 		// Inversao da vez atual no tabuleiro
 		vezAtual == BRANCO ? (vezAtual = PRETO) : (vezAtual = BRANCO);
