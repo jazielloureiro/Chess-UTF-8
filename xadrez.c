@@ -1,3 +1,9 @@
+/*
+ * Jaziel Loureiro de Sousa         - Matrícula: 496044
+ * Iago de Aquino Oliveira          - Matrícula: 494017
+ * Pedro Willian de Oliveira Vieira - Matrícula: 496360
+ */
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -68,7 +74,6 @@ void pausa_tela(){
 	
 	while(getchar() != '\n');
 }
-/*--------------------------------------*/
 
 //Essa função inicia a matriz do tabuleiro colocando cada peça no seu devido lugar
 void inicializa_tabuleiro(casa tabuleiro[TAM][TAM])
@@ -175,20 +180,9 @@ void inicializa_tabuleiro(casa tabuleiro[TAM][TAM])
 	tabuleiro[7][7].peca = TORRE;
 }
 
-//Essa função imprime a situação atual do tabuleiro
-void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], bool xeque)
-{
-	//O i será usado para acessar as linhas da matriz
-	//O j será usado para acessar as colunas da matriz
-	//O k será usado para mostrar o número de cada linha do tabuleiro, semelhante ao a, b, c... Que ficam embaixo do tabuleiro
-	int i, j, k = 8;
-	// printf("\t\t| Vez das peças %s |", (vez == 'B') ? "Brancas" : "Pretas");
-	// printf("\t\t| Peça selecionada: %s |", peca);
-
-	// Menu acima do tabuleiro 
+void imprime_menu_superior(char vez, char *peca, bool xeque){
 	if (xeque)
 	{
-		putchar('\a');
 		putchar('\n');
 		printf("\t┌───────────────────────┐\t┌───────────────────────┐\t┌─────────────┐\n");
 		printf("\t│ Vez das peças %s\t│\t│ Peça selecionada: %s\t│\t│ Rei em xeque│\n", (vez == 'B') ? "Brancas" : "Pretas", peca);
@@ -201,7 +195,15 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], bool xe
 		printf("\t└───────────────────────┘\t└───────────────────────┘\n");
 		putchar('\n');
 	}
-	
+}
+
+//Essa função imprime a situação atual do tabuleiro
+void imprime_tabuleiro(casa tabuleiro[TAM][TAM])
+{
+	//O i será usado para acessar as linhas da matriz
+	//O j será usado para acessar as colunas da matriz
+	//O k será usado para mostrar o número de cada linha do tabuleiro, semelhante ao a, b, c... Que ficam embaixo do tabuleiro
+	int i, j, k = 8;
 	
 	//Imprime a parte de cima do tabuleiro
 	printf("  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
@@ -227,6 +229,8 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], bool xe
 	printf("  └───┴───┴───┴───┴───┴───┴───┴───┘\n"
 		   "    a   b   c   d   e   f   g   h\n");
 }
+
+/*--------------------------------------*/
 
 /*----------Funções de Movimentação----------*/
 //Ler as coordenadas de uma casa
@@ -562,20 +566,20 @@ void retorna_estado_anterior(casa tabuleiro[TAM][TAM], ultimo_estado lance, entr
 bool checa_xeque(casa tabuleiro[TAM][TAM], char vez){
 	entradas xeque;
 	char vez_oponente = (vez == BRANCO? PRETO : BRANCO);
-	int i, j; //, linha_rei, coluna_rei;
+	int i, j;
 	
 	// Procura onde está o rei
 	for(i = 0; i < TAM; i++){
 		for(j = 0; j < TAM; j++){
 			if(tabuleiro[i][j].peca == REI && tabuleiro[i][j].cor == vez){
-				xeque.linha_destino = i; //linha_rei = i;
-				xeque.coluna_destino = j; //coluna_rei = j;
+				xeque.linha_destino = i;
+				xeque.coluna_destino = j;
 				break;
 			}
 		}
 	}
 	
-	//
+	// Verifica se as peças do oponenete estão ameaçando o rei
 	for(i = 0; i < TAM; i++){
 		for(j = 0; j < TAM; j++){
 			if(tabuleiro[i][j].cor == vez_oponente){
@@ -590,72 +594,6 @@ bool checa_xeque(casa tabuleiro[TAM][TAM], char vez){
 	}
 				   	
 	return false;
-	
-	/*
-	// Checando lado esquerdo da linha
-	for(j = coluna_rei - 1; j >= 0; j--){
-		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-	
-	// Checando lado direito da linha
-	for(j = coluna_rei + 1; j <= 7; j++){
-		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-	
-	// Checando a parte superior da coluna
-	for(i = linha_rei - 1, j = coluna_rei; i >= 0; i--){
-		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-	
-	// Checando a parte inferior da coluna
-	for(i = linha_rei + 1; i <= 7; i++){
-		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-	
-	// Checando a diagonal superior esquerda
-	for(i = linha_rei - 1, j = coluna_rei - 1; i >= 0 && j >= 0; i--, j--){
-		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-
-	// Checando a diagonal superior direita
-	for(i = linha_rei - 1, j = coluna_rei + 1; i >= 0 && j <= 7; i--, j++){
-		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-
-	// Checando a diagonal inferior esquerda
-	for(i = linha_rei + 1, j = coluna_rei - 1; i <= 7 && j >= 0; i++, j--){
-		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-
-	// Checando a diagonal inferior direita
-	for(i = linha_rei + 1, j = coluna_rei + 1; i <= 7 && i <= 7; i++, j++){
-		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
-			return true;
-		else if(tabuleiro[i][j].cor == vez)
-			break;
-	}
-	*/
 }
 
 /*----------Funções do Menu----------*/
@@ -673,7 +611,7 @@ void jogar()
 	char vezAtual = BRANCO;
 
 	// Declaração da String Peça selecionada
-	char pecaselecionadaIm[7] = "\u25A0", pecaselecionada = NULO;
+	char pecaSelecionadaIm[7], pecaSelecionada = NULO;
 
 	inicializa_tabuleiro(tabuleiro);
 
@@ -684,7 +622,8 @@ void jogar()
 			do
 			{
 				limpa_tela();
-				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm, checa_xeque(tabuleiro, vezAtual));
+				imprime_menu_superior(vezAtual, "■", checa_xeque(tabuleiro, vezAtual));
+				imprime_tabuleiro(tabuleiro);
 
 				//Recebe as coordenadas da peça que irá se mover
 				printf("\nDigite as coordenadas da peça que deseja mover: ");
@@ -703,13 +642,14 @@ void jogar()
 				tratamento_entrada_usuario(&usuario.linha_origem, &usuario.coluna_origem);
 			} while (tabuleiro[usuario.linha_origem][usuario.coluna_origem].cor != vezAtual);
 
-			pecaselecionada = tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca;
-			strcpy(pecaselecionadaIm, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
+			strcpy(pecaSelecionadaIm, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
+			pecaSelecionada = tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca;
 
 			do
 			{
 				limpa_tela();
-				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm, checa_xeque(tabuleiro, vezAtual));
+				imprime_menu_superior(vezAtual, pecaSelecionadaIm, checa_xeque(tabuleiro, vezAtual));
+				imprime_tabuleiro(tabuleiro);
 
 				//Recebe as coordenadas de para onde a peça irá se mover
 				printf("\nDigite para você onde deseja mover tal peça: ");
@@ -725,7 +665,7 @@ void jogar()
 				tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
 			} while (tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor == vezAtual);
 			
-		}while(!valida_movimento(pecaselecionada, usuario, vezAtual) || checa_colisao(pecaselecionada, tabuleiro, usuario));
+		}while(!valida_movimento(pecaSelecionada, usuario, vezAtual) || checa_colisao(pecaSelecionada, tabuleiro, usuario));
 
 		// Salva o estado do tabuleiro antes de realizar o lance
 		salva_estado_tabuleiro(tabuleiro, &lance, usuario);
@@ -734,7 +674,7 @@ void jogar()
 		movimenta_peca(tabuleiro, &usuario);
 		
 		// Promoção do peão
-		if(pecaselecionada == PEAO && (usuario.linha_destino == 0 || usuario.linha_destino == 7))
+		if(pecaSelecionada == PEAO && (usuario.linha_destino == 0 || usuario.linha_destino == 7))
 			promocao(&tabuleiro[usuario.linha_destino][usuario.coluna_destino], vezAtual);
 			
 		if(checa_xeque(tabuleiro, vezAtual) == true){
@@ -771,7 +711,7 @@ void ajuda(){
 	     "indepedente de quantas peças foram capturadas por você.\n"
 	     "O rei assim como a dama pode andar para qualquer direção, porém só pode andar um casa por vez.\n\n"
 	     "Aqui estão todos os conhecimentos que você vai precisar, caso tente qualquer movimento desses porém nada ocorra,\n"
-	     "quer dizer que você está em xeque e o rei está em perigo\n"
+	     "quer dizer que você está em xeque e o rei está em perigo.\n"
 	     "Para pedir um empate durante a partida digite :e\n"
 	     "Para desistir da partida digite :d");
 	     
