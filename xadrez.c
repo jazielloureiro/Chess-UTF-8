@@ -182,7 +182,15 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7])
 	//O j será usado para acessar as colunas da matriz
 	//O k será usado para mostrar o número de cada linha do tabuleiro, semelhante ao a, b, c... Que ficam embaixo do tabuleiro
 	int i, j, k = 8;
+	// printf("\t\t| Vez das peças %s |", (vez == 'B') ? "Brancas" : "Pretas");
+	// printf("\t\t| Peça selecionada: %s |", peca);
 
+	// Menu acima do tabuleiro 
+	putchar('\n');
+	printf("\t┌───────────────────────┐\t┌───────────────────────┐\n");
+	printf("\t│ Vez das peças %s\t│\t│ Peça selecionada: %s\t│\n", (vez == 'B') ? "Brancas" : "Pretas", peca);
+	printf("\t└───────────────────────┘\t└───────────────────────┘\n");
+	putchar('\n');
 	//Imprime a parte de cima do tabuleiro
 	printf("  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 
@@ -194,17 +202,6 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7])
 		//Imprime todas as imagens das casas da linha i do tabuleiro
 		for (j = 0; j < TAM; j++)
 			printf(" %s │", tabuleiro[i][j].imagem);
-
-		// Menu ao lado do tabuleiro, vez do participante atual e Peca selecionada
-		switch (k)
-		{
-			case 6:
-				printf("\t\t| Vez das peças %s |", (vez == 'B') ? "Brancas" : "Pretas");
-				break;
-			case 4:
-				printf("\t\t| Peça selecionada: %s |", peca);
-				break;
-		}
 
 		//Pula de linha
 		putchar('\n');
