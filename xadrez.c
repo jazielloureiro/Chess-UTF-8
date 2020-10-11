@@ -20,10 +20,6 @@
 //Quando a casa estiver vazia essa constante será usada para identificá-la
 #define NULO 'N'
 
-//Constantes para identificar o fim de jogo
-#define FIM_DE_JOGO 'F'
-#define CONTINUA 'C'
-
 //Estrutura para armazenar as informações de cada casa do tabuleiro
 typedef struct
 {
@@ -46,6 +42,11 @@ typedef struct
 	char linha_destino;
 	char coluna_destino;
 } entradas;
+	
+typedef struct{
+	casa origem;
+	casa destino;
+} ultimo_estado;
 
 /*----------Funções Auxiliares----------*/
 //Essa função deve funcionar tanto no Linux como no Windows
@@ -231,7 +232,7 @@ void ler_casa(char *linha, char *coluna){
 	limpa_buffer();
 }
 
-char realiza_acoes_usuario(char acao, char vez){
+bool realiza_acoes_usuario(char acao, char vez){
 	char escolha;
 	
 	if(acao == 'd')
@@ -255,17 +256,17 @@ char realiza_acoes_usuario(char acao, char vez){
 			
 		pausa_tela();
 			       
-		return FIM_DE_JOGO;
+		return true;
 	}
 	
-	return CONTINUA;
+	return false;
 }
 
-char verifica_acoes_usuario(char linha, char coluna, char vez){
+bool verifica_acoes_usuario(char linha, char coluna, char vez){
 	if(coluna == ':' && (linha == 'e' || linha == 'd'))
 		return realiza_acoes_usuario(linha, vez);
 		
-	return CONTINUA;
+	return false;
 }
 
 //verifica se as coordenadas lidas são válidas
@@ -529,6 +530,125 @@ void promocao(casa *promocao, char vez){
 }
 /*-----------------------------------*/
 
+void salva_estado_tabuleiro(casa tabuleiro[TAM][TAM], ultimo_estado *lance, entradas usuario){
+	strcpy(lance->origem.imagem, tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem);
+	lance->origem.peca = tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca;
+	lance->origem.cor  = tabuleiro[usuario.linha_origem][usuario.coluna_origem].cor;
+	
+	strcpy(lance->destino.imagem, tabuleiro[usuario.linha_destino][usuario.coluna_destino].imagem);
+	lance->destino.peca = tabuleiro[usuario.linha_destino][usuario.coluna_destino].peca;
+	lance->destino.cor  = tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor;
+}
+
+void retorna_estado_anterior(casa tabuleiro[TAM][TAM], ultimo_estado lance, entradas usuario){
+	strcpy(tabuleiro[usuario.linha_origem][usuario.coluna_origem].imagem, lance.origem.imagem);
+	tabuleiro[usuario.linha_origem][usuario.coluna_origem].peca = lance.origem.peca;
+	tabuleiro[usuario.linha_origem][usuario.coluna_origem].cor  = lance.origem.cor;
+	
+	strcpy(tabuleiro[usuario.linha_destino][usuario.coluna_destino].imagem, lance.destino.imagem);
+	tabuleiro[usuario.linha_destino][usuario.coluna_destino].peca = lance.destino.peca;
+	tabuleiro[usuario.linha_destino][usuario.coluna_destino].cor  = lance.destino.cor;
+}
+
+bool checa_xeque(casa tabuleiro[TAM][TAM], char vez){
+	entradas xeque;
+	char vez_oponente = (vez == BRANCO? PRETO : BRANCO);
+	int i, j; //, linha_rei, coluna_rei;
+	
+	// Procura onde está o rei
+	for(i = 0; i < TAM; i++){
+		for(j = 0; j < TAM; j++){
+			if(tabuleiro[i][j].peca == REI && tabuleiro[i][j].cor == vez){
+				xeque.linha_destino = i; //linha_rei = i;
+				xeque.coluna_destino = j; //coluna_rei = j;
+				break;
+			}
+		}
+	}
+	
+	//
+	for(i = 0; i < TAM; i++){
+		for(j = 0; j < TAM; j++){
+			if(tabuleiro[i][j].cor == vez_oponente){
+				xeque.linha_origem = i;
+				xeque.coluna_origem = j;
+			
+				if(valida_movimento(tabuleiro[i][j].peca, xeque, vez) &&
+				   !checa_colisao(tabuleiro[i][j].peca, tabuleiro, xeque))
+				   	return true;
+			}
+		}
+	}
+				   	
+	return false;
+	
+	/*
+	// Checando lado esquerdo da linha
+	for(j = coluna_rei - 1; j >= 0; j--){
+		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+	
+	// Checando lado direito da linha
+	for(j = coluna_rei + 1; j <= 7; j++){
+		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+	
+	// Checando a parte superior da coluna
+	for(i = linha_rei - 1, j = coluna_rei; i >= 0; i--){
+		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+	
+	// Checando a parte inferior da coluna
+	for(i = linha_rei + 1; i <= 7; i++){
+		if((tabuleiro[i][j].peca == TORRE || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+	
+	// Checando a diagonal superior esquerda
+	for(i = linha_rei - 1, j = coluna_rei - 1; i >= 0 && j >= 0; i--, j--){
+		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+
+	// Checando a diagonal superior direita
+	for(i = linha_rei - 1, j = coluna_rei + 1; i >= 0 && j <= 7; i--, j++){
+		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+
+	// Checando a diagonal inferior esquerda
+	for(i = linha_rei + 1, j = coluna_rei - 1; i <= 7 && j >= 0; i++, j--){
+		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+
+	// Checando a diagonal inferior direita
+	for(i = linha_rei + 1, j = coluna_rei + 1; i <= 7 && i <= 7; i++, j++){
+		if((tabuleiro[i][j].peca == BISPO || tabuleiro[i][j].peca == DAMA) && tabuleiro[i][j].cor != vez)
+			return true;
+		else if(tabuleiro[i][j].cor == vez)
+			break;
+	}
+	*/
+}
+
 /*----------Funções do Menu----------*/
 void jogar()
 {
@@ -537,6 +657,8 @@ void jogar()
 
 	//Declaração da estrutura que armazenará as entradas do usuário
 	entradas usuario;
+	
+	ultimo_estado lance;
 
 	// Declaração da vez atual no tabuleiro, inicia com Branco
 	char vezAtual = BRANCO;
@@ -562,7 +684,7 @@ void jogar()
 				//Verifica se um dos jogadores pediu empate ou desistiu da partida
 				if(verifica_acoes_usuario(usuario.linha_origem,
 							   usuario.coluna_origem,
-							   vezAtual) == FIM_DE_JOGO)
+							   vezAtual) == true)
 					return;
 				
 				//Verifica se a casa lida é válida
@@ -587,7 +709,7 @@ void jogar()
 				//Verifica se um dos jogadores pediu empate ou desistiu da partida
 				if(verifica_acoes_usuario(usuario.linha_destino,
 							   usuario.coluna_destino,
-							   vezAtual) == FIM_DE_JOGO)
+							   vezAtual) == true)
 					return;
 
 				//Converte os valores que o usuário digitou em valores válidos para a matriz.
@@ -596,12 +718,20 @@ void jogar()
 			
 		}while(!valida_movimento(pecaselecionada, usuario, vezAtual) || checa_colisao(pecaselecionada, tabuleiro, usuario));
 
+		// Salva o estado do tabuleiro antes de realizar o lance
+		salva_estado_tabuleiro(tabuleiro, &lance, usuario);
+
 		//Realizará o movimento
 		movimenta_peca(tabuleiro, &usuario);
 		
 		// Promoção do peão
 		if(pecaselecionada == PEAO && (usuario.linha_destino == 0 || usuario.linha_destino == 7))
 			promocao(&tabuleiro[usuario.linha_destino][usuario.coluna_destino], vezAtual);
+			
+		if(checa_xeque(tabuleiro, vezAtual) == true){
+			retorna_estado_anterior(tabuleiro, lance, usuario);
+			continue;
+		}
 
 		// Inversao da vez atual no tabuleiro
 		vezAtual == BRANCO ? (vezAtual = PRETO) : (vezAtual = BRANCO);
