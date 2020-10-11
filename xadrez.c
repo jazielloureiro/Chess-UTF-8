@@ -740,8 +740,30 @@ void jogar()
 
 void ajuda(){
 	limpa_tela();
-
-	puts("Para pedir um empate durante a partida digite :e\n"
+	
+	puts("Para fazer um movimento ou selecionar um peça digite a letra e o número da casa, sem o uso de espaço (Exemplo: a1)\n"
+	     "Aqui vai algumas regras e dicas básicas:\n\n"
+	     "1. Peão\n"
+	     "Se o peão chegar ao outro lado do tabuleiro poderá ser promovido a uma peça que será de sua escolha.\n"
+	     "O peão só pode seguir em linha reta e para frente, podendo andar duas casas somente em sua primeira jogada,\n"
+	     "ele captura apenas na diagonal.\n\n"
+	     "2. Cavalo\n"
+	     "Anda sempre em formato de 'L', ele sempre captura no final do L e qualquer peça no caminho é pulada.\n\n"
+	     "3. Torre\n"
+	     "Sempre anda em linha reta sendo para frente, trás, esquerda ou direita,\n"
+	     "podendo parar em qualquer lugar para capturar um peça, porém ele para onde capturar.\n\n"
+	     "4. Bispo\n"
+	     "Anda sempre na diagonal, e assim como a torre pode parar em seu percurso para capturar.\n\n"
+	     "5. Dama\n"
+	     "Anda igual torre e bispo, podendo andar pelas diagonais ou em linha reta,\n"
+	     "e assim como eles, pode parar para capturar durante o percurso.\n\n"
+	     "6. Rei\n"
+	     "E por último mas não menos importante, e de fato uma peça muito importante pois com a morte do rei é game over\n"
+	     "indepedente de quantas peças foram capturadas por você.\n"
+	     "O rei assim como a dama pode andar para qualquer direção, porém só pode andar um casa por vez.\n\n"
+	     "Aqui estão todos os conhecimentos que você vai precisar, caso tente qualquer movimento desses porém nada ocorra,\n"
+	     "quer dizer que você está em xeque e o rei está em perigo\n"
+	     "Para pedir um empate durante a partida digite :e\n"
 	     "Para desistir da partida digite :d");
 	     
 	pausa_tela();
