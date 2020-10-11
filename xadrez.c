@@ -176,7 +176,7 @@ void inicializa_tabuleiro(casa tabuleiro[TAM][TAM])
 }
 
 //Essa função imprime a situação atual do tabuleiro
-void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7])
+void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], bool xeque)
 {
 	//O i será usado para acessar as linhas da matriz
 	//O j será usado para acessar as colunas da matriz
@@ -186,11 +186,22 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7])
 	// printf("\t\t| Peça selecionada: %s |", peca);
 
 	// Menu acima do tabuleiro 
-	putchar('\n');
-	printf("\t┌───────────────────────┐\t┌───────────────────────┐\n");
-	printf("\t│ Vez das peças %s\t│\t│ Peça selecionada: %s\t│\n", (vez == 'B') ? "Brancas" : "Pretas", peca);
-	printf("\t└───────────────────────┘\t└───────────────────────┘\n");
-	putchar('\n');
+	if (xeque)
+	{
+		putchar('\n');
+		printf("\t┌───────────────────────┐\t┌───────────────────────┐\t┌─────────────┐\n");
+		printf("\t│ Vez das peças %s\t│\t│ Peça selecionada: %s\t│\t│ Rei em xeque│\n", (vez == 'B') ? "Brancas" : "Pretas", peca);
+		printf("\t└───────────────────────┘\t└───────────────────────┘\t└─────────────┘\n");
+		putchar('\n');
+	} else {
+		putchar('\n');
+		printf("\t┌───────────────────────┐\t┌───────────────────────┐\n");
+		printf("\t│ Vez das peças %s\t│\t│ Peça selecionada: %s\t│\n", (vez == 'B') ? "Brancas" : "Pretas", peca);
+		printf("\t└───────────────────────┘\t└───────────────────────┘\n");
+		putchar('\n');
+	}
+	
+	
 	//Imprime a parte de cima do tabuleiro
 	printf("  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 
@@ -672,7 +683,7 @@ void jogar()
 			do
 			{
 				limpa_tela();
-				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
+				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm, checa_xeque(tabuleiro, vezAtual));
 
 				//Recebe as coordenadas da peça que irá se mover
 				printf("\nDigite as coordenadas da peça que deseja mover: ");
@@ -697,7 +708,7 @@ void jogar()
 			do
 			{
 				limpa_tela();
-				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm);
+				imprime_tabuleiro(tabuleiro, vezAtual, pecaselecionadaIm, checa_xeque(tabuleiro, vezAtual));
 
 				//Recebe as coordenadas de para onde a peça irá se mover
 				printf("\nDigite para você onde deseja mover tal peça: ");
