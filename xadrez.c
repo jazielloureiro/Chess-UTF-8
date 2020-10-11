@@ -188,6 +188,7 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM], char vez, char peca[7], bool xe
 	// Menu acima do tabuleiro 
 	if (xeque)
 	{
+		putchar('\a');
 		putchar('\n');
 		printf("\t┌───────────────────────┐\t┌───────────────────────┐\t┌─────────────┐\n");
 		printf("\t│ Vez das peças %s\t│\t│ Peça selecionada: %s\t│\t│ Rei em xeque│\n", (vez == 'B') ? "Brancas" : "Pretas", peca);
