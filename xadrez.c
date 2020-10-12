@@ -660,6 +660,9 @@ void jogar()
 							   usuario.coluna_destino,
 							   vezAtual) == true)
 					return;
+				
+				//Verifica se a casa lida é válida
+				valida_casa(&usuario.linha_destino, &usuario.coluna_destino);
 
 				//Converte os valores que o usuário digitou em valores válidos para a matriz.
 				tratamento_entrada_usuario(&usuario.linha_destino, &usuario.coluna_destino);
