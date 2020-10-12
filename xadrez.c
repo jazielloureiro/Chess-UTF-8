@@ -206,12 +206,12 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM])
 	int i, j, k = 8;
 	
 	//Imprime a parte de cima do tabuleiro
-	printf("  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
+	printf("\t  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 
 	for (i = 0; i < TAM; i++)
 	{
 		//Imprime o número da linha do tabuleiro
-		printf("%d │", k--);
+		printf("\t%d │", k--);
 
 		//Imprime todas as imagens das casas da linha i do tabuleiro
 		for (j = 0; j < TAM; j++)
@@ -222,12 +222,12 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM])
 
 		//Imprime a separação de cada linha
 		if (i < TAM - 1)
-			printf("  ├───┼───┼───┼───┼───┼───┼───┼───┤\n");
+			printf("\t  ├───┼───┼───┼───┼───┼───┼───┼───┤\n");
 	}
 
 	//Imprime a parte de baixo do tabuleiro
-	printf("  └───┴───┴───┴───┴───┴───┴───┴───┘\n"
-		   "    a   b   c   d   e   f   g   h\n");
+	printf("\t  └───┴───┴───┴───┴───┴───┴───┴───┘\n"
+		   "\t    a   b   c   d   e   f   g   h\n");
 }
 
 /*--------------------------------------*/
