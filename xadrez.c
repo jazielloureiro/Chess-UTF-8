@@ -227,7 +227,7 @@ void imprime_tabuleiro(casa tabuleiro[TAM][TAM])
 
 	//Imprime a parte de baixo do tabuleiro
 	printf("\t  └───┴───┴───┴───┴───┴───┴───┴───┘\n"
-		   "\t    a   b   c   d   e   f   g   h\n");
+	       "\t    a   b   c   d   e   f   g   h\n");
 }
 
 /*--------------------------------------*/
