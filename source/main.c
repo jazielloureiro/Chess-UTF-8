@@ -1,9 +1,9 @@
 #include "aux.h"
 #include "chess.h"
-#include "input.h"
+#include "endgame.h"
 #include "movement.h"
+
 #include <stdio.h>
-#include <stdbool.h>
 
 void play(){
 	square board[BOARD_SIZE][BOARD_SIZE];

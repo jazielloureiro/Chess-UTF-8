@@ -1,6 +1,6 @@
 #include "aux.h"
 #include "chess.h"
-#include "input.h"
+
 #include <stdio.h>
 
 void read_square(char *row, char *column){

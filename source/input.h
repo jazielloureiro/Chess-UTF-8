@@ -1,8 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include <stdbool.h>
-
 typedef struct{
 	char from_row;
 	char from_column;

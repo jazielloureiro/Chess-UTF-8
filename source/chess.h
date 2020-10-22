@@ -1,11 +1,11 @@
 #ifndef CHESS_H
 #define CHESS_H
 
+#include <stdbool.h>
+#include "input.h"
+
 #define BOARD_SIZE 8
 #define IMAGE_SIZE 7
-
-#include "input.h"
-#include <stdbool.h>
 
 #define BISHOP 'B'
 #define KING   'K'
