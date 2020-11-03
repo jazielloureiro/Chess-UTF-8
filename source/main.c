@@ -79,7 +79,7 @@ void play(){
 		get_current_board(board, &history);
 		
 		player_move == WHITE? (player_move = BLACK) : (player_move = WHITE);
-	}while(special_finals(board));
+	}while(!special_finals(board, &history));
 }
 
 void help(){
