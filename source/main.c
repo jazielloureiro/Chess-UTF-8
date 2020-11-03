@@ -1,22 +1,21 @@
+#include <stdbool.h>
+#include <stdio.h>
+
 #include "aux.h"
 #include "chess.h"
 #include "endgame.h"
+#include "input.h"
 #include "movement.h"
 
-#include <stdio.h>
-
 void play(){
-	square board[BOARD_SIZE][BOARD_SIZE];
-
+	square board[BOARD_SIZE][BOARD_SIZE], *selected_piece;
+	History history;
 	inputs user;
-	
 	last_state movement;
-
 	char player_move = WHITE;
 	
-	square *selected_piece;
-
 	init_board(board);
+	init_history(board, &history);
 
 	do{
 		do{
@@ -28,7 +27,7 @@ void play(){
 				printf("\nEnter the square of the piece you want to move: ");
 				read_square(&user.from_row, &user.from_column);
 				
-				if(verify_player_actions(user.from_row, user.from_column, player_move) == true)
+				if(verify_player_actions(user.from_row, user.from_column, player_move))
 					return;
 				
 				validate_square(&user.from_row, &user.from_column);
@@ -46,7 +45,7 @@ void play(){
 				printf("\nEnter where you want to move the piece: ");
 				read_square(&user.to_row, &user.to_column);
 				
-				if(verify_player_actions(user.to_row, user.to_column, player_move) == true)
+				if(verify_player_actions(user.to_row, user.to_column, player_move))
 					return;
 				
 				validate_square(&user.to_row, &user.to_column);
@@ -59,17 +58,28 @@ void play(){
 		save_state_board(board, &movement, user);
 
 		move_piece(board, user);
-		
-		if(selected_piece->name == PAWN && (user.to_row == 0 || user.to_row == 7))
-			promotion(&board[user.to_row][user.to_column], player_move);
+
+		if(count_pieces(board) < history.pieces_count){
+			history.pieces_count--;
+			history.moves_count = 0;
+		}
+
+		if(board[user.to_row][user.to_column].name == PAWN){
+			history.moves_count = 0;
+
+			if(user.to_row == 0 || user.to_row == 7)
+				promotion(&board[user.to_row][user.to_column], player_move);
+		}
 			
-		if(verify_check(board, player_move) == true){
+		if(verify_check(board, player_move)){
 			return_last_state(board, movement, user);
 			continue;
 		}
 
+		get_current_board(board, &history);
+		
 		player_move == WHITE? (player_move = BLACK) : (player_move = WHITE);
-	}while(true);
+	}while(special_finals(board));
 }
 
 void help(){

@@ -1,7 +1,7 @@
-#include "aux.h"
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "aux.h"
 
 void clear_input_buffer(){
 	char buffer;

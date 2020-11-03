@@ -1,8 +1,11 @@
-#include "aux.h"
-#include "chess.h"
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "aux.h"
+#include "chess.h"
+#include "endgame.h"
+#include "input.h"
 
 void init_board(square board[][BOARD_SIZE]){
 	int i, j;
@@ -82,6 +85,12 @@ void init_board(square board[][BOARD_SIZE]){
 	board[7][7].name = ROOK;
 }
 
+void init_history(square board[][BOARD_SIZE], History *history){
+	history->moves_count = 0;
+	history->pieces_count = MAX_PIECES;
+	get_current_board(board, history);
+}
+
 void print_top_menu(char move, char *piece, bool check){
 	if(check){
 		putchar('\n');
@@ -115,6 +124,52 @@ void print_board(square board[][BOARD_SIZE]){
 
 	printf("\t  └───┴───┴───┴───┴───┴───┴───┴───┘\n"
 	       "\t    a   b   c   d   e   f   g   h\n");
+}
+
+void get_current_board(square board[][BOARD_SIZE], History *history){
+	int i, j, sqr_counter, *move;
+
+	move = &history->moves_count;
+
+	for(i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
+		for(j = 0; j < BOARD_SIZE; j++){
+			if(board[i][j].name != NO_PIECE){
+				history->sqr_hist[*move][sqr_counter].name = board[i][j].name;
+				history->sqr_hist[*move][sqr_counter].color = board[i][j].color;
+				history->sqr_hist[*move][sqr_counter].row = i;
+				history->sqr_hist[*move][sqr_counter].column = j;
+				sqr_counter++;
+			}
+		}
+	}
+
+	(*move)++;
+
+	/*
+	for(i = 0; i < *move; i++){
+		printf("X----------Move %d----------X\n", i);
+
+		for(j = 0; j < sqr_counter; j++){
+			printf("Piecename: %c\n", history->sqr_hist[i][j].name);
+			printf("Color: %c\n", history->sqr_hist[i][j].color);
+			printf("Row: %d\n", history->sqr_hist[i][j].row);
+			printf("Column: %d\n", history->sqr_hist[i][j].column);
+			putchar('\n');
+		}
+	}
+	getchar();
+	*/
+}
+
+int count_pieces(square board[][BOARD_SIZE]){
+	int i, j, pieces_amount;
+
+	for(i = 0, pieces_amount = 0; i < BOARD_SIZE; i++)
+		for(j = 0; j < BOARD_SIZE; j++)
+			if(board[i][j].name != NO_PIECE)
+				pieces_amount++;
+	
+	return pieces_amount;
 }
 
 void save_state_board(square board[][BOARD_SIZE], last_state *movement, inputs user){

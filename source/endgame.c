@@ -1,3 +1,6 @@
+#include <stdbool.h>
+#include <stdio.h>
+
 #include "chess.h"
 #include "endgame.h"
 #include "movement.h"
@@ -33,4 +36,9 @@ bool verify_check(square board[][BOARD_SIZE], char move){
 	}
 				   	
 	return false;
+}
+
+bool special_finals(square board[][BOARD_SIZE]){
+
+	return true;
 }

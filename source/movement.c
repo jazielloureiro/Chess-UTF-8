@@ -1,9 +1,11 @@
-#include "aux.h"
-#include "chess.h"
-#include "movement.h"
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "aux.h"
+#include "chess.h"
+#include "input.h"
+#include "movement.h"
 
 bool validate_movement(char selected_piece, inputs user, char move){
 	switch(selected_piece){
