@@ -10,14 +10,16 @@
 void play(){
 	square board[BOARD_SIZE][BOARD_SIZE], *selected_piece;
 	History history;
-	inputs user;
-	last_state movement;
 	char player_move = WHITE;
-	
+
 	init_board(board);
 	init_history(board, &history);
 
 	do{
+		inputs user;
+		last_state movement;
+		bool is_need_reset_history = false;
+
 		do{
 			do{
 				clear_screen();
@@ -59,13 +61,8 @@ void play(){
 
 		move_piece(board, user);
 
-		if(count_pieces(board) < history.pieces_count){
-			history.pieces_count--;
-			history.moves_count = 0;
-		}
-
 		if(board[user.to_row][user.to_column].name == PAWN){
-			history.moves_count = 0;
+			is_need_reset_history = true;
 
 			if(user.to_row == 0 || user.to_row == 7)
 				promotion(&board[user.to_row][user.to_column], player_move);
@@ -75,6 +72,14 @@ void play(){
 			return_last_state(board, movement, user);
 			continue;
 		}
+
+		if(count_pieces(board) < history.pieces_count){
+			history.pieces_count--;
+			is_need_reset_history = true;
+		}
+
+		if(is_need_reset_history)
+			history.moves_count = 0;
 
 		get_current_board(board, &history);
 		
