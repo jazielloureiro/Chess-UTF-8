@@ -66,18 +66,45 @@ bool is_there_threefold_repetition(History *history){
 	return false;
 }
 
-/*
- * TODO:
- * 1. 50 movimentos
- * 2. Tripla repetição
- * 3. Afogamento
- * 4. Material insuficiente
- */
+bool is_there_insufficient_material(square board[][BOARD_SIZE]){
+	int white_minor_pieces = 0, black_minor_pieces = 0, i, j;
+	bool white_has_sufficient_material = false, black_has_sufficient_material = false;
+
+	for(i = 0; i < BOARD_SIZE; i++){
+		for(j = 0; j < BOARD_SIZE; j++){
+			if(board[i][j].name == BISHOP || board[i][j].name == KNIGHT){
+				if(board[i][j].color == WHITE)
+					white_minor_pieces++;
+				else
+					black_minor_pieces++;
+			}else if(board[i][j].name == QUEEN ||
+			         board[i][j].name == ROOK ||
+			         board[i][j].name == PAWN){
+				if(board[i][j].color == WHITE)
+					white_has_sufficient_material = true;
+				else
+					black_has_sufficient_material = true;
+			}
+		}
+	}
+
+	if(white_minor_pieces >= 2)
+		white_has_sufficient_material = true;
+	if(black_minor_pieces >= 2)
+		black_has_sufficient_material = true;
+
+	if(white_has_sufficient_material || black_has_sufficient_material)
+		return false;
+
+	return true;
+}
 
 bool special_finals(square board[][BOARD_SIZE], History *history){
 	if(history->moves_count == MAX_MOVES)
 		return true;
 	else if(is_there_threefold_repetition(history))
+		return true;
+	else if(is_there_insufficient_material(board))
 		return true;
 
 	return false;
