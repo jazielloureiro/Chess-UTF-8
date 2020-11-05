@@ -10,10 +10,12 @@
 void play(){
 	square board[BOARD_SIZE][BOARD_SIZE], *selected_piece;
 	History history;
+	castle_pieces_history castle_hist;
 	char player_move = WHITE;
 
 	init_board(board);
 	init_history(board, &history);
+	init_castle_history(&castle_hist);
 
 	do{
 		inputs user;
@@ -23,7 +25,7 @@ void play(){
 		do{
 			do{
 				clear_screen();
-				print_top_menu(player_move, "■", verify_check(board, player_move));
+				print_top_menu(player_move, verify_check(board, player_move));
 				print_board(board);
 
 				printf("\nEnter the square of the piece you want to move: ");
@@ -41,7 +43,7 @@ void play(){
 
 			do{
 				clear_screen();
-				print_top_menu(player_move, selected_piece->image, verify_check(board, player_move));
+				print_top_menu(player_move, verify_check(board, player_move));
 				print_board(board);
 
 				printf("\nEnter where you want to move the piece: ");

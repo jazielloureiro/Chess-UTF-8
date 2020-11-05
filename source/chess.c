@@ -91,17 +91,26 @@ void init_history(square board[][BOARD_SIZE], History *history){
 	get_current_board(board, history);
 }
 
-void print_top_menu(char move, char *piece, bool check){
+void init_castle_history(castle_pieces_history *castle_hist){
+	castle_hist->is_left_black_rook_moved = false;
+	castle_hist->is_right_black_rook_moved = false;
+	castle_hist->is_black_king_moved = false;
+	castle_hist->is_left_white_rook_moved = false;
+	castle_hist->is_right_white_rook_moved = false;
+	castle_hist->is_white_king_moved = false;
+}
+
+void print_top_menu(char move, bool check){
 	if(check){
 		putchar('\n');
-		printf("\t┌───────────────┐\t┌───────────────────────┐\t┌───────┐\n");
-		printf("\t│ %s moves\t│\t│ Selected piece: %s\t│\t│ Check │\n", (move == WHITE? "White" : "Black"), piece);
-		printf("\t└───────────────┘\t└───────────────────────┘\t└───────┘\n\n");
+		printf("\t  ┌───────────────┐   ┌───────────┐\n");
+		printf("\t  │ %s to move │   │   Check   │\n", (move == WHITE? "White" : "Black"));
+		printf("\t  └───────────────┘   └───────────┘\n\n");
 	}else{
 		putchar('\n');
-		printf("\t┌───────────────┐\t┌───────────────────────┐\n");
-		printf("\t│ %s moves\t│\t│ Selected piece: %s\t│\n", (move == WHITE? "White" : "Black"), piece);
-		printf("\t└───────────────┘\t└───────────────────────┘\n\n");
+		printf("\t\t  ┌───────────────┐\n");
+		printf("\t\t  │ %s to move │\n", (move == WHITE? "White" : "Black"));
+		printf("\t\t  └───────────────┘\n\n");
 	}
 }
 
