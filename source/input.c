@@ -6,40 +6,30 @@
 #include "input.h"
 
 void read_movement_input(movement_input *move_input){
-	char space_input;
-
 	printf("\nEnter your movement: ");
 
-	read_square(&move_input->from_row, &move_input->from_column);
+	move_input->from_column = getchar();
+	move_input->from_row = getchar();
 
 	if(move_input->from_column == ':'){
 		clear_input_buffer();
 		return;
 	}
 
-	space_input = getchar();
+	getchar();
 
-	read_square(&move_input->to_row, &move_input->to_column);
+	move_input->to_column = getchar();
+	move_input->to_row = getchar();
 
 	clear_input_buffer();
 }
 
-void read_square(char *row, char *column){
-	*column = getchar();
-	*row = getchar();
-}
-
 bool is_the_squares_valid(movement_input *move_input){
-	if(is_square_valid(move_input->from_row, move_input->from_column) &&
-	   is_square_valid(move_input->to_row, move_input->to_column))
-	   	return true;
-
-	return false;
-}
-
-bool is_square_valid(char row, char column){
-	if(column < 'a' || column > 'h' || row < '1' || row > '8')
-		return false;
+	if(move_input->from_column == INVALID_SQUARE ||
+	   move_input->from_row    == INVALID_SQUARE ||
+	   move_input->to_column   == INVALID_SQUARE ||
+	   move_input->to_row      == INVALID_SQUARE)
+	   	return false;
 
 	return true;
 }
@@ -74,9 +64,9 @@ bool is_player_action_valid(char action, char move){
 	return false;
 }
 
-bool has_player_action(char row, char column){
+bool has_player_action(char row, char column, char move){
 	if(column == ':' && (row == 'r' || row == 'd'))
-		return true;
+		return is_player_action_valid(row, move);
 		
 	return false;
 }
@@ -90,8 +80,12 @@ void convert_square_readed(char *row, char *column){
 		case '4': *row = 4; break;
 		case '3': *row = 5; break;
 		case '2': *row = 6; break;
-		case '1': *row = 7;
+		case '1': *row = 7; break;
+		default:  *row = INVALID_SQUARE;
 	}
 
-	*column -= 'a';
+	if(*column < 'a' || *column > 'h')
+		*column = INVALID_SQUARE;
+	else
+		*column -= 'a';
 }

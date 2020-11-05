@@ -8,7 +8,7 @@
 #include "movement.h"
 
 void play(){
-	square board[BOARD_SIZE][BOARD_SIZE], *selected_piece;
+	square board[BOARD_SIZE][BOARD_SIZE];
 	History history;
 	castle_pieces_history castle_hist;
 	char player_move = WHITE;
@@ -20,11 +20,9 @@ void play(){
 	do{
 		movement_input move_input;
 		last_state movement;
-		bool is_movement_valid, is_need_reset_history = false;
+		bool is_need_reset_history = false;
 
 		do{
-			is_movement_valid = false;
-
 			clear_screen();
 			print_top_menu(player_move, verify_check(board, player_move));
 			print_board(board);
@@ -32,37 +30,10 @@ void play(){
 			read_movement_input(&move_input);
 
 			if(has_player_action(move_input.from_row,
-			                     move_input.from_column)){
-				if(is_player_action_valid(move_input.from_row,
-							  player_move)){
-					return;
-				}
-			}
-
-			if(!is_the_squares_valid(&move_input)){
-				puts("\nYou've entered an invalid square!");
-				pause();
-				continue;
-			}
-
-			convert_square_readed(&move_input.from_row, &move_input.from_column);
-			convert_square_readed(&move_input.to_row, &move_input.to_column);
-
-			if(board[move_input.from_row][move_input.from_column].color != player_move){
-				puts("\nPlease, choose a piece of your color.");
-				pause();
-			}else if(board[move_input.to_row][move_input.to_column].color == player_move){
-				puts("\nYou can't capture your own piece!");
-				pause();
-			}else if(!validate_movement(board, move_input, player_move)){
-				puts("\nThis movement is incompatible with your piece.");
-				pause();
-			}else if(verify_collision(board, move_input)){
-				puts("\nYour piece can't jump over other pieces!");
-				pause();
-			}else
-				is_movement_valid = true;
-		}while(!is_movement_valid);
+			                     move_input.from_column,
+					     player_move))
+				return;
+		}while(!is_the_movement_valid(board, &move_input, player_move));
 
 		save_state_board(board, &movement, move_input);
 

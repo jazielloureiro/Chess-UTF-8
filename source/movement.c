@@ -7,6 +7,49 @@
 #include "input.h"
 #include "movement.h"
 
+bool is_the_movement_valid(square board[][BOARD_SIZE], movement_input *move_input, char player_move){
+	char message = VALID_MOVEMENT;
+
+	convert_square_readed(&move_input->from_row, &move_input->from_column);
+	convert_square_readed(&move_input->to_row, &move_input->to_column);
+
+	if(!is_the_squares_valid(move_input))
+		message = INVALID_SQUARE;
+	else if(board[move_input->from_row][move_input->from_column].color != player_move)
+		message = CHOOSE_WRONG_COLOR;
+	else if(board[move_input->to_row][move_input->to_column].color == player_move)
+		message = CAPTURE_OWN_PIECE;
+	else if(!validate_movement(board, *move_input, player_move))
+		message = INCOMPATIBLE_MOVE;
+	else if(verify_collision(board, *move_input))
+		message = JUMP_OTHER_PIECES;
+
+	if(message != VALID_MOVEMENT){
+		switch(message){
+			case INVALID_SQUARE:
+				puts("\nYou've entered an invalid square!");
+				break;
+			case CHOOSE_WRONG_COLOR:
+				puts("\nYou must choose a piece of your color.");
+				break;
+			case CAPTURE_OWN_PIECE:
+				puts("\nYou can't capture your own piece!");
+				break;
+			case INCOMPATIBLE_MOVE:
+				puts("\nThis movement is incompatible with your piece.");
+				break;
+			case JUMP_OTHER_PIECES:
+				puts("\nYour piece can't jump over other pieces!");
+		}
+
+		pause();
+
+		return false;
+	}
+
+	return true;
+}
+
 bool validate_movement(square board[][BOARD_SIZE], movement_input user, char move){
 	switch(board[user.from_row][user.from_column].name){
 		case BISHOP: return validate_movement_bishop(user);

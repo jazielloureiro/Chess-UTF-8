@@ -1,6 +1,7 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
+bool is_the_movement_valid(square board[][BOARD_SIZE], movement_input *move_input, char player_move);
 bool validate_movement(square board[][BOARD_SIZE], movement_input user, char move);
 bool validate_movement_bishop(movement_input user);
 bool validate_movement_king(movement_input user);
