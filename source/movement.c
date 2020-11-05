@@ -7,8 +7,8 @@
 #include "input.h"
 #include "movement.h"
 
-bool validate_movement(char selected_piece, inputs user, char move){
-	switch(selected_piece){
+bool validate_movement(square board[][BOARD_SIZE], movement_input user, char move){
+	switch(board[user.from_row][user.from_column].name){
 		case BISHOP: return validate_movement_bishop(user);
 		case KING:   return validate_movement_king(user);
 		case KNIGHT: return validate_movement_knight(user);
@@ -18,7 +18,7 @@ bool validate_movement(char selected_piece, inputs user, char move){
 	}
 }
 
-bool validate_movement_bishop(inputs user){
+bool validate_movement_bishop(movement_input user){
 	int i, j;
 
 	// Verifying the top left diagonal
@@ -52,7 +52,7 @@ bool validate_movement_bishop(inputs user){
 	return false;
 }
 
-bool validate_movement_king(inputs user){
+bool validate_movement_king(movement_input user){
 	int i, j;
 
 	for(i = user.from_row - 1; i <= user.from_row + 1; i++)
@@ -63,7 +63,7 @@ bool validate_movement_king(inputs user){
 	return false;
 }
 
-bool validate_movement_knight(inputs user){
+bool validate_movement_knight(movement_input user){
 	int diff_row, diff_column;
 	
 	diff_row    = user.to_row    - user.from_row;
@@ -82,7 +82,7 @@ bool validate_movement_knight(inputs user){
 	return false;
 }
 
-bool validate_movement_pawn(inputs user, char move){
+bool validate_movement_pawn(movement_input user, char move){
 	int advance2Squares = (move == WHITE? -2 : 2),
 	    advance1Square  = (move == WHITE? -1 : 1);
 
@@ -104,7 +104,7 @@ bool validate_movement_pawn(inputs user, char move){
 	return false;
 }
 
-bool validate_movement_queen(inputs user){
+bool validate_movement_queen(movement_input user){
 	if(validate_movement_rook(user) == true)
 		return true;
 	if(validate_movement_bishop(user) == true)
@@ -113,7 +113,7 @@ bool validate_movement_queen(inputs user){
 	return false;
 }
 
-bool validate_movement_rook(inputs user){
+bool validate_movement_rook(movement_input user){
 	if(user.from_row == user.to_row)
 		return true;
 	if(user.from_column == user.to_column)
@@ -122,15 +122,15 @@ bool validate_movement_rook(inputs user){
 	return false;
 }
 
-bool verify_collision(char selected_piece, square board[][BOARD_SIZE], inputs user){
-	if(selected_piece == PAWN){
+bool verify_collision(square board[][BOARD_SIZE], movement_input user){
+	if(board[user.from_row][user.from_column].name == PAWN){
 		if(user.from_row  != user.to_row  &&
 		   user.from_column != user.to_column &&
 		   board[user.to_row][user.to_column].name == NO_PIECE)
 		   	return true;
 	}
 	
-	if(selected_piece != KNIGHT){
+	if(board[user.from_row][user.from_column].name != KNIGHT){
 		int i = user.from_row, j = user.from_column;
 		
 		do{
@@ -152,7 +152,7 @@ bool verify_collision(char selected_piece, square board[][BOARD_SIZE], inputs us
 	return false;
 }
 
-void move_piece(square board[][BOARD_SIZE], inputs user){
+void move_piece(square board[][BOARD_SIZE], movement_input user){
 	strcpy(board[user.to_row][user.to_column].image,
 	       board[user.from_row][user.from_column].image);
 

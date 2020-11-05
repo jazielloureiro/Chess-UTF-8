@@ -2,11 +2,12 @@
 #include <stdio.h>
 
 #include "chess.h"
+#include "input.h"
 #include "endgame.h"
 #include "movement.h"
 
 bool verify_check(square board[][BOARD_SIZE], char move){
-	inputs check;
+	movement_input check;
 	char oponent_color = (move == WHITE? BLACK : WHITE);
 	int i, j;
 	
@@ -28,8 +29,8 @@ bool verify_check(square board[][BOARD_SIZE], char move){
 				check.from_row = i;
 				check.from_column = j;
 			
-				if(validate_movement(board[i][j].name, check, move) &&
-				   !verify_collision(board[i][j].name, board, check))
+				if(validate_movement(board, check, move) &&
+				   !verify_collision(board, check))
 				   	return true;
 			}
 		}

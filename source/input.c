@@ -3,23 +3,48 @@
 
 #include "aux.h"
 #include "chess.h"
+#include "input.h"
 
-void read_square(char *row, char *column){
-	*column = getchar();
+void read_movement_input(movement_input *move_input){
+	char space_input;
 
-	*row = getchar();
+	printf("\nEnter your movement: ");
+
+	read_square(&move_input->from_row, &move_input->from_column);
+
+	if(move_input->from_column == ':'){
+		clear_input_buffer();
+		return;
+	}
+
+	space_input = getchar();
+
+	read_square(&move_input->to_row, &move_input->to_column);
 
 	clear_input_buffer();
 }
 
-void validate_square(char *row, char *column){
-	while(*column < 'a' || *column > 'h' || *row < '1' || *row > '8'){
-		printf("\nYou've entered an invalid square! Enter a square again: ");
-		read_square(row, column);
-	}
+void read_square(char *row, char *column){
+	*column = getchar();
+	*row = getchar();
 }
 
-bool do_player_actions(char action, char move){
+bool is_the_squares_valid(movement_input *move_input){
+	if(is_square_valid(move_input->from_row, move_input->from_column) &&
+	   is_square_valid(move_input->to_row, move_input->to_column))
+	   	return true;
+
+	return false;
+}
+
+bool is_square_valid(char row, char column){
+	if(column < 'a' || column > 'h' || row < '1' || row > '8')
+		return false;
+
+	return true;
+}
+
+bool is_player_action_valid(char action, char move){
 	char choose;
 	
 	if(action == 'r')
@@ -49,14 +74,14 @@ bool do_player_actions(char action, char move){
 	return false;
 }
 
-bool verify_player_actions(char row, char column, char move){
+bool has_player_action(char row, char column){
 	if(column == ':' && (row == 'r' || row == 'd'))
-		return do_player_actions(row, move);
+		return true;
 		
 	return false;
 }
 
-void convert_inputs_user(char *row, char *column){
+void convert_square_readed(char *row, char *column){
 	switch(*row){
 		case '8': *row = 0; break;
 		case '7': *row = 1; break;

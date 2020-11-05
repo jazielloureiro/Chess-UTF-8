@@ -181,7 +181,7 @@ int count_pieces(square board[][BOARD_SIZE]){
 	return pieces_amount;
 }
 
-void save_state_board(square board[][BOARD_SIZE], last_state *movement, inputs user){
+void save_state_board(square board[][BOARD_SIZE], last_state *movement, movement_input user){
 	strcpy(movement->from.image, board[user.from_row][user.from_column].image);
 	movement->from.name  = board[user.from_row][user.from_column].name;
 	movement->from.color = board[user.from_row][user.from_column].color;
@@ -191,7 +191,7 @@ void save_state_board(square board[][BOARD_SIZE], last_state *movement, inputs u
 	movement->to.color = board[user.to_row][user.to_column].color;
 }
 
-void return_last_state(square board[][BOARD_SIZE], last_state movement, inputs user){
+void return_last_state(square board[][BOARD_SIZE], last_state movement, movement_input user){
 	strcpy(board[user.from_row][user.from_column].image, movement.from.image);
 	board[user.from_row][user.from_column].name = movement.from.name;
 	board[user.from_row][user.from_column].color  = movement.from.color;

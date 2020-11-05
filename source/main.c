@@ -18,60 +18,65 @@ void play(){
 	init_castle_history(&castle_hist);
 
 	do{
-		inputs user;
+		movement_input move_input;
 		last_state movement;
-		bool is_need_reset_history = false;
+		bool is_movement_valid, is_need_reset_history = false;
 
 		do{
-			do{
-				clear_screen();
-				print_top_menu(player_move, verify_check(board, player_move));
-				print_board(board);
+			is_movement_valid = false;
 
-				printf("\nEnter the square of the piece you want to move: ");
-				read_square(&user.from_row, &user.from_column);
-				
-				if(verify_player_actions(user.from_row, user.from_column, player_move))
+			clear_screen();
+			print_top_menu(player_move, verify_check(board, player_move));
+			print_board(board);
+
+			read_movement_input(&move_input);
+
+			if(has_player_action(move_input.from_row,
+			                     move_input.from_column)){
+				if(is_player_action_valid(move_input.from_row,
+							  player_move)){
 					return;
-				
-				validate_square(&user.from_row, &user.from_column);
+				}
+			}
 
-				convert_inputs_user(&user.from_row, &user.from_column);
-			}while(board[user.from_row][user.from_column].color != player_move);
+			if(!is_the_squares_valid(&move_input)){
+				puts("\nYou've entered an invalid square!");
+				pause();
+				continue;
+			}
 
-			selected_piece = &board[user.from_row][user.from_column];
+			convert_square_readed(&move_input.from_row, &move_input.from_column);
+			convert_square_readed(&move_input.to_row, &move_input.to_column);
 
-			do{
-				clear_screen();
-				print_top_menu(player_move, verify_check(board, player_move));
-				print_board(board);
+			if(board[move_input.from_row][move_input.from_column].color != player_move){
+				puts("\nPlease, choose a piece of your color.");
+				pause();
+			}else if(board[move_input.to_row][move_input.to_column].color == player_move){
+				puts("\nYou can't capture your own piece!");
+				pause();
+			}else if(!validate_movement(board, move_input, player_move)){
+				puts("\nThis movement is incompatible with your piece.");
+				pause();
+			}else if(verify_collision(board, move_input)){
+				puts("\nYour piece can't jump over other pieces!");
+				pause();
+			}else
+				is_movement_valid = true;
+		}while(!is_movement_valid);
 
-				printf("\nEnter where you want to move the piece: ");
-				read_square(&user.to_row, &user.to_column);
-				
-				if(verify_player_actions(user.to_row, user.to_column, player_move))
-					return;
-				
-				validate_square(&user.to_row, &user.to_column);
+		save_state_board(board, &movement, move_input);
 
-				convert_inputs_user(&user.to_row, &user.to_column);
-			}while(board[user.to_row][user.to_column].color == player_move);
-			
-		}while(!validate_movement(selected_piece->name, user, player_move) || verify_collision(selected_piece->name, board, user));
+		move_piece(board, move_input);
 
-		save_state_board(board, &movement, user);
-
-		move_piece(board, user);
-
-		if(board[user.to_row][user.to_column].name == PAWN){
+		if(board[move_input.to_row][move_input.to_column].name == PAWN){
 			is_need_reset_history = true;
 
-			if(user.to_row == 0 || user.to_row == 7)
-				promotion(&board[user.to_row][user.to_column], player_move);
+			if(move_input.to_row == 0 || move_input.to_row == 7)
+				promotion(&board[move_input.to_row][move_input.to_column], player_move);
 		}
 			
 		if(verify_check(board, player_move)){
-			return_last_state(board, movement, user);
+			return_last_state(board, movement, move_input);
 			continue;
 		}
 

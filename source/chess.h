@@ -61,7 +61,7 @@ void print_top_menu(char move, bool check);
 void print_board(square board[][BOARD_SIZE]);
 void get_current_board(square board[][BOARD_SIZE], History *history);
 int count_pieces(square board[][BOARD_SIZE]);
-void save_state_board(square board[][BOARD_SIZE], last_state *movement, inputs user);
-void return_last_state(square board[][BOARD_SIZE], last_state movement, inputs user);
+void save_state_board(square board[][BOARD_SIZE], last_state *movement, movement_input user);
+void return_last_state(square board[][BOARD_SIZE], last_state movement, movement_input user);
 
 #endif
