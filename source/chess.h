@@ -30,7 +30,7 @@ typedef struct{
 typedef struct{
 	square from;
 	square to;
-} last_state;
+} movement_squares;
 
 typedef struct{
 	char name;
@@ -41,8 +41,8 @@ typedef struct{
 	
 typedef struct{
 	square_hist sqr_hist[MAX_MOVES][MAX_PIECES];
-	int pieces_count;
-	int moves_count;
+	int pieces_counter;
+	int moves_counter;
 } History;
 
 typedef struct{
@@ -61,7 +61,7 @@ void print_top_menu(char move, bool check);
 void print_board(square board[][BOARD_SIZE]);
 void get_current_board(square board[][BOARD_SIZE], History *history);
 int count_pieces(square board[][BOARD_SIZE]);
-void save_state_board(square board[][BOARD_SIZE], last_state *movement, movement_input user);
-void return_last_state(square board[][BOARD_SIZE], last_state movement, movement_input user);
+void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, movement_input user);
+void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, movement_input user);
 
 #endif

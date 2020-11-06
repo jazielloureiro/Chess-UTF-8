@@ -7,7 +7,7 @@
 #include "input.h"
 #include "movement.h"
 
-bool is_the_movement_valid(square board[][BOARD_SIZE], movement_input *move_input, char player_move){
+bool is_basic_movement_valid(square board[][BOARD_SIZE], movement_input *move_input, char player_move){
 	char message = VALID_MOVEMENT;
 
 	convert_square_readed(&move_input->from_row, &move_input->from_column);
@@ -19,9 +19,9 @@ bool is_the_movement_valid(square board[][BOARD_SIZE], movement_input *move_inpu
 		message = CHOOSE_WRONG_COLOR;
 	else if(board[move_input->to_row][move_input->to_column].color == player_move)
 		message = CAPTURE_OWN_PIECE;
-	else if(!validate_movement(board, *move_input, player_move))
+	else if(!is_piece_movement_compatible(board, *move_input, player_move))
 		message = INCOMPATIBLE_MOVE;
-	else if(verify_collision(board, *move_input))
+	else if(is_jump_other_pieces(board, *move_input))
 		message = JUMP_OTHER_PIECES;
 
 	if(message != VALID_MOVEMENT){
@@ -50,67 +50,73 @@ bool is_the_movement_valid(square board[][BOARD_SIZE], movement_input *move_inpu
 	return true;
 }
 
-bool validate_movement(square board[][BOARD_SIZE], movement_input user, char move){
-	switch(board[user.from_row][user.from_column].name){
-		case BISHOP: return validate_movement_bishop(user);
-		case KING:   return validate_movement_king(user);
-		case KNIGHT: return validate_movement_knight(user);
-		case PAWN:   return validate_movement_pawn(user, move);
-		case QUEEN:  return validate_movement_queen(user);
-		case ROOK:   return validate_movement_rook(user);
+bool is_piece_movement_compatible(square board[][BOARD_SIZE], movement_input move_input, char move){
+	switch(board[move_input.from_row][move_input.from_column].name){
+		case BISHOP:
+			return is_bishop_movement_valid(move_input);
+		case KING:
+			return is_king_movement_valid(move_input);
+		case KNIGHT:
+			return is_knight_movement_valid(move_input);
+		case PAWN:
+			return is_pawn_movement_valid(move_input, move);
+		case QUEEN:
+			return is_queen_movement_valid(move_input);
+		case ROOK:
+			return is_rook_movement_valid(move_input);
 	}
 }
 
-bool validate_movement_bishop(movement_input user){
+bool is_bishop_movement_valid(movement_input move_input){
 	int i, j;
 
 	// Verifying the top left diagonal
-	for(i = user.from_row - 1, j = user.from_column - 1;
+	for(i = move_input.from_row - 1, j = move_input.from_column - 1;
 	    i >= 0 && j >= 0;
 	    i--, j--)
-		if(i == user.to_row && j == user.to_column)
+		if(i == move_input.to_row && j == move_input.to_column)
 			return true;
 
 	// Verifying the top right diagonal
-	for(i = user.from_row - 1, j = user.from_column + 1;
+	for(i = move_input.from_row - 1, j = move_input.from_column + 1;
 	    i >= 0 && j <= 7;
 	    i--, j++)
-		if(i == user.to_row && j == user.to_column)
+		if(i == move_input.to_row && j == move_input.to_column)
 			return true;
 
 	// Verifying the bottom left diagonal
-	for(i = user.from_row + 1, j = user.from_column - 1;
+	for(i = move_input.from_row + 1, j = move_input.from_column - 1;
 	    i <= 7 && j >= 0;
 	    i++, j--)
-		if(i == user.to_row && j == user.to_column)
+		if(i == move_input.to_row && j == move_input.to_column)
 			return true;
 
 	// Verifying the bottom right diagonal
-	for(i = user.from_row + 1, j = user.from_column + 1;
+	for(i = move_input.from_row + 1, j = move_input.from_column + 1;
 	    i <= 7 && i <= 7;
 	    i++, j++)
-		if(i == user.to_row && j == user.to_column)
+		if(i == move_input.to_row && j == move_input.to_column)
 			return true;
 
 	return false;
 }
 
-bool validate_movement_king(movement_input user){
+bool is_king_movement_valid(movement_input move_input){
 	int i, j;
 
-	for(i = user.from_row - 1; i <= user.from_row + 1; i++)
-		for(j = user.from_column - 1; j <= user.from_column + 1; j++)
-			if(i == user.to_row && j == user.to_column)
+	for(i = move_input.from_row - 1; i <= move_input.from_row + 1; i++)
+		for(j = move_input.from_column - 1; j <= move_input.from_column + 1; j++)
+			if(i == move_input.to_row && j == move_input.to_column)
 				return true;
 
 	return false;
 }
 
-bool validate_movement_knight(movement_input user){
+bool is_knight_movement_valid(movement_input move_input){
 	int diff_row, diff_column;
 	
-	diff_row    = user.to_row    - user.from_row;
-	diff_column = user.to_column - user.from_column;
+	diff_row    = move_input.to_row    - move_input.from_row;
+	diff_column = move_input.to_column - move_input.from_column;
 
 	if(diff_row == 2  && diff_column == 1  ||
 	   diff_row == 2  && diff_column == -1 ||
@@ -125,91 +131,91 @@ bool validate_movement_knight(movement_input user){
 	return false;
 }
 
-bool validate_movement_pawn(movement_input user, char move){
+bool is_pawn_movement_valid(movement_input move_input, char move){
 	int advance2Squares = (move == WHITE? -2 : 2),
 	    advance1Square  = (move == WHITE? -1 : 1);
 
-	if(user.from_row == 6 || user.from_row == 1)
-		if(user.from_row + advance2Squares == user.to_row &&
-		   user.from_column == user.to_column)
+	if(move_input.from_row == 6 || move_input.from_row == 1)
+		if(move_input.from_row + advance2Squares == move_input.to_row &&
+		   move_input.from_column == move_input.to_column)
 		   	return true;
 			
-	if(user.from_row + advance1Square == user.to_row){
+	if(move_input.from_row + advance1Square == move_input.to_row){
 		int j;
 
-		for(j = user.from_column - 1;
-		    j <= user.from_column + 1;
+		for(j = move_input.from_column - 1;
+		    j <= move_input.from_column + 1;
 		    j++)
-			if(j == user.to_column)
+			if(j == move_input.to_column)
 		    		return true;
 	}
 	
 	return false;
 }
 
-bool validate_movement_queen(movement_input user){
-	if(validate_movement_rook(user) == true)
+bool is_queen_movement_valid(movement_input move_input){
+	if(is_rook_movement_valid(move_input) == true)
 		return true;
-	if(validate_movement_bishop(user) == true)
+	if(is_bishop_movement_valid(move_input) == true)
 		return true;
 		
 	return false;
 }
 
-bool validate_movement_rook(movement_input user){
-	if(user.from_row == user.to_row)
+bool is_rook_movement_valid(movement_input move_input){
+	if(move_input.from_row == move_input.to_row)
 		return true;
-	if(user.from_column == user.to_column)
+	if(move_input.from_column == move_input.to_column)
 		return true;
 
 	return false;
 }
 
-bool verify_collision(square board[][BOARD_SIZE], movement_input user){
-	if(board[user.from_row][user.from_column].name == PAWN){
-		if(user.from_row  != user.to_row  &&
-		   user.from_column != user.to_column &&
-		   board[user.to_row][user.to_column].name == NO_PIECE)
+bool is_jump_other_pieces(square board[][BOARD_SIZE], movement_input move_input){
+	if(board[move_input.from_row][move_input.from_column].name == PAWN){
+		if(move_input.from_row  != move_input.to_row  &&
+		   move_input.from_column != move_input.to_column &&
+		   board[move_input.to_row][move_input.to_column].name == NO_PIECE)
 		   	return true;
 	}
 	
-	if(board[user.from_row][user.from_column].name != KNIGHT){
-		int i = user.from_row, j = user.from_column;
+	if(board[move_input.from_row][move_input.from_column].name != KNIGHT){
+		int i = move_input.from_row, j = move_input.from_column;
 		
 		do{
-			if(i < user.to_row)
+			if(i < move_input.to_row)
 				i++;
-			else if(i > user.to_row)
+			else if(i > move_input.to_row)
 				i--;
 			
-			if(j < user.to_column)
+			if(j < move_input.to_column)
 				j++;
-			else if(j > user.to_column)
+			else if(j > move_input.to_column)
 				j--;
 			
-			if(board[i][j].name != NO_PIECE && (i != user.to_row || j != user.to_column))
+			if(board[i][j].name != NO_PIECE && (i != move_input.to_row || j != move_input.to_column))
 				return true;
-		}while(i != user.to_row || j != user.to_column);
+		}while(i != move_input.to_row || j != move_input.to_column);
 	}
 	
 	return false;
 }
 
-void move_piece(square board[][BOARD_SIZE], movement_input user){
-	strcpy(board[user.to_row][user.to_column].image,
-	       board[user.from_row][user.from_column].image);
+void move_piece(square board[][BOARD_SIZE], movement_input move_input){
+	strcpy(board[move_input.to_row][move_input.to_column].image,
+	       board[move_input.from_row][move_input.from_column].image);
 
-	board[user.to_row][user.to_column].name = 
-	board[user.from_row][user.from_column].name;
+	board[move_input.to_row][move_input.to_column].name = 
+	board[move_input.from_row][move_input.from_column].name;
 
-	board[user.to_row][user.to_column].color = 
-	board[user.from_row][user.from_column].color;
+	board[move_input.to_row][move_input.to_column].color = 
+	board[move_input.from_row][move_input.from_column].color;
 
-	strcpy(board[user.from_row][user.from_column].image, " \0");
+	strcpy(board[move_input.from_row][move_input.from_column].image, " \0");
 
-	board[user.from_row][user.from_column].name = NO_PIECE;
+	board[move_input.from_row][move_input.from_column].name = NO_PIECE;
 
-	board[user.from_row][user.from_column].color = NO_PIECE;
+	board[move_input.from_row][move_input.from_column].color = NO_PIECE;
 }
 
 void promotion(square *piece, char move){

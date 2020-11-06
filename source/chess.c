@@ -86,8 +86,8 @@ void init_board(square board[][BOARD_SIZE]){
 }
 
 void init_history(square board[][BOARD_SIZE], History *history){
-	history->moves_count = 0;
-	history->pieces_count = MAX_PIECES;
+	history->moves_counter = 0;
+	history->pieces_counter = MAX_PIECES;
 	get_current_board(board, history);
 }
 
@@ -138,7 +138,7 @@ void print_board(square board[][BOARD_SIZE]){
 void get_current_board(square board[][BOARD_SIZE], History *history){
 	int i, j, sqr_counter, *move;
 
-	move = &history->moves_count;
+	move = &history->moves_counter;
 
 	for(i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
@@ -181,22 +181,22 @@ int count_pieces(square board[][BOARD_SIZE]){
 	return pieces_amount;
 }
 
-void save_state_board(square board[][BOARD_SIZE], last_state *movement, movement_input user){
-	strcpy(movement->from.image, board[user.from_row][user.from_column].image);
-	movement->from.name  = board[user.from_row][user.from_column].name;
-	movement->from.color = board[user.from_row][user.from_column].color;
+void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, movement_input user){
+	strcpy(move_squares->from.image, board[user.from_row][user.from_column].image);
+	move_squares->from.name  = board[user.from_row][user.from_column].name;
+	move_squares->from.color = board[user.from_row][user.from_column].color;
 	
-	strcpy(movement->to.image, board[user.to_row][user.to_column].image);
-	movement->to.name  = board[user.to_row][user.to_column].name;
-	movement->to.color = board[user.to_row][user.to_column].color;
+	strcpy(move_squares->to.image, board[user.to_row][user.to_column].image);
+	move_squares->to.name  = board[user.to_row][user.to_column].name;
+	move_squares->to.color = board[user.to_row][user.to_column].color;
 }
 
-void return_last_state(square board[][BOARD_SIZE], last_state movement, movement_input user){
-	strcpy(board[user.from_row][user.from_column].image, movement.from.image);
-	board[user.from_row][user.from_column].name = movement.from.name;
-	board[user.from_row][user.from_column].color  = movement.from.color;
+void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, movement_input user){
+	strcpy(board[user.from_row][user.from_column].image, move_squares.from.image);
+	board[user.from_row][user.from_column].name = move_squares.from.name;
+	board[user.from_row][user.from_column].color  = move_squares.from.color;
 	
-	strcpy(board[user.to_row][user.to_column].image, movement.to.image);
-	board[user.to_row][user.to_column].name = movement.to.name;
-	board[user.to_row][user.to_column].color  = movement.to.color;
+	strcpy(board[user.to_row][user.to_column].image, move_squares.to.image);
+	board[user.to_row][user.to_column].name = move_squares.to.name;
+	board[user.to_row][user.to_column].color  = move_squares.to.color;
 }

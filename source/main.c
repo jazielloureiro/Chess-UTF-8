@@ -19,12 +19,12 @@ void play(){
 
 	do{
 		movement_input move_input;
-		last_state movement;
+		movement_squares move_squares;
 		bool is_need_reset_history = false;
 
 		do{
 			clear_screen();
-			print_top_menu(player_move, verify_check(board, player_move));
+			print_top_menu(player_move, is_player_king_in_check(board, player_move));
 			print_board(board);
 
 			read_movement_input(&move_input);
@@ -33,9 +33,9 @@ void play(){
 			                     move_input.from_column,
 					     player_move))
 				return;
-		}while(!is_the_movement_valid(board, &move_input, player_move));
+		}while(!is_basic_movement_valid(board, &move_input, player_move));
 
-		save_state_board(board, &movement, move_input);
+		save_move_squares(board, &move_squares, move_input);
 
 		move_piece(board, move_input);
 
@@ -46,23 +46,26 @@ void play(){
 				promotion(&board[move_input.to_row][move_input.to_column], player_move);
 		}
 			
-		if(verify_check(board, player_move)){
-			return_last_state(board, movement, move_input);
+		if(is_player_king_in_check(board, player_move)){
+			puts("\nYour can't do this move, because your king will be in check.");
+			pause();
+
+			return_move_squares(board, move_squares, move_input);
 			continue;
 		}
 
-		if(count_pieces(board) < history.pieces_count){
-			history.pieces_count--;
+		if(count_pieces(board) < history.pieces_counter){
+			history.pieces_counter--;
 			is_need_reset_history = true;
 		}
 
 		if(is_need_reset_history)
-			history.moves_count = 0;
+			history.moves_counter = 0;
 
 		get_current_board(board, &history);
 		
 		player_move == WHITE? (player_move = BLACK) : (player_move = WHITE);
-	}while(!special_finals(board, &history));
+	}while(!is_there_special_finals(board, &history));
 }
 
 void help(){

@@ -6,7 +6,7 @@
 #include "endgame.h"
 #include "movement.h"
 
-bool verify_check(square board[][BOARD_SIZE], char move){
+bool is_player_king_in_check(square board[][BOARD_SIZE], char move){
 	movement_input check;
 	char oponent_color = (move == WHITE? BLACK : WHITE);
 	int i, j;
@@ -29,8 +29,8 @@ bool verify_check(square board[][BOARD_SIZE], char move){
 				check.from_row = i;
 				check.from_column = j;
 			
-				if(validate_movement(board, check, move) &&
-				   !verify_collision(board, check))
+				if(is_piece_movement_compatible(board, check, move) &&
+				   !is_jump_other_pieces(board, check))
 				   	return true;
 			}
 		}
@@ -40,14 +40,14 @@ bool verify_check(square board[][BOARD_SIZE], char move){
 }
 
 bool is_there_threefold_repetition(History *history){
-	square_hist *current_state = history->sqr_hist[history->moves_count - 1];
+	square_hist *current_state = history->sqr_hist[history->moves_counter - 1];
 	int repetition_counter, i;
 
-	for(repetition_counter = 1, i = 0; i < history->moves_count - 1; i++){
+	for(repetition_counter = 1, i = 0; i < history->moves_counter - 1; i++){
 		bool is_different;
 		int j;
 
-		for(is_different = false, j = 0; j < history->pieces_count; j++){
+		for(is_different = false, j = 0; j < history->pieces_counter; j++){
 			if(current_state[j].name   != history->sqr_hist[i][j].name ||
 			   current_state[j].color  != history->sqr_hist[i][j].color ||
 			   current_state[j].row    != history->sqr_hist[i][j].row ||
@@ -100,8 +100,8 @@ bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 	return true;
 }
 
-bool special_finals(square board[][BOARD_SIZE], History *history){
-	if(history->moves_count == MAX_MOVES)
+bool is_there_special_finals(square board[][BOARD_SIZE], History *history){
+	if(history->moves_counter == MAX_MOVES)
 		return true;
 	else if(is_there_threefold_repetition(history))
 		return true;
