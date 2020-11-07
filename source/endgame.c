@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "aux.h"
 #include "chess.h"
 #include "input.h"
 #include "endgame.h"
@@ -101,12 +102,23 @@ bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 }
 
 bool is_there_special_finals(square board[][BOARD_SIZE], History *history){
-	if(history->moves_counter == MAX_MOVES)
-		return true;
-	else if(is_there_threefold_repetition(history))
-		return true;
-	else if(is_there_insufficient_material(board))
-		return true;
+	bool is_there_final = false;
 
-	return false;
+	if(history->moves_counter == MAX_MOVES){
+		puts("\nNo capture has been made and no pawn has been moved in the last fifty moves.");
+		is_there_final = true;
+	}else if(is_there_threefold_repetition(history)){
+		puts("\nThe same board position has occurred three times.");
+		is_there_final = true;
+	}else if(is_there_insufficient_material(board)){
+		puts("\nBoth the players have insufficient material to force a checkmate.");
+		is_there_final = true;
+	}
+
+	if(is_there_final){
+		puts("So, It's a draw!");
+		pause();
+	}
+
+	return is_there_final;
 }
