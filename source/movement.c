@@ -173,10 +173,14 @@ bool is_rook_movement_valid(movement_input move_input){
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], movement_input move_input){
 	if(board[move_input.from_row][move_input.from_column].name == PAWN){
-		if(move_input.from_row  != move_input.to_row  &&
+		if(move_input.from_row != move_input.to_row  &&
 		   move_input.from_column != move_input.to_column &&
 		   board[move_input.to_row][move_input.to_column].name == NO_PIECE)
 		   	return true;
+
+		if(move_input.from_column == move_input.to_column &&
+		   board[move_input.to_row][move_input.to_column].name != NO_PIECE)
+			return true;
 	}
 	
 	if(board[move_input.from_row][move_input.from_column].name != KNIGHT){
@@ -221,7 +225,7 @@ void move_piece(square board[][BOARD_SIZE], movement_input move_input){
 void promotion(square *piece, char move){
 	char choose;
 
-	puts("\nFor which piece do you want to promove? ");
+	puts("\nFor which piece do you want to promove?");
 	
 	if(move == WHITE)
 		puts("1. ♕\n2. ♖\n3. ♗\n4. ♘\n");
@@ -250,6 +254,5 @@ void promotion(square *piece, char move){
 		case '4':
 			sprintf(piece->image, move == WHITE? "♘" : "♞");
 			piece->name = KNIGHT;
-			break;
 	}       
 }
