@@ -18,13 +18,13 @@ void play(){
 	init_castle_history(&castle_hist);
 
 	do{
-		movement_input move_input;
+		movement_input move_input, check;
 		movement_squares move_squares;
 		bool is_need_reset_history = false;
 
 		do{
 			clear_screen();
-			print_top_menu(player_move, is_player_king_in_check(board, player_move));
+			print_top_menu(player_move, is_player_king_in_check(board, player_move, &check));
 			print_board(board);
 
 			read_movement_input(&move_input);
@@ -46,7 +46,10 @@ void play(){
 				promotion(&board[move_input.to_row][move_input.to_column], player_move);
 		}
 			
-		if(is_player_king_in_check(board, player_move)){
+		if(is_player_king_in_check(board, player_move, &check)){
+			if(has_checkmate(board, check, player_move))
+				return;
+
 			puts("\nYour can't do this move, because your king will be in check.");
 			pause();
 
