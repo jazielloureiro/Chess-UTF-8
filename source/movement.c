@@ -9,47 +9,26 @@
 #include "movement.h"
 
 bool is_basic_movement_valid(square board[][BOARD_SIZE], movement_input *move_input, char player_move){
-	char message = VALID_MOVEMENT;
-
 	convert_square_readed(&move_input->from_row, &move_input->from_column);
 	convert_square_readed(&move_input->to_row, &move_input->to_column);
 
-	if(!is_the_squares_valid(move_input))
-		message = INVALID_SQUARE;
-	else if(board[move_input->from_row][move_input->from_column].color != player_move)
-		message = CHOOSE_WRONG_COLOR;
-	else if(board[move_input->to_row][move_input->to_column].color == player_move)
-		message = CAPTURE_OWN_PIECE;
-	else if(!is_piece_movement_compatible(board, *move_input, player_move))
-		message = INCOMPATIBLE_MOVE;
-	else if(is_jump_other_pieces(board, *move_input))
-		message = JUMP_OTHER_PIECES;
-	else if(is_king_will_be_in_check(board, player_move, *move_input))
-		message = KING_IN_CHECK;
-
-	if(message != VALID_MOVEMENT){
-		switch(message){
-			case INVALID_SQUARE:
-				puts("\nYou've entered an invalid square!");
-				break;
-			case CHOOSE_WRONG_COLOR:
-				puts("\nYou must choose a piece of your color.");
-				break;
-			case CAPTURE_OWN_PIECE:
-				puts("\nYou can't capture your own piece!");
-				break;
-			case INCOMPATIBLE_MOVE:
-				puts("\nThis movement is incompatible with your piece.");
-				break;
-			case JUMP_OTHER_PIECES:
-				puts("\nYour piece can't jump over other pieces!");
-				break;
-			case KING_IN_CHECK:
-				puts("\nYour can't do this move, because your king will be in check.");
-		}
-
-		pause();
-
+	if(!is_the_squares_valid(move_input)){
+		print_message(INVALID_SQUARE);
+		return false;
+	}else if(board[move_input->from_row][move_input->from_column].color != player_move){
+		print_message(CHOOSE_WRONG_COLOR);
+		return false;
+	}else if(board[move_input->to_row][move_input->to_column].color == player_move){
+		print_message(CAPTURE_OWN_PIECE);
+		return false;
+	}else if(!is_piece_movement_compatible(board, *move_input, player_move)){
+		print_message(INCOMPATIBLE_MOVE);
+		return false;
+	}else if(is_jump_other_pieces(board, *move_input)){
+		print_message(JUMP_OTHER_PIECES);
+		return false;
+	}else if(is_king_will_be_in_check(board, player_move, *move_input)){
+		print_message(KING_IN_CHECK);
 		return false;
 	}
 

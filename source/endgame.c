@@ -200,23 +200,16 @@ bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 }
 
 bool is_there_special_finals(square board[][BOARD_SIZE], History *history){
-	bool is_there_final = false;
-
 	if(history->moves_counter == MAX_MOVES){
-		puts("\nNo capture has been made and no pawn has been moved in the last fifty moves.");
-		is_there_final = true;
+		print_message(FIFTY_MOVES);
+		return true;
 	}else if(is_there_threefold_repetition(history)){
-		puts("\nThe same board position has occurred three times.");
-		is_there_final = true;
+		print_message(THREEFOLD_REP);
+		return true;
 	}else if(is_there_insufficient_material(board)){
-		puts("\nBoth the players have insufficient material to force a checkmate.");
-		is_there_final = true;
+		print_message(INSUFFICIENT_MAT);
+		return true;
 	}
 
-	if(is_there_final){
-		puts("So, It's a draw!");
-		pause();
-	}
-
-	return is_there_final;
+	return false;
 }

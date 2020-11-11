@@ -21,6 +21,16 @@
 #define MAX_MOVES 100
 #define MAX_PIECES 32
 
+#define INVALID_SQUARE     -1
+#define CHOOSE_WRONG_COLOR -2
+#define CAPTURE_OWN_PIECE  -3
+#define INCOMPATIBLE_MOVE  -4
+#define JUMP_OTHER_PIECES  -5
+#define KING_IN_CHECK      -6
+#define FIFTY_MOVES        -7
+#define THREEFOLD_REP      -8
+#define INSUFFICIENT_MAT   -9
+
 typedef struct{
 	char image[IMAGE_SIZE];
 	char name;
@@ -59,6 +69,7 @@ void init_history(square board[][BOARD_SIZE], History *history);
 void init_castle_history(castle_pieces_history *castle_hist);
 void print_top_menu(char move, bool check);
 void print_board(square board[][BOARD_SIZE]);
+void print_message(int message);
 void get_current_board(square board[][BOARD_SIZE], History *history);
 int count_pieces(square board[][BOARD_SIZE]);
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, movement_input user);

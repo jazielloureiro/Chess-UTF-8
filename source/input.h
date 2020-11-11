@@ -1,14 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#define VALID_MOVEMENT      0
-#define INVALID_SQUARE     -1
-#define CHOOSE_WRONG_COLOR -2
-#define CAPTURE_OWN_PIECE  -3
-#define INCOMPATIBLE_MOVE  -4
-#define JUMP_OTHER_PIECES  -5
-#define KING_IN_CHECK      -6
-
 typedef struct{
 	char from_row;
 	char from_column;
