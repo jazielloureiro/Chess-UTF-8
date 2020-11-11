@@ -4,6 +4,7 @@
 
 #include "aux.h"
 #include "chess.h"
+#include "endgame.h"
 #include "input.h"
 #include "movement.h"
 
@@ -23,6 +24,8 @@ bool is_basic_movement_valid(square board[][BOARD_SIZE], movement_input *move_in
 		message = INCOMPATIBLE_MOVE;
 	else if(is_jump_other_pieces(board, *move_input))
 		message = JUMP_OTHER_PIECES;
+	else if(is_king_will_be_in_check(board, player_move, *move_input))
+		message = KING_IN_CHECK;
 
 	if(message != VALID_MOVEMENT){
 		switch(message){
@@ -40,6 +43,9 @@ bool is_basic_movement_valid(square board[][BOARD_SIZE], movement_input *move_in
 				break;
 			case JUMP_OTHER_PIECES:
 				puts("\nYour piece can't jump over other pieces!");
+				break;
+			case KING_IN_CHECK:
+				puts("\nYour can't do this move, because your king will be in check.");
 		}
 
 		pause();

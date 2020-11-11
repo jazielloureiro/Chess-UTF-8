@@ -19,12 +19,11 @@ void play(){
 
 	do{
 		movement_input move_input, check;
-		movement_squares move_squares;
-		bool is_king_in_check, is_need_reset_history = false;
+		bool is_check, is_need_reset_history = false;
 
-		is_king_in_check = is_player_king_in_check(board, player_move, &check);
+		is_check = is_player_king_in_check(board, player_move, &check);
 
-		if(is_king_in_check){
+		if(is_check){
 			if(has_checkmate(board, check, player_move)){
 				clear_screen();
 				print_board(board);
@@ -33,10 +32,9 @@ void play(){
 			}
 		}
 
-
 		do{
 			clear_screen();
-			print_top_menu(player_move, is_king_in_check);
+			print_top_menu(player_move, is_check);
 			print_board(board);
 
 			read_movement_input(&move_input);
@@ -47,8 +45,6 @@ void play(){
 				return;
 		}while(!is_basic_movement_valid(board, &move_input, player_move));
 
-		save_move_squares(board, &move_squares, move_input);
-
 		move_piece(board, move_input);
 
 		if(board[move_input.to_row][move_input.to_column].name == PAWN){
@@ -58,14 +54,6 @@ void play(){
 				promotion(&board[move_input.to_row][move_input.to_column], player_move);
 		}
 			
-		if(is_player_king_in_check(board, player_move, &check)){
-			puts("\nYour can't do this move, because your king will be in check.");
-			pause();
-
-			return_move_squares(board, move_squares, move_input);
-			continue;
-		}
-
 		if(count_pieces(board) < history.pieces_counter){
 			history.pieces_counter--;
 			is_need_reset_history = true;
