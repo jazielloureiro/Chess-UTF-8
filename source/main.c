@@ -20,11 +20,23 @@ void play(){
 	do{
 		movement_input move_input, check;
 		movement_squares move_squares;
-		bool is_need_reset_history = false;
+		bool is_king_in_check, is_need_reset_history = false;
+
+		is_king_in_check = is_player_king_in_check(board, player_move, &check);
+
+		if(is_king_in_check){
+			if(has_checkmate(board, check, player_move)){
+				clear_screen();
+				print_board(board);
+				pause();
+				return;
+			}
+		}
+
 
 		do{
 			clear_screen();
-			print_top_menu(player_move, is_player_king_in_check(board, player_move, &check));
+			print_top_menu(player_move, is_king_in_check);
 			print_board(board);
 
 			read_movement_input(&move_input);
@@ -47,9 +59,6 @@ void play(){
 		}
 			
 		if(is_player_king_in_check(board, player_move, &check)){
-			if(has_checkmate(board, check, player_move))
-				return;
-
 			puts("\nYour can't do this move, because your king will be in check.");
 			pause();
 
