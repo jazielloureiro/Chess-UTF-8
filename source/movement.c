@@ -58,9 +58,14 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], movement_input mov
 			return is_king_movement_valid(move_input);
 		case KNIGHT:
 			return is_knight_movement_valid(move_input);
-		case PAWN:
-			return is_pawn_movement_valid(move_input, move);
-		case QUEEN:
+		case PAWN:{
+			bool is_valid = is_pawn_movement_valid(move_input, move);
+
+			if(is_valid)
+				is_valid = is_pawn_capture_valid(board, move_input);
+
+			return is_valid;
+		}case QUEEN:
 			return is_queen_movement_valid(move_input);
 		case ROOK:
 			return is_rook_movement_valid(move_input);
@@ -153,36 +158,36 @@ bool is_pawn_movement_valid(movement_input move_input, char move){
 	return false;
 }
 
-bool is_queen_movement_valid(movement_input move_input){
-	if(is_rook_movement_valid(move_input) == true)
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], movement_input move_input){
+	if(move_input.from_column != move_input.to_column &&
+	   board[move_input.to_row][move_input.to_column].name != NO_PIECE)
+	   	return true;
+
+	if(move_input.from_column == move_input.to_column &&
+	   board[move_input.to_row][move_input.to_column].name == NO_PIECE)
 		return true;
-	if(is_bishop_movement_valid(move_input) == true)
+
+	return false;
+}
+
+bool is_queen_movement_valid(movement_input move_input){
+	if(is_rook_movement_valid(move_input))
+		return true;
+	if(is_bishop_movement_valid(move_input))
 		return true;
 		
 	return false;
 }
 
 bool is_rook_movement_valid(movement_input move_input){
-	if(move_input.from_row == move_input.to_row)
-		return true;
-	if(move_input.from_column == move_input.to_column)
+	if(move_input.from_row    == move_input.to_row ||
+	   move_input.from_column == move_input.to_column)
 		return true;
 
 	return false;
 }
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], movement_input move_input){
-	if(board[move_input.from_row][move_input.from_column].name == PAWN){
-		if(move_input.from_row != move_input.to_row  &&
-		   move_input.from_column != move_input.to_column &&
-		   board[move_input.to_row][move_input.to_column].name == NO_PIECE)
-		   	return true;
-
-		if(move_input.from_column == move_input.to_column &&
-		   board[move_input.to_row][move_input.to_column].name != NO_PIECE)
-			return true;
-	}
-	
 	if(board[move_input.from_row][move_input.from_column].name != KNIGHT){
 		int i = move_input.from_row, j = move_input.from_column;
 		

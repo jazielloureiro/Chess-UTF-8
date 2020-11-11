@@ -7,6 +7,7 @@ bool is_bishop_movement_valid(movement_input move_input);
 bool is_king_movement_valid(movement_input move_input);
 bool is_knight_movement_valid(movement_input move_input);
 bool is_pawn_movement_valid(movement_input move_input, char move);
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], movement_input move_input);
 bool is_queen_movement_valid(movement_input move_input);
 bool is_rook_movement_valid(movement_input move_input);
 bool is_jump_other_pieces(square board[][BOARD_SIZE], movement_input move_input);
