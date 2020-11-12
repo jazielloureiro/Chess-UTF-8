@@ -30,6 +30,13 @@ void play(){
 				pause();
 				return;
 			}
+		}else{
+			if(has_stalemate(board, player_move)){
+				clear_screen();
+				print_board(board);
+				pause();
+				return;
+			}
 		}
 
 		do{

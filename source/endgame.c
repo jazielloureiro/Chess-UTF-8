@@ -138,6 +138,46 @@ bool has_checkmate(square board[][BOARD_SIZE], movement_input check, char move){
 	return true;
 }
 
+bool is_there_possible_move(square board[][BOARD_SIZE], movement_input movement, char player_move){
+	int i, j;
+
+	for(i = 0; i < BOARD_SIZE; i++){
+		for(j = 0; j < BOARD_SIZE; j++){
+			if(board[i][j].color != player_move){
+				movement.to_row = i;
+				movement.to_column = j;
+
+				if(is_piece_movement_compatible(board, movement, player_move) &&
+				   !is_jump_other_pieces(board, movement) &&
+				   !is_king_will_be_in_check(board, player_move, movement))
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool has_stalemate(square board[][BOARD_SIZE], char player_move){
+	int i, j;
+
+	for(i = 0; i < BOARD_SIZE; i++){
+		for(j = 0; j < BOARD_SIZE; j++){
+			if(board[i][j].color == player_move){
+				movement_input movement;
+
+				movement.from_row = i;
+				movement.from_column = j;
+				
+				if(is_there_possible_move(board, movement, player_move))
+					return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 bool is_there_threefold_repetition(History *history){
 	square_hist *current_state = history->sqr_hist[history->moves_counter - 1];
 	int repetition_counter, i;
