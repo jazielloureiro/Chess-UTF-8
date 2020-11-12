@@ -24,7 +24,7 @@ bool is_king_will_be_in_check(square board[][BOARD_SIZE], char move, movement_in
 }
 
 bool is_player_king_in_check(square board[][BOARD_SIZE], char move, movement_input *check){
-	char oponent_color = (move == WHITE? BLACK : WHITE);
+	char opponent_color = (move == WHITE? BLACK : WHITE);
 	int i, j;
 	
 	// Searching where the king is
@@ -41,11 +41,11 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], char move, movement_inp
 	// Verify if the oponent's pieces are threatening the king
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
-			if(board[i][j].color == oponent_color){
+			if(board[i][j].color == opponent_color){
 				check->from_row = i;
 				check->from_column = j;
 
-				if(is_piece_movement_compatible(board, *check, move) &&
+				if(is_piece_movement_compatible(board, *check, opponent_color) &&
 				   !is_jump_other_pieces(board, *check))
 				   	return true;
 			}
