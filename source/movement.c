@@ -13,22 +13,22 @@ bool is_basic_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_
 	convert_square_readed(&move_input->to_row, &move_input->to_column);
 
 	if(!is_the_squares_valid(move_input)){
-		print_message(INVALID_SQUARE);
+		print_error_message(INVALID_SQUARE);
 		return false;
 	}else if(board[move_input->from_row][move_input->from_column].color != player_move){
-		print_message(CHOOSE_WRONG_COLOR);
+		print_error_message(CHOOSE_WRONG_COLOR);
 		return false;
 	}else if(board[move_input->to_row][move_input->to_column].color == player_move){
-		print_message(CAPTURE_OWN_PIECE);
+		print_error_message(CAPTURE_OWN_PIECE);
 		return false;
 	}else if(!is_piece_movement_compatible(board, *move_input, player_move)){
-		print_message(INCOMPATIBLE_MOVE);
+		print_error_message(INCOMPATIBLE_MOVE);
 		return false;
 	}else if(is_jump_other_pieces(board, *move_input)){
-		print_message(JUMP_OTHER_PIECES);
+		print_error_message(JUMP_OTHER_PIECES);
 		return false;
 	}else if(is_king_will_be_in_check(board, player_move, *move_input)){
-		print_message(KING_IN_CHECK);
+		print_error_message(KING_IN_CHECK);
 		return false;
 	}
 

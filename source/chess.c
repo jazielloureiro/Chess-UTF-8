@@ -101,23 +101,23 @@ void init_castle_history(castle_pieces_history *castle_hist){
 }
 
 void print_top_menu(char move, bool check){
+	putchar('\n');
+
 	if(check){
-		putchar('\n');
 		printf("\t  ┌───────────────┐   ┌───────────┐\n");
 		printf("\t  │ %s to move │   │   Check   │\n", (move == WHITE? "White" : "Black"));
-		printf("\t  └───────────────┘   └───────────┘\n\n");
+		printf("\t  └───────────────┘   └───────────┘\n");
 	}else{
-		putchar('\n');
 		printf("\t\t  ┌───────────────┐\n");
 		printf("\t\t  │ %s to move │\n", (move == WHITE? "White" : "Black"));
-		printf("\t\t  └───────────────┘\n\n");
+		printf("\t\t  └───────────────┘\n");
 	}
 }
 
 void print_board(square board[][BOARD_SIZE]){
 	int i, j, k = 8;
 	
-	printf("\t  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
+	printf("\n\t  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		printf("\t%d │", k--);
@@ -135,7 +135,7 @@ void print_board(square board[][BOARD_SIZE]){
 	       "\t    a   b   c   d   e   f   g   h\n");
 }
 
-void print_message(int message){
+void print_error_message(int message){
 	switch(message){
 		case INVALID_SQUARE:
 			puts("\nYou've entered an invalid square!");
@@ -155,18 +155,48 @@ void print_message(int message){
 		case KING_IN_CHECK:
 			puts("\nYour can't do this move, because your king will be in check.");
 			break;
+	}
+
+	pause();
+}
+
+void print_final_board(square board[][BOARD_SIZE], char final){
+	clear_screen();
+	putchar('\n');
+
+	switch(final){
+		case WHITE:
+			puts("\t  ┌────────────┐      ┌───────────┐\n"
+			     "\t  │ Black wins │      │ Checkmate │\n"
+			     "\t  └────────────┘      └───────────┘");
+			break;
+		case BLACK:
+			puts("\t  ┌────────────┐      ┌───────────┐\n"
+			     "\t  │ White wins │      │ Checkmate │\n"
+			     "\t  └────────────┘      └───────────┘");
+			break;
 		case FIFTY_MOVES:
-			puts("\nNo capture has been made and no pawn has been moved in the last fifty moves.\n"
-			     "So, It's a draw!");
+			puts("\t      ┌──────┐  ┌─────────────┐\n"
+			     "\t      │ Draw │  │ Fifty moves │\n"
+			     "\t      └──────┘  └─────────────┘");
 			break;
 		case THREEFOLD_REP:
-			puts("\nThe same board position has occurred three times.\n"
-			     "So, It's a draw!");
+			puts("\t  ┌──────┐ ┌──────────────────────┐\n"
+			     "\t  │ Draw │ │ Threefold repetition │\n"
+			     "\t  └──────┘ └──────────────────────┘");
 			break;
 		case INSUFFICIENT_MAT:
-			puts("\nBoth the players have insufficient material to force a checkmate.\n"
-			     "So, It's a draw!");
+			puts("\t  ┌──────┐┌───────────────────────┐\n"
+			     "\t  │ Draw ││ Insufficient material │\n"
+			     "\t  └──────┘└───────────────────────┘");
+			break;
+		case STALEMATE:
+			puts("\t      ┌──────┐    ┌───────────┐\n"
+			     "\t      │ Draw │    │ Stalemate │\n"
+			     "\t      └──────┘    └───────────┘");
 	}
+
+	print_board(board);
 
 	pause();
 }

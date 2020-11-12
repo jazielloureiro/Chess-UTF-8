@@ -30,6 +30,7 @@
 #define FIFTY_MOVES        -7
 #define THREEFOLD_REP      -8
 #define INSUFFICIENT_MAT   -9
+#define STALEMATE          -10
 
 typedef struct{
 	char image[IMAGE_SIZE];
@@ -69,7 +70,8 @@ void init_history(square board[][BOARD_SIZE], History *history);
 void init_castle_history(castle_pieces_history *castle_hist);
 void print_top_menu(char move, bool check);
 void print_board(square board[][BOARD_SIZE]);
-void print_message(int message);
+void print_error_message(int message);
+void print_final_board(square board[][BOARD_SIZE], char final);
 void get_current_board(square board[][BOARD_SIZE], History *history);
 int count_pieces(square board[][BOARD_SIZE]);
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input);

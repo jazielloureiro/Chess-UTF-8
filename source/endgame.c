@@ -241,13 +241,13 @@ bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 
 bool is_there_special_finals(square board[][BOARD_SIZE], History *history){
 	if(history->moves_counter == MAX_MOVES){
-		print_message(FIFTY_MOVES);
+		print_final_board(board, FIFTY_MOVES);
 		return true;
 	}else if(is_there_threefold_repetition(history)){
-		print_message(THREEFOLD_REP);
+		print_final_board(board, THREEFOLD_REP);
 		return true;
 	}else if(is_there_insufficient_material(board)){
-		print_message(INSUFFICIENT_MAT);
+		print_final_board(board, INSUFFICIENT_MAT);
 		return true;
 	}
 

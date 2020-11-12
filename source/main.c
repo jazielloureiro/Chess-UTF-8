@@ -25,16 +25,12 @@ void play(){
 
 		if(is_check){
 			if(has_checkmate(board, check, player_move)){
-				clear_screen();
-				print_board(board);
-				pause();
+				print_final_board(board, player_move);
 				return;
 			}
 		}else{
 			if(has_stalemate(board, player_move)){
-				clear_screen();
-				print_board(board);
-				pause();
+				print_final_board(board, STALEMATE);
 				return;
 			}
 		}
