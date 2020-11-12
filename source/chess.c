@@ -217,22 +217,22 @@ int count_pieces(square board[][BOARD_SIZE]){
 	return pieces_amount;
 }
 
-void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, movement_input user){
-	strcpy(move_squares->from.image, board[user.from_row][user.from_column].image);
-	move_squares->from.name  = board[user.from_row][user.from_column].name;
-	move_squares->from.color = board[user.from_row][user.from_column].color;
+void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input){
+	strcpy(move_squares->from.image, board[move_input.from_row][move_input.from_column].image);
+	move_squares->from.name  = board[move_input.from_row][move_input.from_column].name;
+	move_squares->from.color = board[move_input.from_row][move_input.from_column].color;
 	
-	strcpy(move_squares->to.image, board[user.to_row][user.to_column].image);
-	move_squares->to.name  = board[user.to_row][user.to_column].name;
-	move_squares->to.color = board[user.to_row][user.to_column].color;
+	strcpy(move_squares->to.image, board[move_input.to_row][move_input.to_column].image);
+	move_squares->to.name  = board[move_input.to_row][move_input.to_column].name;
+	move_squares->to.color = board[move_input.to_row][move_input.to_column].color;
 }
 
-void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, movement_input user){
-	strcpy(board[user.from_row][user.from_column].image, move_squares.from.image);
-	board[user.from_row][user.from_column].name = move_squares.from.name;
-	board[user.from_row][user.from_column].color  = move_squares.from.color;
+void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input){
+	strcpy(board[move_input.from_row][move_input.from_column].image, move_squares.from.image);
+	board[move_input.from_row][move_input.from_column].name = move_squares.from.name;
+	board[move_input.from_row][move_input.from_column].color  = move_squares.from.color;
 	
-	strcpy(board[user.to_row][user.to_column].image, move_squares.to.image);
-	board[user.to_row][user.to_column].name = move_squares.to.name;
-	board[user.to_row][user.to_column].color  = move_squares.to.color;
+	strcpy(board[move_input.to_row][move_input.to_column].image, move_squares.to.image);
+	board[move_input.to_row][move_input.to_column].name = move_squares.to.name;
+	board[move_input.to_row][move_input.to_column].color  = move_squares.to.color;
 }

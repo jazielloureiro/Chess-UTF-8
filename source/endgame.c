@@ -7,10 +7,10 @@
 #include "endgame.h"
 #include "movement.h"
 
-bool is_king_will_be_in_check(square board[][BOARD_SIZE], char move, movement_input move_input){
+bool is_king_will_be_in_check(square board[][BOARD_SIZE], char move, move_coordinates move_input){
 	bool is_check;
 	movement_squares move_squares;
-	movement_input check;
+	move_coordinates check;
 
 	save_move_squares(board, &move_squares, move_input);
 
@@ -23,7 +23,7 @@ bool is_king_will_be_in_check(square board[][BOARD_SIZE], char move, movement_in
 	return is_check;
 }
 
-bool is_player_king_in_check(square board[][BOARD_SIZE], char move, movement_input *check){
+bool is_player_king_in_check(square board[][BOARD_SIZE], char move, move_coordinates *check){
 	char opponent_color = (move == WHITE? BLACK : WHITE);
 	int i, j;
 	
@@ -55,14 +55,14 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], char move, movement_inp
 	return false;
 }
 
-bool can_king_move(square board[][BOARD_SIZE], movement_input check, char move){
+bool can_king_move(square board[][BOARD_SIZE], move_coordinates check, char move){
 	int i, j;
 
 	for(i = check.to_row - 1; i <= check.to_row + 1; i++){
 		for(j = check.to_column - 1; j <= check.to_column + 1; j++){
 			if(i >= 0 && i <= 7 && j >= 0 && j <= 7 &&
 			   board[i][j].color != board[check.to_row][check.to_column].color){
-				movement_input temp_move;
+				move_coordinates temp_move;
 				movement_squares temp_squares;
 
 				temp_move.to_row = i;
@@ -79,9 +79,9 @@ bool can_king_move(square board[][BOARD_SIZE], movement_input check, char move){
 	return false;
 }
 
-bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], movement_input check, char move){
+bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], move_coordinates check, char move){
 	int i, j;
-	movement_input att_piece;
+	move_coordinates att_piece;
 
 	att_piece.to_row = check.from_row;
 	att_piece.to_column = check.from_column;
@@ -103,7 +103,7 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], movement_input 
 	return false;
 }
 
-bool can_piece_cover_check(square board[][BOARD_SIZE], movement_input check, char move){
+bool can_piece_cover_check(square board[][BOARD_SIZE], move_coordinates check, char move){
 	char *i = &check.from_row, *j = &check.from_column;
 
 	if(board[*i][*j].name != KNIGHT){
@@ -127,7 +127,7 @@ bool can_piece_cover_check(square board[][BOARD_SIZE], movement_input check, cha
 	return false;
 }
 
-bool has_checkmate(square board[][BOARD_SIZE], movement_input check, char move){
+bool has_checkmate(square board[][BOARD_SIZE], move_coordinates check, char move){
 	if(can_king_move(board, check, move))
 		return false;
 	else if(can_piece_cover_check(board, check, move))
@@ -138,7 +138,7 @@ bool has_checkmate(square board[][BOARD_SIZE], movement_input check, char move){
 	return true;
 }
 
-bool is_there_possible_move(square board[][BOARD_SIZE], movement_input movement, char player_move){
+bool is_there_possible_move(square board[][BOARD_SIZE], move_coordinates movement, char player_move){
 	int i, j;
 
 	for(i = 0; i < BOARD_SIZE; i++){
@@ -164,7 +164,7 @@ bool has_stalemate(square board[][BOARD_SIZE], char player_move){
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == player_move){
-				movement_input movement;
+				move_coordinates movement;
 
 				movement.from_row = i;
 				movement.from_column = j;

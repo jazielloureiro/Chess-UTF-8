@@ -18,7 +18,7 @@ void play(){
 	init_castle_history(&castle_hist);
 
 	do{
-		movement_input move_input, check;
+		move_coordinates move_input, check;
 		bool is_check, is_need_reset_history = false;
 
 		is_check = is_player_king_in_check(board, player_move, &check);

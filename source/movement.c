@@ -8,7 +8,7 @@
 #include "input.h"
 #include "movement.h"
 
-bool is_basic_movement_valid(square board[][BOARD_SIZE], movement_input *move_input, char player_move){
+bool is_basic_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input, char player_move){
 	convert_square_readed(&move_input->from_row, &move_input->from_column);
 	convert_square_readed(&move_input->to_row, &move_input->to_column);
 
@@ -35,7 +35,7 @@ bool is_basic_movement_valid(square board[][BOARD_SIZE], movement_input *move_in
 	return true;
 }
 
-bool is_piece_movement_compatible(square board[][BOARD_SIZE], movement_input move_input, char move){
+bool is_piece_movement_compatible(square board[][BOARD_SIZE], move_coordinates move_input, char move){
 	switch(board[move_input.from_row][move_input.from_column].name){
 		case BISHOP:
 			return is_bishop_movement_valid(move_input);
@@ -57,7 +57,7 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], movement_input mov
 	}
 }
 
-bool is_bishop_movement_valid(movement_input move_input){
+bool is_bishop_movement_valid(move_coordinates move_input){
 	int i, j;
 
 	// Verifying the top left diagonal
@@ -91,7 +91,7 @@ bool is_bishop_movement_valid(movement_input move_input){
 	return false;
 }
 
-bool is_king_movement_valid(movement_input move_input){
+bool is_king_movement_valid(move_coordinates move_input){
 	int i, j;
 
 	for(i = move_input.from_row - 1; i <= move_input.from_row + 1; i++)
@@ -102,7 +102,7 @@ bool is_king_movement_valid(movement_input move_input){
 	return false;
 }
 
-bool is_knight_movement_valid(movement_input move_input){
+bool is_knight_movement_valid(move_coordinates move_input){
 	int diff_row, diff_column;
 	
 	diff_row    = move_input.to_row    - move_input.from_row;
@@ -121,7 +121,7 @@ bool is_knight_movement_valid(movement_input move_input){
 	return false;
 }
 
-bool is_pawn_movement_valid(movement_input move_input, char move){
+bool is_pawn_movement_valid(move_coordinates move_input, char move){
 	int advance2Squares = (move == WHITE? -2 : 2),
 	    advance1Square  = (move == WHITE? -1 : 1);
 
@@ -143,7 +143,7 @@ bool is_pawn_movement_valid(movement_input move_input, char move){
 	return false;
 }
 
-bool is_pawn_capture_valid(square board[][BOARD_SIZE], movement_input move_input){
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coordinates move_input){
 	if(move_input.from_column != move_input.to_column &&
 	   board[move_input.to_row][move_input.to_column].name != NO_PIECE)
 	   	return true;
@@ -155,7 +155,7 @@ bool is_pawn_capture_valid(square board[][BOARD_SIZE], movement_input move_input
 	return false;
 }
 
-bool is_queen_movement_valid(movement_input move_input){
+bool is_queen_movement_valid(move_coordinates move_input){
 	if(is_rook_movement_valid(move_input))
 		return true;
 	if(is_bishop_movement_valid(move_input))
@@ -164,7 +164,7 @@ bool is_queen_movement_valid(movement_input move_input){
 	return false;
 }
 
-bool is_rook_movement_valid(movement_input move_input){
+bool is_rook_movement_valid(move_coordinates move_input){
 	if(move_input.from_row    == move_input.to_row ||
 	   move_input.from_column == move_input.to_column)
 		return true;
@@ -172,7 +172,7 @@ bool is_rook_movement_valid(movement_input move_input){
 	return false;
 }
 
-bool is_jump_other_pieces(square board[][BOARD_SIZE], movement_input move_input){
+bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move_input){
 	if(board[move_input.from_row][move_input.from_column].name != KNIGHT){
 		int i = move_input.from_row, j = move_input.from_column;
 		
@@ -195,7 +195,7 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], movement_input move_input)
 	return false;
 }
 
-void move_piece(square board[][BOARD_SIZE], movement_input move_input){
+void move_piece(square board[][BOARD_SIZE], move_coordinates move_input){
 	strcpy(board[move_input.to_row][move_input.to_column].image,
 	       board[move_input.from_row][move_input.from_column].image);
 

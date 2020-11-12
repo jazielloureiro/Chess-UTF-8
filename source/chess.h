@@ -72,7 +72,7 @@ void print_board(square board[][BOARD_SIZE]);
 void print_message(int message);
 void get_current_board(square board[][BOARD_SIZE], History *history);
 int count_pieces(square board[][BOARD_SIZE]);
-void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, movement_input user);
-void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, movement_input user);
+void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input);
+void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input);
 
 #endif

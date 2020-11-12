@@ -5,7 +5,7 @@
 #include "chess.h"
 #include "input.h"
 
-void read_movement_input(movement_input *move_input){
+void read_movement_input(move_coordinates *move_input){
 	printf("\nEnter your movement: ");
 
 	move_input->from_column = getchar();
@@ -24,7 +24,7 @@ void read_movement_input(movement_input *move_input){
 	clear_input_buffer();
 }
 
-bool is_the_squares_valid(movement_input *move_input){
+bool is_the_squares_valid(move_coordinates *move_input){
 	if(move_input->from_column == INVALID_SQUARE ||
 	   move_input->from_row    == INVALID_SQUARE ||
 	   move_input->to_column   == INVALID_SQUARE ||
