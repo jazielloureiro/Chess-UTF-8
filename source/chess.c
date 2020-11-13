@@ -90,36 +90,56 @@ void init_history(square board[][BOARD_SIZE], History *history){
 	history->pieces_counter = MAX_PIECES;
 	get_current_board(board, history);
 
-	history->castle.is_left_black_rook_moved = false;
-	history->castle.is_right_black_rook_moved = false;
-	history->castle.is_black_king_moved = false;
-	history->castle.is_left_white_rook_moved = false;
-	history->castle.is_right_white_rook_moved = false;
-	history->castle.is_white_king_moved = false;
+	history->castle.has_left_black_rook_moved = false;
+	history->castle.has_right_black_rook_moved = false;
+	history->castle.has_black_king_moved = false;
+	history->castle.has_left_white_rook_moved = false;
+	history->castle.has_right_white_rook_moved = false;
+	history->castle.has_white_king_moved = false;
+}
+
+bool has_pawn_moved(History history, move_coordinates move){
+	int i, last_board;
+
+	for(i = 0, last_board = history.moves_counter - 1;
+	    i < history.pieces_counter;
+	    i++){
+		if(history.sqr_hist[last_board][i].row    == move.from_row &&
+		   history.sqr_hist[last_board][i].column == move.from_column){
+			if(history.sqr_hist[last_board][i].name == PAWN)
+				return true;
+			else
+				break;
+		}
+	}
+
+	return false;
 }
 
 void update_castle_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
 	if(board[move.to_row][move.to_column].name == KING){
 		if(move.from_row == 0 && move.from_column == 4)
-			history->castle.is_black_king_moved = true;
+			history->castle.has_black_king_moved = true;
 		else if(move.from_row == 7 && move.from_column == 4)
-			history->castle.is_white_king_moved = true;
+			history->castle.has_white_king_moved = true;
 	}else if(board[move.to_row][move.to_column].name == ROOK){
 		if(move.from_row == 0 && move.from_column == 0)
-			history->castle.is_left_black_rook_moved = true;
+			history->castle.has_left_black_rook_moved = true;
 		else if(move.from_row == 0 && move.from_column == 7)
-			history->castle.is_right_black_rook_moved = true;
+			history->castle.has_right_black_rook_moved = true;
 		else if(move.from_row == 7 && move.from_column == 0)
-			history->castle.is_left_white_rook_moved = true;
+			history->castle.has_left_white_rook_moved = true;
 		else if(move.from_row == 7 && move.from_column == 7)
-			history->castle.is_right_white_rook_moved = true;
+			history->castle.has_right_white_rook_moved = true;
 	}
 }
+
 void update_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
 	if(count_pieces(board) < history->pieces_counter){
 		history->pieces_counter--;
 		history->moves_counter = 0;
-	}
+	}else if(has_pawn_moved(*history, move))
+		history->moves_counter = 0;
 
 	update_castle_history(board, history, move);
 

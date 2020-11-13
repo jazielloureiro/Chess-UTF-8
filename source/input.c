@@ -89,3 +89,11 @@ void convert_square_readed(char *row, char *column){
 	else
 		*column -= 'a';
 }
+
+bool is_there_promotion(square board[][BOARD_SIZE], move_coordinates move){
+	if(board[move.to_row][move.to_column].name == PAWN &&
+	   (move.to_row == 0 || move.to_row == 7))
+		return true;
+
+	return false;
+}

@@ -1,7 +1,7 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-bool is_basic_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input, char player_move);
+bool is_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input, char player_move);
 bool is_piece_movement_compatible(square board[][BOARD_SIZE], move_coordinates move_input, char move);
 bool is_bishop_movement_valid(move_coordinates move_input);
 bool is_king_movement_valid(move_coordinates move_input);

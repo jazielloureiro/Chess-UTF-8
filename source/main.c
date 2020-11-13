@@ -21,16 +21,17 @@ void play(){
 
 		is_check = is_player_king_in_check(board, player_move, &check);
 
-		if(is_check)
+		if(is_check){
 			if(has_checkmate(board, check, player_move)){
 				print_final_board(board, player_move);
 				return;
 			}
-		else
+		}else{
 			if(has_stalemate(board, player_move)){
 				print_final_board(board, STALEMATE);
 				return;
 			}
+		}
 
 		do{
 			clear_screen();
@@ -43,17 +44,13 @@ void play(){
 			                     move_input.from_column,
 					     player_move))
 				return;
-		}while(!is_basic_movement_valid(board, &move_input, player_move));
+		}while(!is_movement_valid(board, &move_input, player_move));
 
 		move_piece(board, move_input);
 
-		if(board[move_input.to_row][move_input.to_column].name == PAWN){
-			history.moves_counter = 0;
+		if(is_there_promotion(board, move_input))
+			promotion(&board[move_input.to_row][move_input.to_column], player_move);
 
-			if(move_input.to_row == 0 || move_input.to_row == 7)
-				promotion(&board[move_input.to_row][move_input.to_column], player_move);
-		}
-			
 		update_history(board, &history, move_input);
 		
 		player_move == WHITE? (player_move = BLACK) : (player_move = WHITE);

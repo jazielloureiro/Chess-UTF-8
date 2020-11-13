@@ -8,7 +8,7 @@
 #include "input.h"
 #include "movement.h"
 
-bool is_basic_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input, char player_move){
+bool is_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input, char player_move){
 	convert_square_readed(&move_input->from_row, &move_input->from_column);
 	convert_square_readed(&move_input->to_row, &move_input->to_column);
 
