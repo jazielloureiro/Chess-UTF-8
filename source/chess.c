@@ -89,15 +89,41 @@ void init_history(square board[][BOARD_SIZE], History *history){
 	history->moves_counter = 0;
 	history->pieces_counter = MAX_PIECES;
 	get_current_board(board, history);
+
+	history->castle.is_left_black_rook_moved = false;
+	history->castle.is_right_black_rook_moved = false;
+	history->castle.is_black_king_moved = false;
+	history->castle.is_left_white_rook_moved = false;
+	history->castle.is_right_white_rook_moved = false;
+	history->castle.is_white_king_moved = false;
 }
 
-void init_castle_history(castle_pieces_history *castle_hist){
-	castle_hist->is_left_black_rook_moved = false;
-	castle_hist->is_right_black_rook_moved = false;
-	castle_hist->is_black_king_moved = false;
-	castle_hist->is_left_white_rook_moved = false;
-	castle_hist->is_right_white_rook_moved = false;
-	castle_hist->is_white_king_moved = false;
+void update_castle_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
+	if(board[move.to_row][move.to_column].name == KING){
+		if(move.from_row == 0 && move.from_column == 4)
+			history->castle.is_black_king_moved = true;
+		else if(move.from_row == 7 && move.from_column == 4)
+			history->castle.is_white_king_moved = true;
+	}else if(board[move.to_row][move.to_column].name == ROOK){
+		if(move.from_row == 0 && move.from_column == 0)
+			history->castle.is_left_black_rook_moved = true;
+		else if(move.from_row == 0 && move.from_column == 7)
+			history->castle.is_right_black_rook_moved = true;
+		else if(move.from_row == 7 && move.from_column == 0)
+			history->castle.is_left_white_rook_moved = true;
+		else if(move.from_row == 7 && move.from_column == 7)
+			history->castle.is_right_white_rook_moved = true;
+	}
+}
+void update_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
+	if(count_pieces(board) < history->pieces_counter){
+		history->pieces_counter--;
+		history->moves_counter = 0;
+	}
+
+	update_castle_history(board, history, move);
+
+	get_current_board(board, history);
 }
 
 void print_top_menu(char move, bool check){
@@ -219,21 +245,6 @@ void get_current_board(square board[][BOARD_SIZE], History *history){
 	}
 
 	(*move)++;
-
-	/*
-	for(i = 0; i < *move; i++){
-		printf("X----------Move %d----------X\n", i);
-
-		for(j = 0; j < sqr_counter; j++){
-			printf("Piecename: %c\n", history->sqr_hist[i][j].name);
-			printf("Color: %c\n", history->sqr_hist[i][j].color);
-			printf("Row: %d\n", history->sqr_hist[i][j].row);
-			printf("Column: %d\n", history->sqr_hist[i][j].column);
-			putchar('\n');
-		}
-	}
-	getchar();
-	*/
 }
 
 int count_pieces(square board[][BOARD_SIZE]){

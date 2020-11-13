@@ -10,30 +10,27 @@
 void play(){
 	square board[BOARD_SIZE][BOARD_SIZE];
 	History history;
-	castle_pieces_history castle_hist;
 	char player_move = WHITE;
 
 	init_board(board);
 	init_history(board, &history);
-	init_castle_history(&castle_hist);
 
 	do{
 		move_coordinates move_input, check;
-		bool is_check, is_need_reset_history = false;
+		bool is_check;
 
 		is_check = is_player_king_in_check(board, player_move, &check);
 
-		if(is_check){
+		if(is_check)
 			if(has_checkmate(board, check, player_move)){
 				print_final_board(board, player_move);
 				return;
 			}
-		}else{
+		else
 			if(has_stalemate(board, player_move)){
 				print_final_board(board, STALEMATE);
 				return;
 			}
-		}
 
 		do{
 			clear_screen();
@@ -51,21 +48,13 @@ void play(){
 		move_piece(board, move_input);
 
 		if(board[move_input.to_row][move_input.to_column].name == PAWN){
-			is_need_reset_history = true;
+			history.moves_counter = 0;
 
 			if(move_input.to_row == 0 || move_input.to_row == 7)
 				promotion(&board[move_input.to_row][move_input.to_column], player_move);
 		}
 			
-		if(count_pieces(board) < history.pieces_counter){
-			history.pieces_counter--;
-			is_need_reset_history = true;
-		}
-
-		if(is_need_reset_history)
-			history.moves_counter = 0;
-
-		get_current_board(board, &history);
+		update_history(board, &history, move_input);
 		
 		player_move == WHITE? (player_move = BLACK) : (player_move = WHITE);
 	}while(!is_there_special_finals(board, &history));

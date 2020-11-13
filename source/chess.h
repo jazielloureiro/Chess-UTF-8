@@ -51,12 +51,6 @@ typedef struct{
 } square_hist;
 	
 typedef struct{
-	square_hist sqr_hist[MAX_MOVES][MAX_PIECES];
-	int pieces_counter;
-	int moves_counter;
-} History;
-
-typedef struct{
 	bool is_left_black_rook_moved;
 	bool is_right_black_rook_moved;
 	bool is_black_king_moved;
@@ -65,9 +59,17 @@ typedef struct{
 	bool is_white_king_moved;
 } castle_pieces_history;
 
+typedef struct{
+	square_hist sqr_hist[MAX_MOVES][MAX_PIECES];
+	int pieces_counter;
+	int moves_counter;
+	castle_pieces_history castle;
+} History;
+
 void init_board(square board[][BOARD_SIZE]);
 void init_history(square board[][BOARD_SIZE], History *history);
-void init_castle_history(castle_pieces_history *castle_hist);
+void update_castle_history(square board[][BOARD_SIZE], History *history, move_coordinates move);
+void update_history(square board[][BOARD_SIZE], History *history, move_coordinates move);
 void print_top_menu(char move, bool check);
 void print_board(square board[][BOARD_SIZE]);
 void print_error_message(int message);
