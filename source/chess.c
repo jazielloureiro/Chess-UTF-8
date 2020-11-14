@@ -5,6 +5,7 @@
 #include "aux.h"
 #include "chess.h"
 #include "endgame.h"
+#include "movement.h"
 #include "input.h"
 
 void init_board(square board[][BOARD_SIZE]){
@@ -96,6 +97,8 @@ void init_history(square board[][BOARD_SIZE], History *history){
 	history->castle.has_left_white_rook_moved = false;
 	history->castle.has_right_white_rook_moved = false;
 	history->castle.has_white_king_moved = false;
+
+	history->has_en_passant_occurred = false;
 }
 
 bool has_pawn_moved(History history, move_coordinates move){
@@ -134,6 +137,13 @@ void update_castle_history(square board[][BOARD_SIZE], History *history, move_co
 	}
 }
 
+void update_last_input(move_coordinates *last_input, move_coordinates move){
+	last_input->from_row    = move.from_row;
+	last_input->from_column = move.from_column;
+	last_input->to_row      = move.to_row;
+	last_input->to_column   = move.to_column;
+}
+
 void update_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
 	if(count_pieces(board) < history->pieces_counter){
 		history->pieces_counter--;
@@ -141,9 +151,13 @@ void update_history(square board[][BOARD_SIZE], History *history, move_coordinat
 	}else if(has_pawn_moved(*history, move))
 		history->moves_counter = 0;
 
+	get_current_board(board, history);
+
 	update_castle_history(board, history, move);
 
-	get_current_board(board, history);
+	update_last_input(&history->last_input, move);
+
+	history->has_en_passant_occurred = false;
 }
 
 void print_top_menu(char move, bool check){
@@ -296,4 +310,15 @@ void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squar
 	strcpy(board[move_input.to_row][move_input.to_column].image, move_squares.to.image);
 	board[move_input.to_row][move_input.to_column].name = move_squares.to.name;
 	board[move_input.to_row][move_input.to_column].color  = move_squares.to.color;
+}
+
+void en_passant(square board[][BOARD_SIZE], History history){
+	move_coordinates move;
+
+	move.from_row = history.last_input.to_row;
+	move.from_column = history.last_input.to_column;
+	move.to_row = history.last_input.to_row;
+	move.to_column = history.last_input.to_column;
+
+	move_piece(board, move);
 }

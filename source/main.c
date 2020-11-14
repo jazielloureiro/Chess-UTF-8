@@ -19,15 +19,15 @@ void play(){
 		move_coordinates move_input, check;
 		bool is_check;
 
-		is_check = is_player_king_in_check(board, player_move, &check);
+		is_check = is_player_king_in_check(board, &history, player_move, &check);
 
 		if(is_check){
-			if(has_checkmate(board, check, player_move)){
+			if(has_checkmate(board, &history, check, player_move)){
 				print_final_board(board, player_move);
 				return;
 			}
 		}else{
-			if(has_stalemate(board, player_move)){
+			if(has_stalemate(board, &history, player_move)){
 				print_final_board(board, STALEMATE);
 				return;
 			}
@@ -44,9 +44,12 @@ void play(){
 			                     move_input.from_column,
 					     player_move))
 				return;
-		}while(!is_movement_valid(board, &move_input, player_move));
+		}while(!is_movement_valid(board, &history, &move_input, player_move));
 
 		move_piece(board, move_input);
+
+		if(history.has_en_passant_occurred)
+			en_passant(board, history);
 
 		if(is_there_promotion(board, move_input))
 			promotion(&board[move_input.to_row][move_input.to_column], player_move);

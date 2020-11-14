@@ -8,7 +8,7 @@
 #include "input.h"
 #include "movement.h"
 
-bool is_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input, char player_move){
+bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordinates *move_input, char player_move){
 	convert_square_readed(&move_input->from_row, &move_input->from_column);
 	convert_square_readed(&move_input->to_row, &move_input->to_column);
 
@@ -21,13 +21,13 @@ bool is_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input,
 	}else if(board[move_input->to_row][move_input->to_column].color == player_move){
 		print_error_message(CAPTURE_OWN_PIECE);
 		return false;
-	}else if(!is_piece_movement_compatible(board, *move_input, player_move)){
+	}else if(!is_piece_movement_compatible(board, history, *move_input, player_move)){
 		print_error_message(INCOMPATIBLE_MOVE);
 		return false;
 	}else if(is_jump_other_pieces(board, *move_input)){
 		print_error_message(JUMP_OTHER_PIECES);
 		return false;
-	}else if(is_king_will_be_in_check(board, player_move, *move_input)){
+	}else if(is_king_will_be_in_check(board, history, player_move, *move_input)){
 		print_error_message(KING_IN_CHECK);
 		return false;
 	}
@@ -35,7 +35,7 @@ bool is_movement_valid(square board[][BOARD_SIZE], move_coordinates *move_input,
 	return true;
 }
 
-bool is_piece_movement_compatible(square board[][BOARD_SIZE], move_coordinates move_input, char move){
+bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, move_coordinates move_input, char move){
 	switch(board[move_input.from_row][move_input.from_column].name){
 		case BISHOP:
 			return is_bishop_movement_valid(move_input);
@@ -47,7 +47,7 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], move_coordinates m
 			bool is_valid = is_pawn_movement_valid(move_input, move);
 
 			if(is_valid)
-				is_valid = is_pawn_capture_valid(board, move_input);
+				is_valid = is_pawn_capture_valid(board, history, move_input);
 
 			return is_valid;
 		}case QUEEN:
@@ -143,14 +143,49 @@ bool is_pawn_movement_valid(move_coordinates move_input, char move){
 	return false;
 }
 
-bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coordinates move_input){
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move_input){
+	if(move_input.from_column == move_input.to_column &&
+	   board[move_input.to_row][move_input.to_column].name == NO_PIECE)
+		return true;
+
 	if(move_input.from_column != move_input.to_column &&
 	   board[move_input.to_row][move_input.to_column].name != NO_PIECE)
 	   	return true;
 
-	if(move_input.from_column == move_input.to_column &&
-	   board[move_input.to_row][move_input.to_column].name == NO_PIECE)
+	if(is_en_passant_valid(board, history, move_input))
 		return true;
+
+	return false;
+}
+
+bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
+	int from_row = history->last_input.from_row,
+	    from_column = history->last_input.from_column,
+	    to_row = history->last_input.to_row,
+	    to_column = history->last_input.to_column,
+	    advance2Squares = (board[move.from_row][move.from_column].color == WHITE? 2 : -2),
+	    origin_row = (board[move.from_row][move.from_column].color == WHITE? 1 : 6);
+
+/*
+printf("%d\n", board[to_row][to_column].name == PAWN);
+printf("%d\n", from_row + advance2Squares == to_row);
+printf("%d\n", from_row == origin_row);
+printf("%d\n", from_column == to_column);
+printf("%d\n", to_row == move.from_row);
+//printf("%d\n", );
+*/
+
+	if(board[to_row][to_column].name == PAWN &&
+	   from_row + advance2Squares == to_row &&
+	   from_row == origin_row &&
+	   from_column == to_column &&
+	   to_row == move.from_row &&
+	   (to_column - move.from_column == 1 ||
+	   to_column - move.from_column == -1) &&
+	   to_column == move.to_column){
+		history->has_en_passant_occurred = true;
+	   	return true;
+	}
 
 	return false;
 }

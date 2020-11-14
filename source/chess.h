@@ -69,6 +69,8 @@ typedef struct{
 	int pieces_counter;
 	int moves_counter;
 	castle_pieces_history castle;
+	move_coordinates last_input;
+	bool has_en_passant_occurred;
 } History;
 
 void init_board(square board[][BOARD_SIZE]);
@@ -84,5 +86,6 @@ void get_current_board(square board[][BOARD_SIZE], History *history);
 int count_pieces(square board[][BOARD_SIZE]);
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input);
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input);
+void en_passant(square board[][BOARD_SIZE], History history);
 
 #endif
