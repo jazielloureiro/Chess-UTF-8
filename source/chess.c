@@ -163,16 +163,16 @@ void update_history(square board[][BOARD_SIZE], History *history, move_coordinat
 	history->has_en_passant_occurred = false;
 }
 
-void print_top_menu(char move, bool check){
+void print_top_menu(char turn, bool check){
 	putchar('\n');
 
 	if(check){
 		printf("\t  ┌───────────────┐   ┌───────────┐\n");
-		printf("\t  │ %s to move │   │   Check   │\n", (move == WHITE? "White" : "Black"));
+		printf("\t  │ %s to move │   │   Check   │\n", (turn == WHITE? "White" : "Black"));
 		printf("\t  └───────────────┘   └───────────┘\n");
 	}else{
 		printf("\t\t  ┌───────────────┐\n");
-		printf("\t\t  │ %s to move │\n", (move == WHITE? "White" : "Black"));
+		printf("\t\t  │ %s to move │\n", (turn == WHITE? "White" : "Black"));
 		printf("\t\t  └───────────────┘\n");
 	}
 }

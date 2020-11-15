@@ -79,7 +79,7 @@ void init_history(square board[][BOARD_SIZE], History *history);
 void update_castle_history(square board[][BOARD_SIZE], History *history, move_coordinates move);
 bool has_pawn_moved(History history, move_coordinates move);
 void update_history(square board[][BOARD_SIZE], History *history, move_coordinates move);
-void print_top_menu(char move, bool check);
+void print_top_menu(char turn, bool check);
 void print_board(square board[][BOARD_SIZE]);
 void print_error_message(int message);
 void print_final_board(square board[][BOARD_SIZE], char final);

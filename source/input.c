@@ -34,15 +34,15 @@ bool is_the_squares_valid(move_coordinates *move_input){
 	return true;
 }
 
-bool is_player_action_valid(char action, char move){
+bool is_player_action_valid(char action, char turn){
 	char choose;
 	
 	if(action == 'r')
 		printf("Do you want to resign the game? [y/n] ");
 	else
 		printf("The %s player offers a draw, does the %s player agree? [y/n] ",
-		       move == WHITE? "White" : "Black",
-		       move == WHITE? "Black" : "White");
+		       turn == WHITE? "White" : "Black",
+		       turn == WHITE? "Black" : "White");
 
 	do{
 		choose = getchar();
@@ -52,7 +52,7 @@ bool is_player_action_valid(char action, char move){
 	if(choose == 'y'){
 		if(action == 'r')
 			printf("End of the game! The %s player resigned the game!\n",
-			       move == WHITE? "White" : "Black");
+			       turn == WHITE? "White" : "Black");
 		else
 			printf("End of the game! Both players agreed to a draw!\n");
 			
@@ -64,9 +64,9 @@ bool is_player_action_valid(char action, char move){
 	return false;
 }
 
-bool has_player_action(char row, char column, char move){
+bool has_player_action(char row, char column, char turn){
 	if(column == ':' && (row == 'r' || row == 'd'))
-		return is_player_action_valid(row, move);
+		return is_player_action_valid(row, turn);
 		
 	return false;
 }

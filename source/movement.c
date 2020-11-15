@@ -8,26 +8,26 @@
 #include "input.h"
 #include "movement.h"
 
-bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordinates *move_input, char player_move){
+bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordinates *move_input, char turn){
 	convert_square_readed(&move_input->from_row, &move_input->from_column);
 	convert_square_readed(&move_input->to_row, &move_input->to_column);
 
 	if(!is_the_squares_valid(move_input)){
 		print_error_message(INVALID_SQUARE);
 		return false;
-	}else if(board[move_input->from_row][move_input->from_column].color != player_move){
+	}else if(board[move_input->from_row][move_input->from_column].color != turn){
 		print_error_message(CHOOSE_WRONG_COLOR);
 		return false;
-	}else if(board[move_input->to_row][move_input->to_column].color == player_move){
+	}else if(board[move_input->to_row][move_input->to_column].color == turn){
 		print_error_message(CAPTURE_OWN_PIECE);
 		return false;
-	}else if(!is_piece_movement_compatible(board, history, *move_input, player_move)){
+	}else if(!is_piece_movement_compatible(board, history, *move_input, turn)){
 		print_error_message(INCOMPATIBLE_MOVE);
 		return false;
 	}else if(is_jump_other_pieces(board, *move_input)){
 		print_error_message(JUMP_OTHER_PIECES);
 		return false;
-	}else if(is_king_will_be_in_check(board, history, player_move, *move_input)){
+	}else if(is_king_will_be_in_check(board, history, turn, *move_input)){
 		print_error_message(KING_IN_CHECK);
 		return false;
 	}
@@ -35,7 +35,7 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordi
 	return true;
 }
 
-bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, move_coordinates move_input, char move){
+bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, move_coordinates move_input, char turn){
 	switch(board[move_input.from_row][move_input.from_column].name){
 		case BISHOP:
 			return is_bishop_movement_valid(move_input);
@@ -43,13 +43,13 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 			bool is_valid = is_king_movement_valid(move_input);
 
 			if(!is_valid)
-				is_valid = is_castle_valid(board, history, move_input, move);
+				is_valid = is_castle_valid(board, history, move_input, turn);
 
 			return is_valid;
 		}case KNIGHT:
 			return is_knight_movement_valid(move_input);
 		case PAWN:{
-			bool is_valid = is_pawn_movement_valid(move_input, move);
+			bool is_valid = is_pawn_movement_valid(move_input, turn);
 
 			if(is_valid)
 				is_valid = is_pawn_capture_valid(board, history, move_input);
@@ -117,11 +117,11 @@ bool are_there_pieces_between(square board[][BOARD_SIZE], int start, int end, in
 	return false;
 }
 
-bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates move, char player_move){
+bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates move, char turn){
 	int i;
 	move_coordinates temp;
 
-	if(is_player_king_in_check(board, history, player_move, &temp))
+	if(is_player_king_in_check(board, history, turn, &temp))
 		return false;
 
 	do{
@@ -130,42 +130,42 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates
 		else
 			move.from_column--;
 
-		if(is_king_will_be_in_check(board, history, player_move, move))
+		if(is_king_will_be_in_check(board, history, turn, move))
 			return false;
 	}while(move.from_column != move.to_column);
 
 	return true;
 }
 
-bool is_castle_valid(square board[][BOARD_SIZE], History *history, move_coordinates move, char player_move){
-	if(player_move == WHITE &&
+bool is_castle_valid(square board[][BOARD_SIZE], History *history, move_coordinates move, char turn){
+	if(turn == WHITE &&
 	   !history->castle.has_white_king_moved &&
 	   move.to_row == 7){
 		if(!history->castle.has_left_white_rook_moved && move.to_column == 2){
 			if(!are_there_pieces_between(board, 0, move.from_column, 7) &&
-			   is_king_safe(board, history, move, player_move)){
+			   is_king_safe(board, history, move, turn)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
 		}else if(!history->castle.has_right_white_rook_moved && move.to_column == 6){
 			if(!are_there_pieces_between(board, move.from_column, 7, 7) &&
-			   is_king_safe(board, history, move, player_move)){
+			   is_king_safe(board, history, move, turn)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
 		}
-	}else if(player_move == BLACK &&
+	}else if(turn == BLACK &&
 	         !history->castle.has_black_king_moved &&
 	         move.to_row == 0){
 		if(!history->castle.has_left_black_rook_moved && move.to_column == 2){
 			if(!are_there_pieces_between(board, 0, move.from_column, 0) &&
-			   is_king_safe(board, history, move, player_move)){
+			   is_king_safe(board, history, move, turn)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
 		}else if(!history->castle.has_right_black_rook_moved && move.to_column == 6){
 			if(!are_there_pieces_between(board, move.from_column, 7, 0) &&
-			   is_king_safe(board, history, move, player_move)){
+			   is_king_safe(board, history, move, turn)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
@@ -194,9 +194,9 @@ bool is_knight_movement_valid(move_coordinates move_input){
 	return false;
 }
 
-bool is_pawn_movement_valid(move_coordinates move_input, char move){
-	int advance2Squares = (move == WHITE? -2 : 2),
-	    advance1Square  = (move == WHITE? -1 : 1);
+bool is_pawn_movement_valid(move_coordinates move_input, char turn){
+	int advance2Squares = (turn == WHITE? -2 : 2),
+	    advance1Square  = (turn == WHITE? -1 : 1);
 
 	if(move_input.from_row == 6 || move_input.from_row == 1)
 		if(move_input.from_row + advance2Squares == move_input.to_row &&
@@ -311,12 +311,12 @@ void move_piece(square board[][BOARD_SIZE], move_coordinates move_input){
 	board[move_input.from_row][move_input.from_column].color = NO_PIECE;
 }
 
-void promotion(square *piece, char move){
+void promotion(square *piece, char turn){
 	char choose;
 
 	puts("\nFor which piece do you want to promove?");
 	
-	if(move == WHITE)
+	if(turn == WHITE)
 		puts("1. ♕\n2. ♖\n3. ♗\n4. ♘\n");
 	else
 		puts("1. ♛\n2. ♜\n3. ♝\n4. ♞\n");
@@ -329,19 +329,19 @@ void promotion(square *piece, char move){
 	       
 	switch(choose){
 		case '1':
-			sprintf(piece->image, move == WHITE? "♕" : "♛");
+			sprintf(piece->image, turn == WHITE? "♕" : "♛");
 			piece->name = QUEEN;
 			break;
 		case '2':
-			sprintf(piece->image, move == WHITE? "♖" : "♜");
+			sprintf(piece->image, turn == WHITE? "♖" : "♜");
 			piece->name = ROOK;
 			break;
 		case '3':
-			sprintf(piece->image, move == WHITE? "♗" : "♝");
+			sprintf(piece->image, turn == WHITE? "♗" : "♝");
 			piece->name = BISHOP;
 			break;
 		case '4':
-			sprintf(piece->image, move == WHITE? "♘" : "♞");
+			sprintf(piece->image, turn == WHITE? "♘" : "♞");
 			piece->name = KNIGHT;
 	}       
 }
