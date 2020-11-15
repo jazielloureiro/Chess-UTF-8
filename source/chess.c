@@ -97,6 +97,7 @@ void init_history(square board[][BOARD_SIZE], History *history){
 	history->castle.has_left_white_rook_moved = false;
 	history->castle.has_right_white_rook_moved = false;
 	history->castle.has_white_king_moved = false;
+	history->castle.has_occurred = false;
 
 	history->has_en_passant_occurred = false;
 }
@@ -135,6 +136,8 @@ void update_castle_history(square board[][BOARD_SIZE], History *history, move_co
 		else if(move.from_row == 7 && move.from_column == 7)
 			history->castle.has_right_white_rook_moved = true;
 	}
+
+	history->castle.has_occurred = false;
 }
 
 void update_last_input(move_coordinates *last_input, move_coordinates move){
@@ -321,4 +324,36 @@ void en_passant(square board[][BOARD_SIZE], History history){
 	move.to_column = history.last_input.to_column;
 
 	move_piece(board, move);
+}
+
+void castle(square board[][BOARD_SIZE], move_coordinates move){
+	move_coordinates rook;
+
+	if(move.to_row == 0){
+		if(move.to_column == 2){
+			rook.from_row = 0;
+			rook.from_column = 0;
+			rook.to_row = 0;
+			rook.to_column = 3;
+		}else{
+			rook.from_row = 0;
+			rook.from_column = 7;
+			rook.to_row = 0;
+			rook.to_column = 5;
+		}
+	}else{
+		if(move.to_column == 2){
+			rook.from_row = 7;
+			rook.from_column = 0;
+			rook.to_row = 7;
+			rook.to_column = 3;
+		}else{
+			rook.from_row = 7;
+			rook.from_column = 7;
+			rook.to_row = 7;
+			rook.to_column = 5;
+		}
+	}
+
+	move_piece(board, rook);
 }

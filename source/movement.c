@@ -39,9 +39,14 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 	switch(board[move_input.from_row][move_input.from_column].name){
 		case BISHOP:
 			return is_bishop_movement_valid(move_input);
-		case KING:
-			return is_king_movement_valid(move_input);
-		case KNIGHT:
+		case KING:{
+			bool is_valid = is_king_movement_valid(move_input);
+
+			if(!is_valid)
+				is_valid = is_castle_valid(board, history, move_input, move);
+
+			return is_valid;
+		}case KNIGHT:
 			return is_knight_movement_valid(move_input);
 		case PAWN:{
 			bool is_valid = is_pawn_movement_valid(move_input, move);
@@ -98,6 +103,74 @@ bool is_king_movement_valid(move_coordinates move_input){
 		for(j = move_input.from_column - 1; j <= move_input.from_column + 1; j++)
 			if(i == move_input.to_row && j == move_input.to_column)
 				return true;
+
+	return false;
+}
+
+bool are_there_pieces_between(square board[][BOARD_SIZE], int start, int end, int row){
+	int i;
+
+	for(i = start + 1; i < end; i++)
+		if(board[row][i].name != NO_PIECE)
+			return true;
+
+	return false;
+}
+
+bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates move, char player_move){
+	int i;
+	move_coordinates temp;
+
+	if(is_player_king_in_check(board, history, player_move, &temp))
+		return false;
+
+	do{
+		if(move.from_column < move.to_column)
+			move.from_column++;
+		else
+			move.from_column--;
+
+		if(is_king_will_be_in_check(board, history, player_move, move))
+			return false;
+	}while(move.from_column != move.to_column);
+
+	return true;
+}
+
+bool is_castle_valid(square board[][BOARD_SIZE], History *history, move_coordinates move, char player_move){
+	if(player_move == WHITE &&
+	   !history->castle.has_white_king_moved &&
+	   move.to_row == 7){
+		if(!history->castle.has_left_white_rook_moved && move.to_column == 2){
+			if(!are_there_pieces_between(board, 0, move.from_column, 7) &&
+			   is_king_safe(board, history, move, player_move)){
+			   	history->castle.has_occurred = true;
+				return true;
+			}
+		}else if(!history->castle.has_right_white_rook_moved && move.to_column == 6){
+			if(!are_there_pieces_between(board, move.from_column, 7, 7) &&
+			   is_king_safe(board, history, move, player_move)){
+			   	history->castle.has_occurred = true;
+				return true;
+			}
+		}
+	}else if(player_move == BLACK &&
+	         !history->castle.has_black_king_moved &&
+	         move.to_row == 0){
+		if(!history->castle.has_left_black_rook_moved && move.to_column == 2){
+			if(!are_there_pieces_between(board, 0, move.from_column, 0) &&
+			   is_king_safe(board, history, move, player_move)){
+			   	history->castle.has_occurred = true;
+				return true;
+			}
+		}else if(!history->castle.has_right_black_rook_moved && move.to_column == 6){
+			if(!are_there_pieces_between(board, move.from_column, 7, 0) &&
+			   is_king_safe(board, history, move, player_move)){
+			   	history->castle.has_occurred = true;
+				return true;
+			}
+		}
+	}
 
 	return false;
 }
@@ -165,15 +238,6 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 	    to_column = history->last_input.to_column,
 	    advance2Squares = (board[move.from_row][move.from_column].color == WHITE? 2 : -2),
 	    origin_row = (board[move.from_row][move.from_column].color == WHITE? 1 : 6);
-
-/*
-printf("%d\n", board[to_row][to_column].name == PAWN);
-printf("%d\n", from_row + advance2Squares == to_row);
-printf("%d\n", from_row == origin_row);
-printf("%d\n", from_column == to_column);
-printf("%d\n", to_row == move.from_row);
-//printf("%d\n", );
-*/
 
 	if(board[to_row][to_column].name == PAWN &&
 	   from_row + advance2Squares == to_row &&

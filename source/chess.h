@@ -62,6 +62,7 @@ typedef struct{
 	bool has_left_white_rook_moved;
 	bool has_right_white_rook_moved;
 	bool has_white_king_moved;
+	bool has_occurred;
 } castle_pieces_history;
 
 typedef struct{
@@ -87,5 +88,6 @@ int count_pieces(square board[][BOARD_SIZE]);
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input);
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input);
 void en_passant(square board[][BOARD_SIZE], History history);
+void castle(square board[][BOARD_SIZE], move_coordinates move);
 
 #endif

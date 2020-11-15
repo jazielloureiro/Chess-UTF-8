@@ -51,6 +51,9 @@ void play(){
 		if(history.has_en_passant_occurred)
 			en_passant(board, history);
 
+		if(history.castle.has_occurred)
+			castle(board, move_input);
+
 		if(is_there_promotion(board, move_input))
 			promotion(&board[move_input.to_row][move_input.to_column], player_move);
 

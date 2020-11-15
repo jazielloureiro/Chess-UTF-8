@@ -5,6 +5,9 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordi
 bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, move_coordinates move_input, char move);
 bool is_bishop_movement_valid(move_coordinates move_input);
 bool is_king_movement_valid(move_coordinates move_input);
+bool are_there_pieces_between(square board[][BOARD_SIZE], int start, int end, int row);
+bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates move, char player_move);
+bool is_castle_valid(square board[][BOARD_SIZE], History *history, move_coordinates move, char player_move);
 bool is_knight_movement_valid(move_coordinates move_input);
 bool is_pawn_movement_valid(move_coordinates move_input, char move);
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move_input);
