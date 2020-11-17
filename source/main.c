@@ -16,18 +16,18 @@ void play(){
 	init_history(board, &history);
 
 	do{
-		move_coordinates move_input, check;
+		move_coordinates move_input;
 		bool is_check;
 
-		is_check = is_player_king_in_check(board, &history, player_turn, &check);
+		is_check = is_player_king_in_check(board, &history, player_turn);
 
 		if(is_check){
-			if(has_checkmate(board, &history, check, player_turn)){
+			if(has_checkmate(board, history, player_turn)){
 				print_final_board(board, player_turn);
 				return;
 			}
 		}else{
-			if(has_stalemate(board, &history, player_turn)){
+			if(has_stalemate(board, history, player_turn)){
 				print_final_board(board, STALEMATE);
 				return;
 			}

@@ -27,7 +27,7 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordi
 	}else if(is_jump_other_pieces(board, *move_input)){
 		print_error_message(JUMP_OTHER_PIECES);
 		return false;
-	}else if(is_king_will_be_in_check(board, history, turn, *move_input)){
+	}else if(is_king_will_be_in_check(board, *history, turn, *move_input)){
 		print_error_message(KING_IN_CHECK);
 		return false;
 	}
@@ -121,7 +121,7 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates
 	int i;
 	move_coordinates temp;
 
-	if(is_player_king_in_check(board, history, turn, &temp))
+	if(is_player_king_in_check(board, history, turn))
 		return false;
 
 	do{
@@ -130,7 +130,7 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates
 		else
 			move.from_column--;
 
-		if(is_king_will_be_in_check(board, history, turn, move))
+		if(is_king_will_be_in_check(board, *history, turn, move))
 			return false;
 	}while(move.from_column != move.to_column);
 

@@ -69,6 +69,7 @@ typedef struct{
 	square_hist sqr_hist[MAX_MOVES][MAX_PIECES];
 	int pieces_counter;
 	int moves_counter;
+	move_coordinates check;
 	castle_pieces_history castle;
 	move_coordinates last_input;
 	bool has_en_passant_occurred;

@@ -7,27 +7,27 @@
 #include "endgame.h"
 #include "movement.h"
 
-bool is_king_will_be_in_check(square board[][BOARD_SIZE], History *history, char turn, move_coordinates move_input){
+bool is_king_will_be_in_check(square board[][BOARD_SIZE], History history, char turn, move_coordinates move_input){
 	bool is_check;
 	movement_squares move_squares, aux_squares;
-	move_coordinates check, aux_move;
+	move_coordinates aux_move;
 
 	save_move_squares(board, &move_squares, move_input);
 
 	move_piece(board, move_input);
 
-	if(history->has_en_passant_occurred){
-		aux_move.from_row = history->last_input.to_row;
-		aux_move.from_column = history->last_input.to_column;
-		aux_move.to_row = history->last_input.to_row;
-		aux_move.to_column = history->last_input.to_column;
+	if(history.has_en_passant_occurred){
+		aux_move.from_row = history.last_input.to_row;
+		aux_move.from_column = history.last_input.to_column;
+		aux_move.to_row = history.last_input.to_row;
+		aux_move.to_column = history.last_input.to_column;
 
 		save_move_squares(board, &aux_squares, aux_move);
 
-		en_passant(board, *history);
+		en_passant(board, history);
 	}
 
-	if(history->castle.has_occurred){
+	if(history.castle.has_occurred){
 		if(move_input.to_row == 0){
 			if(move_input.to_column == 2){
 				aux_move.from_row = 0;
@@ -59,20 +59,20 @@ bool is_king_will_be_in_check(square board[][BOARD_SIZE], History *history, char
 		move_piece(board, aux_move);
 	}
 			
-	is_check = is_player_king_in_check(board, history, turn, &check);
+	is_check = is_player_king_in_check(board, &history, turn);
 
 	return_move_squares(board, move_squares, move_input);
 
-	if(history->has_en_passant_occurred)
+	if(history.has_en_passant_occurred)
 		return_move_squares(board, aux_squares, aux_move);
 
-	if(history->castle.has_occurred)
+	if(history.castle.has_occurred)
 		return_move_squares(board, aux_squares, aux_move);
 
 	return is_check;
 }
 
-bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char turn, move_coordinates *check){
+bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char turn){
 	char opponent_color = (turn == WHITE? BLACK : WHITE);
 	int i, j;
 	
@@ -80,22 +80,22 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].name == KING && board[i][j].color == turn){
-				check->to_row = i;
-				check->to_column = j;
+				history->check.to_row = i;
+				history->check.to_column = j;
 				break;
 			}
 		}
 	}
 	
-	// Verify if the oponent's pieces are threatening the king
+	// Verify if the opponent's pieces are threatening the king
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == opponent_color){
-				check->from_row = i;
-				check->from_column = j;
+				history->check.from_row = i;
+				history->check.from_column = j;
 
-				if(is_piece_movement_compatible(board, history, *check, opponent_color) &&
-				   !is_jump_other_pieces(board, *check))
+				if(is_piece_movement_compatible(board, history, history->check, opponent_color) &&
+				   !is_jump_other_pieces(board, history->check))
 				   	return true;
 			}
 		}
@@ -104,20 +104,19 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 	return false;
 }
 
-bool can_king_move(square board[][BOARD_SIZE], History *history, move_coordinates check, char turn){
+bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 	int i, j;
 
-	for(i = check.to_row - 1; i <= check.to_row + 1; i++){
-		for(j = check.to_column - 1; j <= check.to_column + 1; j++){
+	for(i = history.check.to_row - 1; i <= history.check.to_row + 1; i++){
+		for(j = history.check.to_column - 1; j <= history.check.to_column + 1; j++){
 			if(i >= 0 && i <= 7 && j >= 0 && j <= 7 &&
-			   board[i][j].color != board[check.to_row][check.to_column].color){
+			   board[i][j].color != board[history.check.to_row][history.check.to_column].color){
 				move_coordinates temp_move;
-				movement_squares temp_squares;
 
 				temp_move.to_row = i;
 				temp_move.to_column = j;
-				temp_move.from_row = check.to_row;
-				temp_move.from_column = check.to_column;
+				temp_move.from_row = history.check.to_row;
+				temp_move.from_column = history.check.to_column;
 
 				if(!is_king_will_be_in_check(board, history, turn, temp_move))
 				   	return true;
@@ -128,12 +127,12 @@ bool can_king_move(square board[][BOARD_SIZE], History *history, move_coordinate
 	return false;
 }
 
-bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History *history, move_coordinates check, char turn){
+bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history, char turn){
 	int i, j;
 	move_coordinates att_piece;
 
-	att_piece.to_row = check.from_row;
-	att_piece.to_column = check.from_column;
+	att_piece.to_row = history.check.from_row;
+	att_piece.to_column = history.check.from_column;
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
@@ -141,7 +140,7 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History *histor
 				att_piece.from_row = i;
 				att_piece.from_column = j;
 			
-				if(is_piece_movement_compatible(board, history, att_piece, turn) &&
+				if(is_piece_movement_compatible(board, &history, att_piece, turn) &&
 				   !is_jump_other_pieces(board, att_piece) &&
 				   !is_king_will_be_in_check(board, history, turn, att_piece))
 				   	return true;
@@ -152,42 +151,42 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History *histor
 	return false;
 }
 
-bool can_piece_cover_check(square board[][BOARD_SIZE], History *history, move_coordinates check, char turn){
-	char *i = &check.from_row, *j = &check.from_column;
+bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char turn){
+	char *i = &history.check.from_row, *j = &history.check.from_column;
 
 	if(board[*i][*j].name != KNIGHT){
 		do{
-			if(*i < check.to_row)
+			if(*i < history.check.to_row)
 				(*i)++;
-			else if(*i > check.to_row)
+			else if(*i > history.check.to_row)
 				(*i)--;
 			
-			if(*j < check.to_column)
+			if(*j < history.check.to_column)
 				(*j)++;
-			else if(*j > check.to_column)
+			else if(*j > history.check.to_column)
 				(*j)--;
 			
-			if((*i) != check.to_row || (*j) != check.to_column)
-				if(can_attacking_piece_be_captured(board, history, check, turn))
+			if((*i) != history.check.to_row || (*j) != history.check.to_column)
+				if(can_attacking_piece_be_captured(board, history, turn))
 					return true;
-		}while((*i) != check.to_row || (*j) != check.to_column);
+		}while(*i != history.check.to_row || *j != history.check.to_column);
 	}
 
 	return false;
 }
 
-bool has_checkmate(square board[][BOARD_SIZE], History *history, move_coordinates check, char turn){
-	if(can_king_move(board, history, check, turn))
+bool has_checkmate(square board[][BOARD_SIZE], History history, char turn){
+	if(can_king_move(board, history, turn))
 		return false;
-	else if(can_piece_cover_check(board, history, check, turn))
+	else if(can_piece_cover_check(board, history, turn))
 		return false;
-	else if(can_attacking_piece_be_captured(board, history, check, turn))
+	else if(can_attacking_piece_be_captured(board, history, turn))
 		return false;
 
 	return true;
 }
 
-bool is_there_possible_move(square board[][BOARD_SIZE], History *history, move_coordinates movement, char turn){
+bool is_there_possible_move(square board[][BOARD_SIZE], History history, move_coordinates movement, char turn){
 	int i, j;
 
 	for(i = 0; i < BOARD_SIZE; i++){
@@ -196,7 +195,7 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History *history, move_c
 				movement.to_row = i;
 				movement.to_column = j;
 
-				if(is_piece_movement_compatible(board, history, movement, turn) &&
+				if(is_piece_movement_compatible(board, &history, movement, turn) &&
 				   !is_jump_other_pieces(board, movement) &&
 				   !is_king_will_be_in_check(board, history, turn, movement))
 					return true;
@@ -207,7 +206,7 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History *history, move_c
 	return false;
 }
 
-bool has_stalemate(square board[][BOARD_SIZE], History *history, char turn){
+bool has_stalemate(square board[][BOARD_SIZE], History history, char turn){
 	int i, j;
 
 	for(i = 0; i < BOARD_SIZE; i++){
