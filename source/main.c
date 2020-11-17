@@ -74,7 +74,7 @@ void help(){
 	     "How to ask for a draw:\n"
 	     "\tType: :d");
 	     
-	pause();
+	pause_screen();
 }
 
 int main(){

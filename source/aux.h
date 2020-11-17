@@ -3,6 +3,6 @@
 
 void clear_input_buffer();
 void clear_screen();
-void pause();
+void pause_screen();
 
 #endif

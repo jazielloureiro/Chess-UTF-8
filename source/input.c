@@ -56,7 +56,7 @@ bool is_player_action_valid(char action, char turn){
 		else
 			printf("End of the game! Both players agreed to a draw!\n");
 			
-		pause();
+		pause_screen();
 			       
 		return true;
 	}

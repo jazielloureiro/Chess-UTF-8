@@ -220,7 +220,7 @@ void print_error_message(int message){
 			break;
 	}
 
-	pause();
+	pause_screen();
 }
 
 void print_final_board(square board[][BOARD_SIZE], char final){
@@ -261,7 +261,7 @@ void print_final_board(square board[][BOARD_SIZE], char final){
 
 	print_board(board);
 
-	pause();
+	pause_screen();
 }
 
 void get_current_board(square board[][BOARD_SIZE], History *history){

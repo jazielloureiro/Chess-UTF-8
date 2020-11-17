@@ -13,7 +13,7 @@ void clear_screen(){
 	system("clear");
 }
 
-void pause(){
+void pause_screen(){
 	puts("\nPress Enter to continue");
 	
 	while(getchar() != '\n');
