@@ -73,7 +73,7 @@ bool is_there_player_action(Player player){
 	return false;
 }
 
-void convert_square_readed(char *row, char *column){
+void convert_row(char *row){
 	switch(*row){
 		case '8': *row = 0; break;
 		case '7': *row = 1; break;
@@ -85,11 +85,20 @@ void convert_square_readed(char *row, char *column){
 		case '1': *row = 7; break;
 		default:  *row = INVALID_SQUARE;
 	}
+}
 
+void convert_column(char *column){
 	if(*column < 'a' || *column > 'h')
 		*column = INVALID_SQUARE;
 	else
 		*column -= 'a';
+}
+
+void convert_movement_input(move_coordinates *move){
+	convert_row(&move->from_row);
+	convert_column(&move->from_column);
+	convert_row(&move->to_row);
+	convert_column(&move->to_column);
 }
 
 bool is_there_promotion(square board[][BOARD_SIZE], move_coordinates move){

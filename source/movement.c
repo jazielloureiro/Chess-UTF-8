@@ -9,8 +9,7 @@
 #include "movement.h"
 
 bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *player){
-	convert_square_readed(&player->move.from_row, &player->move.from_column);
-	convert_square_readed(&player->move.to_row, &player->move.to_column);
+	convert_movement_input(&player->move);
 
 	if(!is_the_squares_valid(&player->move)){
 		print_error_message(INVALID_SQUARE);
