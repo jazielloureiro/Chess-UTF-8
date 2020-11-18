@@ -295,24 +295,24 @@ int count_pieces(square board[][BOARD_SIZE]){
 	return pieces_amount;
 }
 
-void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input){
-	strcpy(move_squares->from.image, board[move_input.from_row][move_input.from_column].image);
-	move_squares->from.name  = board[move_input.from_row][move_input.from_column].name;
-	move_squares->from.color = board[move_input.from_row][move_input.from_column].color;
+void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move){
+	strcpy(move_squares->from.image, board[move.from_row][move.from_column].image);
+	move_squares->from.name  = board[move.from_row][move.from_column].name;
+	move_squares->from.color = board[move.from_row][move.from_column].color;
 	
-	strcpy(move_squares->to.image, board[move_input.to_row][move_input.to_column].image);
-	move_squares->to.name  = board[move_input.to_row][move_input.to_column].name;
-	move_squares->to.color = board[move_input.to_row][move_input.to_column].color;
+	strcpy(move_squares->to.image, board[move.to_row][move.to_column].image);
+	move_squares->to.name  = board[move.to_row][move.to_column].name;
+	move_squares->to.color = board[move.to_row][move.to_column].color;
 }
 
-void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input){
-	strcpy(board[move_input.from_row][move_input.from_column].image, move_squares.from.image);
-	board[move_input.from_row][move_input.from_column].name = move_squares.from.name;
-	board[move_input.from_row][move_input.from_column].color  = move_squares.from.color;
+void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move){
+	strcpy(board[move.from_row][move.from_column].image, move_squares.from.image);
+	board[move.from_row][move.from_column].name = move_squares.from.name;
+	board[move.from_row][move.from_column].color  = move_squares.from.color;
 	
-	strcpy(board[move_input.to_row][move_input.to_column].image, move_squares.to.image);
-	board[move_input.to_row][move_input.to_column].name = move_squares.to.name;
-	board[move_input.to_row][move_input.to_column].color  = move_squares.to.color;
+	strcpy(board[move.to_row][move.to_column].image, move_squares.to.image);
+	board[move.to_row][move.to_column].name = move_squares.to.name;
+	board[move.to_row][move.to_column].color  = move_squares.to.color;
 }
 
 void en_passant(square board[][BOARD_SIZE], History history){

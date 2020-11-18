@@ -44,7 +44,7 @@ void play(){
 			                          player.move.from_column,
 					          player.turn))
 				return;
-		}while(!is_movement_valid(board, &history, &player.move, player.turn));
+		}while(!is_movement_valid(board, &history, &player));
 
 		move_piece(board, player.move);
 

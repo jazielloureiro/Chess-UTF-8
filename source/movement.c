@@ -8,26 +8,26 @@
 #include "input.h"
 #include "movement.h"
 
-bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordinates *move_input, char turn){
-	convert_square_readed(&move_input->from_row, &move_input->from_column);
-	convert_square_readed(&move_input->to_row, &move_input->to_column);
+bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *player){
+	convert_square_readed(&player->move.from_row, &player->move.from_column);
+	convert_square_readed(&player->move.to_row, &player->move.to_column);
 
-	if(!is_the_squares_valid(move_input)){
+	if(!is_the_squares_valid(&player->move)){
 		print_error_message(INVALID_SQUARE);
 		return false;
-	}else if(board[move_input->from_row][move_input->from_column].color != turn){
+	}else if(board[player->move.from_row][player->move.from_column].color != player->turn){
 		print_error_message(CHOOSE_WRONG_COLOR);
 		return false;
-	}else if(board[move_input->to_row][move_input->to_column].color == turn){
+	}else if(board[player->move.to_row][player->move.to_column].color == player->turn){
 		print_error_message(CAPTURE_OWN_PIECE);
 		return false;
-	}else if(!is_piece_movement_compatible(board, history, *move_input, turn)){
+	}else if(!is_piece_movement_compatible(board, history, *player)){
 		print_error_message(INCOMPATIBLE_MOVE);
 		return false;
-	}else if(is_jump_other_pieces(board, *move_input)){
+	}else if(is_jump_other_pieces(board, player->move)){
 		print_error_message(JUMP_OTHER_PIECES);
 		return false;
-	}else if(will_king_be_in_check(board, *history, turn, *move_input)){
+	}else if(will_king_be_in_check(board, *history, *player)){
 		print_error_message(KING_IN_CHECK);
 		return false;
 	}
@@ -35,73 +35,73 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, move_coordi
 	return true;
 }
 
-bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, move_coordinates move_input, char turn){
-	switch(board[move_input.from_row][move_input.from_column].name){
+bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, Player player){
+	switch(board[player.move.from_row][player.move.from_column].name){
 		case BISHOP:
-			return is_bishop_movement_valid(move_input);
+			return is_bishop_movement_valid(player.move);
 		case KING:{
-			bool is_valid = is_king_movement_valid(move_input);
+			bool is_valid = is_king_movement_valid(player.move);
 
 			if(!is_valid)
-				is_valid = is_castle_valid(board, history, move_input, turn);
+				is_valid = is_castle_valid(board, history, player);
 
 			return is_valid;
 		}case KNIGHT:
-			return is_knight_movement_valid(move_input);
+			return is_knight_movement_valid(player.move);
 		case PAWN:{
-			bool is_valid = is_pawn_movement_valid(move_input, turn);
+			bool is_valid = is_pawn_movement_valid(player);
 
 			if(is_valid)
-				is_valid = is_pawn_capture_valid(board, history, move_input);
+				is_valid = is_pawn_capture_valid(board, history, player.move);
 
 			return is_valid;
 		}case QUEEN:
-			return is_queen_movement_valid(move_input);
+			return is_queen_movement_valid(player.move);
 		case ROOK:
-			return is_rook_movement_valid(move_input);
+			return is_rook_movement_valid(player.move);
 	}
 }
 
-bool is_bishop_movement_valid(move_coordinates move_input){
+bool is_bishop_movement_valid(move_coordinates move){
 	int i, j;
 
 	// Verifying the top left diagonal
-	for(i = move_input.from_row - 1, j = move_input.from_column - 1;
+	for(i = move.from_row - 1, j = move.from_column - 1;
 	    i >= 0 && j >= 0;
 	    i--, j--)
-		if(i == move_input.to_row && j == move_input.to_column)
+		if(i == move.to_row && j == move.to_column)
 			return true;
 
 	// Verifying the top right diagonal
-	for(i = move_input.from_row - 1, j = move_input.from_column + 1;
+	for(i = move.from_row - 1, j = move.from_column + 1;
 	    i >= 0 && j <= 7;
 	    i--, j++)
-		if(i == move_input.to_row && j == move_input.to_column)
+		if(i == move.to_row && j == move.to_column)
 			return true;
 
 	// Verifying the bottom left diagonal
-	for(i = move_input.from_row + 1, j = move_input.from_column - 1;
+	for(i = move.from_row + 1, j = move.from_column - 1;
 	    i <= 7 && j >= 0;
 	    i++, j--)
-		if(i == move_input.to_row && j == move_input.to_column)
+		if(i == move.to_row && j == move.to_column)
 			return true;
 
 	// Verifying the bottom right diagonal
-	for(i = move_input.from_row + 1, j = move_input.from_column + 1;
+	for(i = move.from_row + 1, j = move.from_column + 1;
 	    i <= 7 && i <= 7;
 	    i++, j++)
-		if(i == move_input.to_row && j == move_input.to_column)
+		if(i == move.to_row && j == move.to_column)
 			return true;
 
 	return false;
 }
 
-bool is_king_movement_valid(move_coordinates move_input){
+bool is_king_movement_valid(move_coordinates move){
 	int i, j;
 
-	for(i = move_input.from_row - 1; i <= move_input.from_row + 1; i++)
-		for(j = move_input.from_column - 1; j <= move_input.from_column + 1; j++)
-			if(i == move_input.to_row && j == move_input.to_column)
+	for(i = move.from_row - 1; i <= move.from_row + 1; i++)
+		for(j = move.from_column - 1; j <= move.from_column + 1; j++)
+			if(i == move.to_row && j == move.to_column)
 				return true;
 
 	return false;
@@ -117,55 +117,52 @@ bool are_there_pieces_between(square board[][BOARD_SIZE], int start, int end, in
 	return false;
 }
 
-bool is_king_safe(square board[][BOARD_SIZE], History *history, move_coordinates move, char turn){
-	int i;
-	move_coordinates temp;
-
-	if(is_player_king_in_check(board, history, turn))
+bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
+	if(is_player_king_in_check(board, history, player.turn))
 		return false;
 
 	do{
-		if(move.from_column < move.to_column)
-			move.from_column++;
+		if(player.move.from_column < player.move.to_column)
+			player.move.from_column++;
 		else
-			move.from_column--;
+			player.move.from_column--;
 
-		if(will_king_be_in_check(board, *history, turn, move))
+		if(will_king_be_in_check(board, *history, player))
 			return false;
-	}while(move.from_column != move.to_column);
+	}while(player.move.from_column != player.move.to_column);
 
 	return true;
 }
 
-bool is_castle_valid(square board[][BOARD_SIZE], History *history, move_coordinates move, char turn){
-	if(turn == WHITE &&
+bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player){
+	if(player.turn == WHITE &&
 	   !history->castle.has_white_king_moved &&
-	   move.to_row == 7){
-		if(!history->castle.has_left_white_rook_moved && move.to_column == 2){
-			if(!are_there_pieces_between(board, 0, move.from_column, 7) &&
-			   is_king_safe(board, history, move, turn)){
+	   player.move.to_row == 7){
+		if(!history->castle.has_left_white_rook_moved && player.move.to_column == 2){
+			if(!are_there_pieces_between(board, 0, player.move.from_column, 7) &&
+			   is_king_safe(board, history, player)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
-		}else if(!history->castle.has_right_white_rook_moved && move.to_column == 6){
-			if(!are_there_pieces_between(board, move.from_column, 7, 7) &&
-			   is_king_safe(board, history, move, turn)){
+		}else if(!history->castle.has_right_white_rook_moved && player.move.to_column == 6){
+			if(!are_there_pieces_between(board, player.move.from_column, 7, 7) &&
+			   is_king_safe(board, history, player)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
 		}
-	}else if(turn == BLACK &&
+	}else if(player.turn == BLACK &&
 	         !history->castle.has_black_king_moved &&
-	         move.to_row == 0){
-		if(!history->castle.has_left_black_rook_moved && move.to_column == 2){
-			if(!are_there_pieces_between(board, 0, move.from_column, 0) &&
-			   is_king_safe(board, history, move, turn)){
+	         player.move.to_row == 0){
+		if(!history->castle.has_left_black_rook_moved && player.move.to_column == 2){
+			if(!are_there_pieces_between(board, 0, player.move.from_column, 0) &&
+			   is_king_safe(board, history, player)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
-		}else if(!history->castle.has_right_black_rook_moved && move.to_column == 6){
-			if(!are_there_pieces_between(board, move.from_column, 7, 0) &&
-			   is_king_safe(board, history, move, turn)){
+		}else if(!history->castle.has_right_black_rook_moved && player.move.to_column == 6){
+			if(!are_there_pieces_between(board, player.move.from_column, 7, 0) &&
+			   is_king_safe(board, history, player)){
 			   	history->castle.has_occurred = true;
 				return true;
 			}
@@ -175,11 +172,11 @@ bool is_castle_valid(square board[][BOARD_SIZE], History *history, move_coordina
 	return false;
 }
 
-bool is_knight_movement_valid(move_coordinates move_input){
+bool is_knight_movement_valid(move_coordinates move){
 	int diff_row, diff_column;
 	
-	diff_row    = move_input.to_row    - move_input.from_row;
-	diff_column = move_input.to_column - move_input.from_column;
+	diff_row    = move.to_row    - move.from_row;
+	diff_column = move.to_column - move.from_column;
 
 	if(diff_row == 2  && diff_column == 1  ||
 	   diff_row == 2  && diff_column == -1 ||
@@ -194,38 +191,38 @@ bool is_knight_movement_valid(move_coordinates move_input){
 	return false;
 }
 
-bool is_pawn_movement_valid(move_coordinates move_input, char turn){
-	int advance2Squares = (turn == WHITE? -2 : 2),
-	    advance1Square  = (turn == WHITE? -1 : 1);
+bool is_pawn_movement_valid(Player player){
+	int advance2Squares = (player.turn == WHITE? -2 : 2),
+	    advance1Square  = (player.turn == WHITE? -1 : 1);
 
-	if(move_input.from_row == 6 || move_input.from_row == 1)
-		if(move_input.from_row + advance2Squares == move_input.to_row &&
-		   move_input.from_column == move_input.to_column)
+	if(player.move.from_row == 6 || player.move.from_row == 1)
+		if(player.move.from_row + advance2Squares == player.move.to_row &&
+		   player.move.from_column == player.move.to_column)
 		   	return true;
 			
-	if(move_input.from_row + advance1Square == move_input.to_row){
+	if(player.move.from_row + advance1Square == player.move.to_row){
 		int j;
 
-		for(j = move_input.from_column - 1;
-		    j <= move_input.from_column + 1;
+		for(j = player.move.from_column - 1;
+		    j <= player.move.from_column + 1;
 		    j++)
-			if(j == move_input.to_column)
+			if(j == player.move.to_column)
 		    		return true;
 	}
 	
 	return false;
 }
 
-bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move_input){
-	if(move_input.from_column == move_input.to_column &&
-	   board[move_input.to_row][move_input.to_column].name == NO_PIECE)
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
+	if(move.from_column == move.to_column &&
+	   board[move.to_row][move.to_column].name == NO_PIECE)
 		return true;
 
-	if(move_input.from_column != move_input.to_column &&
-	   board[move_input.to_row][move_input.to_column].name != NO_PIECE)
+	if(move.from_column != move.to_column &&
+	   board[move.to_row][move.to_column].name != NO_PIECE)
 	   	return true;
 
-	if(is_en_passant_valid(board, history, move_input))
+	if(is_en_passant_valid(board, history, move))
 		return true;
 
 	return false;
@@ -254,61 +251,61 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 	return false;
 }
 
-bool is_queen_movement_valid(move_coordinates move_input){
-	if(is_rook_movement_valid(move_input))
+bool is_queen_movement_valid(move_coordinates move){
+	if(is_rook_movement_valid(move))
 		return true;
-	if(is_bishop_movement_valid(move_input))
+	if(is_bishop_movement_valid(move))
 		return true;
 		
 	return false;
 }
 
-bool is_rook_movement_valid(move_coordinates move_input){
-	if(move_input.from_row    == move_input.to_row ||
-	   move_input.from_column == move_input.to_column)
+bool is_rook_movement_valid(move_coordinates move){
+	if(move.from_row    == move.to_row ||
+	   move.from_column == move.to_column)
 		return true;
 
 	return false;
 }
 
-bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move_input){
-	if(board[move_input.from_row][move_input.from_column].name != KNIGHT){
-		int i = move_input.from_row, j = move_input.from_column;
+bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
+	if(board[move.from_row][move.from_column].name != KNIGHT){
+		int i = move.from_row, j = move.from_column;
 		
 		do{
-			if(i < move_input.to_row)
+			if(i < move.to_row)
 				i++;
-			else if(i > move_input.to_row)
+			else if(i > move.to_row)
 				i--;
 			
-			if(j < move_input.to_column)
+			if(j < move.to_column)
 				j++;
-			else if(j > move_input.to_column)
+			else if(j > move.to_column)
 				j--;
 			
-			if(board[i][j].name != NO_PIECE && (i != move_input.to_row || j != move_input.to_column))
+			if(board[i][j].name != NO_PIECE && (i != move.to_row || j != move.to_column))
 				return true;
-		}while(i != move_input.to_row || j != move_input.to_column);
+		}while(i != move.to_row || j != move.to_column);
 	}
 	
 	return false;
 }
 
-void move_piece(square board[][BOARD_SIZE], move_coordinates move_input){
-	strcpy(board[move_input.to_row][move_input.to_column].image,
-	       board[move_input.from_row][move_input.from_column].image);
+void move_piece(square board[][BOARD_SIZE], move_coordinates move){
+	strcpy(board[move.to_row][move.to_column].image,
+	       board[move.from_row][move.from_column].image);
 
-	board[move_input.to_row][move_input.to_column].name = 
-	board[move_input.from_row][move_input.from_column].name;
+	board[move.to_row][move.to_column].name = 
+	board[move.from_row][move.from_column].name;
 
-	board[move_input.to_row][move_input.to_column].color = 
-	board[move_input.from_row][move_input.from_column].color;
+	board[move.to_row][move.to_column].color = 
+	board[move.from_row][move.from_column].color;
 
-	strcpy(board[move_input.from_row][move_input.from_column].image, " \0");
+	strcpy(board[move.from_row][move.from_column].image, " \0");
 
-	board[move_input.from_row][move_input.from_column].name = NO_PIECE;
+	board[move.from_row][move.from_column].name = NO_PIECE;
 
-	board[move_input.from_row][move_input.from_column].color = NO_PIECE;
+	board[move.from_row][move.from_column].color = NO_PIECE;
 }
 
 void promotion(square *piece, char turn){
