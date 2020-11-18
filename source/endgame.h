@@ -1,7 +1,7 @@
 #ifndef ENDGAME_H
 #define ENDGAME_H
 
-bool is_king_will_be_in_check(square board[][BOARD_SIZE], History history, char turn, move_coordinates move_input);
+bool will_king_be_in_check(square board[][BOARD_SIZE], History history, char turn, move_coordinates move_input);
 bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char turn);
 bool can_king_move(square board[][BOARD_SIZE], History history, char turn);
 bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history, char turn);

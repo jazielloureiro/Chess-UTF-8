@@ -7,7 +7,7 @@
 #include "endgame.h"
 #include "movement.h"
 
-bool is_king_will_be_in_check(square board[][BOARD_SIZE], History history, char turn, move_coordinates move_input){
+bool will_king_be_in_check(square board[][BOARD_SIZE], History history, char turn, move_coordinates move_input){
 	bool is_check;
 	movement_squares move_squares, aux_squares;
 	move_coordinates aux_move;
@@ -118,7 +118,7 @@ bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 				temp_move.from_row = history.check.to_row;
 				temp_move.from_column = history.check.to_column;
 
-				if(!is_king_will_be_in_check(board, history, turn, temp_move))
+				if(!will_king_be_in_check(board, history, turn, temp_move))
 				   	return true;
 			}
 		}
@@ -142,7 +142,7 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history
 			
 				if(is_piece_movement_compatible(board, &history, att_piece, turn) &&
 				   !is_jump_other_pieces(board, att_piece) &&
-				   !is_king_will_be_in_check(board, history, turn, att_piece))
+				   !will_king_be_in_check(board, history, turn, att_piece))
 				   	return true;
 			}
 		}
@@ -197,7 +197,7 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History history, move_co
 
 				if(is_piece_movement_compatible(board, &history, movement, turn) &&
 				   !is_jump_other_pieces(board, movement) &&
-				   !is_king_will_be_in_check(board, history, turn, movement))
+				   !will_king_be_in_check(board, history, turn, movement))
 					return true;
 			}
 		}
