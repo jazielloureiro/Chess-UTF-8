@@ -175,7 +175,7 @@ bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char tur
 	return false;
 }
 
-bool has_checkmate(square board[][BOARD_SIZE], History history, char turn){
+bool is_there_checkmate(square board[][BOARD_SIZE], History history, char turn){
 	if(can_king_move(board, history, turn))
 		return false;
 	else if(can_piece_cover_check(board, history, turn))
@@ -206,7 +206,7 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History history, move_co
 	return false;
 }
 
-bool has_stalemate(square board[][BOARD_SIZE], History history, char turn){
+bool is_there_stalemate(square board[][BOARD_SIZE], History history, char turn){
 	int i, j;
 
 	for(i = 0; i < BOARD_SIZE; i++){
@@ -256,7 +256,7 @@ bool is_there_threefold_repetition(History *history){
 
 bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 	int white_minor_pieces = 0, black_minor_pieces = 0, i, j;
-	bool white_has_sufficient_material = false, black_has_sufficient_material = false;
+	bool has_white_sufficient_material = false, has_black_sufficient_material = false;
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
@@ -269,25 +269,25 @@ bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 			         board[i][j].name == ROOK ||
 			         board[i][j].name == PAWN){
 				if(board[i][j].color == WHITE)
-					white_has_sufficient_material = true;
+					has_white_sufficient_material = true;
 				else
-					black_has_sufficient_material = true;
+					has_black_sufficient_material = true;
 			}
 		}
 	}
 
 	if(white_minor_pieces >= 2)
-		white_has_sufficient_material = true;
+		has_white_sufficient_material = true;
 	if(black_minor_pieces >= 2)
-		black_has_sufficient_material = true;
+		has_black_sufficient_material = true;
 
-	if(white_has_sufficient_material || black_has_sufficient_material)
+	if(has_white_sufficient_material || has_black_sufficient_material)
 		return false;
 
 	return true;
 }
 
-bool is_there_special_finals(square board[][BOARD_SIZE], History *history){
+bool is_there_special_final(square board[][BOARD_SIZE], History *history){
 	if(history->moves_counter == MAX_MOVES){
 		print_final_board(board, FIFTY_MOVES);
 		return true;

@@ -64,7 +64,7 @@ bool is_player_action_valid(char action, char turn){
 	return false;
 }
 
-bool has_player_action(char row, char column, char turn){
+bool is_there_player_action(char row, char column, char turn){
 	if(column == ':' && (row == 'r' || row == 'd'))
 		return is_player_action_valid(row, turn);
 		

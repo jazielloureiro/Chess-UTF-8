@@ -22,12 +22,12 @@ void play(){
 		is_check = is_player_king_in_check(board, &history, player_turn);
 
 		if(is_check){
-			if(has_checkmate(board, history, player_turn)){
+			if(is_there_checkmate(board, history, player_turn)){
 				print_final_board(board, player_turn);
 				return;
 			}
 		}else{
-			if(has_stalemate(board, history, player_turn)){
+			if(is_there_stalemate(board, history, player_turn)){
 				print_final_board(board, STALEMATE);
 				return;
 			}
@@ -40,9 +40,9 @@ void play(){
 
 			read_movement_input(&move_input);
 
-			if(has_player_action(move_input.from_row,
-			                     move_input.from_column,
-					     player_turn))
+			if(is_there_player_action(move_input.from_row,
+			                          move_input.from_column,
+					          player_turn))
 				return;
 		}while(!is_movement_valid(board, &history, &move_input, player_turn));
 
@@ -60,7 +60,7 @@ void play(){
 		update_history(board, &history, move_input);
 		
 		player_turn == WHITE? (player_turn = BLACK) : (player_turn = WHITE);
-	}while(!is_there_special_finals(board, &history));
+	}while(!is_there_special_final(board, &history));
 }
 
 void help(){
