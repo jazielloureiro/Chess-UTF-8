@@ -38,9 +38,9 @@ bool is_player_action_valid(char action, char turn){
 	char choose;
 	
 	if(action == 'r')
-		printf("Do you want to resign the game? [y/n] ");
+		printf("\nDo you want to resign the game? [y/n] ");
 	else
-		printf("The %s player offers a draw, does the %s player agree? [y/n] ",
+		printf("\nThe %s player offers a draw, does the %s player agree? [y/n] ",
 		       turn == WHITE? "White" : "Black",
 		       turn == WHITE? "Black" : "White");
 
@@ -64,9 +64,11 @@ bool is_player_action_valid(char action, char turn){
 	return false;
 }
 
-bool is_there_player_action(char row, char column, char turn){
-	if(column == ':' && (row == 'r' || row == 'd'))
-		return is_player_action_valid(row, turn);
+bool is_there_player_action(Player player){
+	if(player.move.from_column == ':' &&
+	   (player.move.from_row == 'r' ||
+	   player.move.from_row == 'd'))
+		return is_player_action_valid(player.move.from_row, player.turn);
 		
 	return false;
 }

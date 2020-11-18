@@ -40,9 +40,7 @@ void play(){
 
 			read_movement_input(&player.move);
 
-			if(is_there_player_action(player.move.from_row,
-			                          player.move.from_column,
-					          player.turn))
+			if(is_there_player_action(player))
 				return;
 		}while(!is_movement_valid(board, &history, &player));
 
