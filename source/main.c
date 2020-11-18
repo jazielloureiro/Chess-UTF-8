@@ -10,24 +10,24 @@
 void play(){
 	square board[BOARD_SIZE][BOARD_SIZE];
 	History history;
-	char player_turn = WHITE;
+	Player player;
 
 	init_board(board);
 	init_history(board, &history);
+	player.turn = WHITE;
 
 	do{
-		move_coordinates move_input;
 		bool is_check;
 
-		is_check = is_player_king_in_check(board, &history, player_turn);
+		is_check = is_player_king_in_check(board, &history, player.turn);
 
 		if(is_check){
-			if(is_there_checkmate(board, history, player_turn)){
-				print_final_board(board, player_turn);
+			if(is_there_checkmate(board, history, player.turn)){
+				print_final_board(board, player.turn);
 				return;
 			}
 		}else{
-			if(is_there_stalemate(board, history, player_turn)){
+			if(is_there_stalemate(board, history, player.turn)){
 				print_final_board(board, STALEMATE);
 				return;
 			}
@@ -35,31 +35,31 @@ void play(){
 
 		do{
 			clear_screen();
-			print_top_menu(player_turn, is_check);
+			print_top_menu(player.turn, is_check);
 			print_board(board);
 
-			read_movement_input(&move_input);
+			read_movement_input(&player.move);
 
-			if(is_there_player_action(move_input.from_row,
-			                          move_input.from_column,
-					          player_turn))
+			if(is_there_player_action(player.move.from_row,
+			                          player.move.from_column,
+					          player.turn))
 				return;
-		}while(!is_movement_valid(board, &history, &move_input, player_turn));
+		}while(!is_movement_valid(board, &history, &player.move, player.turn));
 
-		move_piece(board, move_input);
+		move_piece(board, player.move);
 
 		if(history.has_en_passant_occurred)
 			en_passant(board, history);
 
 		if(history.castle.has_occurred)
-			castle(board, move_input);
+			castle(board, player.move);
 
-		if(is_there_promotion(board, move_input))
-			promotion(&board[move_input.to_row][move_input.to_column], player_turn);
+		if(is_there_promotion(board, player.move))
+			promotion(&board[player.move.to_row][player.move.to_column], player.turn);
 
-		update_history(board, &history, move_input);
+		update_history(board, &history, player.move);
 		
-		player_turn == WHITE? (player_turn = BLACK) : (player_turn = WHITE);
+		player.turn == WHITE? (player.turn = BLACK) : (player.turn = WHITE);
 	}while(!is_there_special_final(board, &history));
 }
 

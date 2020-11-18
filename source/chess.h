@@ -42,6 +42,11 @@ typedef struct{
 	char to_row;
 	char to_column;
 } move_coordinates;
+
+typedef struct{
+	move_coordinates move;
+	char turn;
+} Player;
 	
 typedef struct{
 	square from;
