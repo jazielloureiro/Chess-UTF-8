@@ -63,35 +63,13 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 }
 
 bool is_bishop_movement_valid(move_coordinates move){
-	int i, j;
+	int diff_row, diff_column;
+	
+	diff_row    = abs(move.to_row    - move.from_row);
+	diff_column = abs(move.to_column - move.from_column);
 
-	// Verifying the top left diagonal
-	for(i = move.from_row - 1, j = move.from_column - 1;
-	    i >= 0 && j >= 0;
-	    i--, j--)
-		if(i == move.to_row && j == move.to_column)
-			return true;
-
-	// Verifying the top right diagonal
-	for(i = move.from_row - 1, j = move.from_column + 1;
-	    i >= 0 && j <= 7;
-	    i--, j++)
-		if(i == move.to_row && j == move.to_column)
-			return true;
-
-	// Verifying the bottom left diagonal
-	for(i = move.from_row + 1, j = move.from_column - 1;
-	    i <= 7 && j >= 0;
-	    i++, j--)
-		if(i == move.to_row && j == move.to_column)
-			return true;
-
-	// Verifying the bottom right diagonal
-	for(i = move.from_row + 1, j = move.from_column + 1;
-	    i <= 7 && i <= 7;
-	    i++, j++)
-		if(i == move.to_row && j == move.to_column)
-			return true;
+	if(diff_row == diff_column)
+		return true;
 
 	return false;
 }
@@ -243,9 +221,9 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 }
 
 bool is_queen_movement_valid(move_coordinates move){
-	if(is_rook_movement_valid(move))
-		return true;
 	if(is_bishop_movement_valid(move))
+		return true;
+	if(is_rook_movement_valid(move))
 		return true;
 		
 	return false;
