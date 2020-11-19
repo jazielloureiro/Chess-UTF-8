@@ -142,15 +142,8 @@ bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char tur
 
 	if(board[*i][*j].name != KNIGHT){
 		do{
-			if(*i < history.check.to_row)
-				(*i)++;
-			else if(*i > history.check.to_row)
-				(*i)--;
-			
-			if(*j < history.check.to_column)
-				(*j)++;
-			else if(*j > history.check.to_column)
-				(*j)--;
+			advance_to(i, history.check.to_row);
+			advance_to(j, history.check.to_column);
 			
 			if((*i) != history.check.to_row || (*j) != history.check.to_column)
 				if(can_attacking_piece_be_captured(board, history, turn))

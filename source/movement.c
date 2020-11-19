@@ -121,10 +121,7 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 		return false;
 
 	do{
-		if(player.move.from_column < player.move.to_column)
-			player.move.from_column++;
-		else
-			player.move.from_column--;
+		advance_to(&player.move.from_column, player.move.to_column);
 
 		if(will_king_be_in_check(board, *history, player))
 			return false;
@@ -269,18 +266,11 @@ bool is_rook_movement_valid(move_coordinates move){
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
 	if(board[move.from_row][move.from_column].name != KNIGHT){
-		int i = move.from_row, j = move.from_column;
+		char i = move.from_row, j = move.from_column;
 		
 		do{
-			if(i < move.to_row)
-				i++;
-			else if(i > move.to_row)
-				i--;
-			
-			if(j < move.to_column)
-				j++;
-			else if(j > move.to_column)
-				j--;
+			advance_to(&i, move.to_row);
+			advance_to(&j, move.to_column);
 			
 			if(board[i][j].name != NO_PIECE && (i != move.to_row || j != move.to_column))
 				return true;

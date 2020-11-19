@@ -359,3 +359,10 @@ void castle(square board[][BOARD_SIZE], move_coordinates move){
 
 	move_piece(board, rook);
 }
+
+void advance_to(char *start, char end){
+	if(*start < end)
+		(*start)++;
+	else if(*start > end)
+		(*start)--;
+}

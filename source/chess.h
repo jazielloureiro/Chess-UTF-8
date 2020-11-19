@@ -96,5 +96,6 @@ void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squar
 void en_passant(square board[][BOARD_SIZE], History history);
 void find_castle_rook(move_coordinates move, move_coordinates *rook);
 void castle(square board[][BOARD_SIZE], move_coordinates move);
+void advance_to(char *start, char end);
 
 #endif
