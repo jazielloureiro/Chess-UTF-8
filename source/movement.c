@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "aux.h"
@@ -171,17 +172,11 @@ bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player
 bool is_knight_movement_valid(move_coordinates move){
 	int diff_row, diff_column;
 	
-	diff_row    = move.to_row    - move.from_row;
-	diff_column = move.to_column - move.from_column;
+	diff_row    = abs(move.to_row    - move.from_row);
+	diff_column = abs(move.to_column - move.from_column);
 
-	if(diff_row == 2  && diff_column == 1  ||
-	   diff_row == 2  && diff_column == -1 ||
-	   diff_row == -2 && diff_column == 1  ||
-	   diff_row == -2 && diff_column == -1 ||
-	   diff_row == 1  && diff_column == 2  ||
-	   diff_row == 1  && diff_column == -2 ||
-	   diff_row == -1 && diff_column == 2  ||
-	   diff_row == -1 && diff_column == -2)
+	if(diff_row == 2 && diff_column == 1 ||
+	   diff_row == 1 && diff_column == 2)
 		return true;
 
 	return false;
