@@ -28,31 +28,7 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 	}
 
 	if(history.castle.has_occurred){
-		if(player.move.to_row == 0){
-			if(player.move.to_column == 2){
-				aux_move.from_row = 0;
-				aux_move.from_column = 0;
-				aux_move.to_row = 0;
-				aux_move.to_column = 3;
-			}else{
-				aux_move.from_row = 0;
-				aux_move.from_column = 7;
-				aux_move.to_row = 0;
-				aux_move.to_column = 5;
-			}
-		}else{
-			if(player.move.to_column == 2){
-				aux_move.from_row = 7;
-				aux_move.from_column = 0;
-				aux_move.to_row = 7;
-				aux_move.to_column = 3;
-			}else{
-				aux_move.from_row = 7;
-				aux_move.from_column = 7;
-				aux_move.to_row = 7;
-				aux_move.to_column = 5;
-			}
-		}
+		find_castle_rook(player.move, &aux_move);
 
 		save_move_squares(board, &aux_squares, aux_move);
 

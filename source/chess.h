@@ -94,6 +94,7 @@ int count_pieces(square board[][BOARD_SIZE]);
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input);
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input);
 void en_passant(square board[][BOARD_SIZE], History history);
+void find_castle_rook(move_coordinates move, move_coordinates *rook);
 void castle(square board[][BOARD_SIZE], move_coordinates move);
 
 #endif

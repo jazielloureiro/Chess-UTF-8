@@ -326,34 +326,36 @@ void en_passant(square board[][BOARD_SIZE], History history){
 	move_piece(board, move);
 }
 
+void find_castle_rook(move_coordinates move, move_coordinates *rook){
+	if(move.to_row == 0){
+		rook->from_row = 0;
+		rook->to_row = 0;
+
+		if(move.to_column == 2){
+			rook->from_column = 0;
+			rook->to_column = 3;
+		}else{
+			rook->from_column = 7;
+			rook->to_column = 5;
+		}
+	}else{
+		rook->from_row = 7;
+		rook->to_row = 7;
+
+		if(move.to_column == 2){
+			rook->from_column = 0;
+			rook->to_column = 3;
+		}else{
+			rook->from_column = 7;
+			rook->to_column = 5;
+		}
+	}
+}
+
 void castle(square board[][BOARD_SIZE], move_coordinates move){
 	move_coordinates rook;
 
-	if(move.to_row == 0){
-		if(move.to_column == 2){
-			rook.from_row = 0;
-			rook.from_column = 0;
-			rook.to_row = 0;
-			rook.to_column = 3;
-		}else{
-			rook.from_row = 0;
-			rook.from_column = 7;
-			rook.to_row = 0;
-			rook.to_column = 5;
-		}
-	}else{
-		if(move.to_column == 2){
-			rook.from_row = 7;
-			rook.from_column = 0;
-			rook.to_row = 7;
-			rook.to_column = 3;
-		}else{
-			rook.from_row = 7;
-			rook.from_column = 7;
-			rook.to_row = 7;
-			rook.to_column = 5;
-		}
-	}
+	find_castle_rook(move, &rook);
 
 	move_piece(board, rook);
 }
