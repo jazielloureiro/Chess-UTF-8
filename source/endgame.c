@@ -207,7 +207,7 @@ bool is_there_stalemate(square board[][BOARD_SIZE], History history, char turn){
 }
 
 bool is_there_threefold_repetition(History *history){
-	square_hist *current_state = history->sqr_hist[history->moves_counter - 1];
+	square_hist *current_state = history->board[history->moves_counter - 1];
 	int repetition_counter, i;
 
 	for(repetition_counter = 1, i = 0; i < history->moves_counter - 1; i++){
@@ -215,10 +215,10 @@ bool is_there_threefold_repetition(History *history){
 		int j;
 
 		for(is_different = false, j = 0; j < history->pieces_counter; j++){
-			if(current_state[j].name   != history->sqr_hist[i][j].name ||
-			   current_state[j].color  != history->sqr_hist[i][j].color ||
-			   current_state[j].row    != history->sqr_hist[i][j].row ||
-			   current_state[j].column != history->sqr_hist[i][j].column){
+			if(current_state[j].name   != history->board[i][j].name ||
+			   current_state[j].color  != history->board[i][j].color ||
+			   current_state[j].row    != history->board[i][j].row ||
+			   current_state[j].column != history->board[i][j].column){
 				is_different = true;
 				break;
 			}

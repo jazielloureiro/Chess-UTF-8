@@ -71,7 +71,7 @@ typedef struct{
 } castle_pieces_history;
 
 typedef struct{
-	square_hist sqr_hist[MAX_MOVES][MAX_PIECES];
+	square_hist board[MAX_MOVES][MAX_PIECES];
 	int pieces_counter;
 	int moves_counter;
 	move_coordinates check;

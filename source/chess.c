@@ -108,9 +108,9 @@ bool has_pawn_moved(History history, move_coordinates move){
 	for(i = 0, last_board = history.moves_counter - 1;
 	    i < history.pieces_counter;
 	    i++){
-		if(history.sqr_hist[last_board][i].row    == move.from_row &&
-		   history.sqr_hist[last_board][i].column == move.from_column){
-			if(history.sqr_hist[last_board][i].name == PAWN)
+		if(history.board[last_board][i].row    == move.from_row &&
+		   history.board[last_board][i].column == move.from_column){
+			if(history.board[last_board][i].name == PAWN)
 				return true;
 			else
 				break;
@@ -272,10 +272,10 @@ void get_current_board(square board[][BOARD_SIZE], History *history){
 	for(i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].name != NO_PIECE){
-				history->sqr_hist[*move][sqr_counter].name = board[i][j].name;
-				history->sqr_hist[*move][sqr_counter].color = board[i][j].color;
-				history->sqr_hist[*move][sqr_counter].row = i;
-				history->sqr_hist[*move][sqr_counter].column = j;
+				history->board[*move][sqr_counter].name = board[i][j].name;
+				history->board[*move][sqr_counter].color = board[i][j].color;
+				history->board[*move][sqr_counter].row = i;
+				history->board[*move][sqr_counter].column = j;
 				sqr_counter++;
 			}
 		}
