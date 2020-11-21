@@ -74,10 +74,7 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 
 				if(is_piece_movement_compatible(board, history, opponent) &&
 				   !is_jump_other_pieces(board, opponent.move)){
-					history->check.from_row = i;
-					history->check.from_column = j;
-					history->check.to_row = opponent.move.to_row;
-					history->check.to_column = opponent.move.to_column;
+					copy_move_coordinates(&history->check, opponent.move);
 					
 				   	return true;
 				}

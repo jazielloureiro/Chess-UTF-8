@@ -140,11 +140,11 @@ void update_castle_history(square board[][BOARD_SIZE], History *history, move_co
 	history->castle.has_occurred = false;
 }
 
-void update_last_input(move_coordinates *last_input, move_coordinates move){
-	last_input->from_row    = move.from_row;
-	last_input->from_column = move.from_column;
-	last_input->to_row      = move.to_row;
-	last_input->to_column   = move.to_column;
+void copy_move_coordinates(move_coordinates *to, move_coordinates from){
+	to->from_row    = from.from_row;
+	to->from_column = from.from_column;
+	to->to_row      = from.to_row;
+	to->to_column   = from.to_column;
 }
 
 void update_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
@@ -158,7 +158,7 @@ void update_history(square board[][BOARD_SIZE], History *history, move_coordinat
 
 	update_castle_history(board, history, move);
 
-	update_last_input(&history->last_input, move);
+	copy_move_coordinates(&history->last_input, move);
 
 	history->has_en_passant_occurred = false;
 }
