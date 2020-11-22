@@ -39,10 +39,8 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 	return_move_squares(board, move_squares, player.move);
 
-	if(history.has_en_passant_occurred)
-		return_move_squares(board, aux_squares, aux_move);
-
-	if(history.castle.has_occurred)
+	if(history.castle.has_occurred ||
+	   history.has_en_passant_occurred)
 		return_move_squares(board, aux_squares, aux_move);
 
 	return is_check;
