@@ -109,15 +109,15 @@ void print_final_board(square board[][BOARD_SIZE], char final){
 }
 
 void print_top_menu(char turn, bool check){
-	putchar('\n');
-
 	if(check){
-		printf("\t  ┌───────────────┐   ┌───────────┐\n");
-		printf("\t  │ %s to move │   │   Check   │\n", (turn == WHITE? "White" : "Black"));
-		printf("\t  └───────────────┘   └───────────┘\n");
+		printf("\n\t  ┌───────────────┐   ┌───────────┐\n"
+		       "\t  │ %s to move │   │   Check   │\n"
+		       "\t  └───────────────┘   └───────────┘\n",
+		       (turn == WHITE? "White" : "Black"));
 	}else{
-		printf("\t\t  ┌───────────────┐\n");
-		printf("\t\t  │ %s to move │\n", (turn == WHITE? "White" : "Black"));
-		printf("\t\t  └───────────────┘\n");
+		printf("\n\t\t  ┌───────────────┐\n"
+		       "\t\t  │ %s to move │\n"
+		       "\t\t  └───────────────┘\n",
+		       (turn == WHITE? "White" : "Black"));
 	}
 }
