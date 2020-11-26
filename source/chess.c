@@ -214,17 +214,6 @@ void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squar
 	board[move.to_row][move.to_column].color  = move_squares.to.color;
 }
 
-void en_passant(square board[][BOARD_SIZE], History history){
-	move_coordinates move;
-
-	move.from_row = history.last_input.to_row;
-	move.from_column = history.last_input.to_column;
-	move.to_row = history.last_input.to_row;
-	move.to_column = history.last_input.to_column;
-
-	move_piece(board, move);
-}
-
 void find_castle_rook(move_coordinates move, move_coordinates *rook){
 	if(move.to_row == 0){
 		rook->from_row = 0;

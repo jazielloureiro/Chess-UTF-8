@@ -16,25 +16,18 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 	move_piece(board, player.move);
 
-	if(history.has_en_passant_occurred){
-		aux_move.from_row = history.last_input.to_row;
-		aux_move.from_column = history.last_input.to_column;
-		aux_move.to_row = history.last_input.to_row;
-		aux_move.to_column = history.last_input.to_column;
-
-		save_move_squares(board, &aux_squares, aux_move);
-
-		en_passant(board, history);
-	}
-
-	if(history.castle.has_occurred){
-		find_castle_rook(player.move, &aux_move);
+	if(history.castle.has_occurred ||
+	   history.has_en_passant_occurred){
+		if(history.castle.has_occurred)
+			find_castle_rook(player.move, &aux_move);
+		else
+			copy_move_coordinates(&aux_move, history.last_input);
 
 		save_move_squares(board, &aux_squares, aux_move);
 
 		move_piece(board, aux_move);
 	}
-			
+
 	is_check = is_player_king_in_check(board, &history, player.turn);
 
 	return_move_squares(board, move_squares, player.move);

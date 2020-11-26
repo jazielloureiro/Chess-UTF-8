@@ -46,11 +46,11 @@ void play(){
 
 		move_piece(board, player.move);
 
-		if(history.has_en_passant_occurred)
-			en_passant(board, history);
-
 		if(history.castle.has_occurred)
 			castle(board, player.move);
+
+		if(history.has_en_passant_occurred)
+			move_piece(board, history.last_input);
 
 		if(is_there_promotion(board, player.move))
 			promotion(&board[player.move.to_row][player.move.to_column], player.turn);
