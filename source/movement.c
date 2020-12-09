@@ -10,6 +10,9 @@
 #include "movement.h"
 
 bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *player){
+	if(player->move.from_column == ':')
+		return false;
+
 	convert_movement_input(&player->move);
 
 	if(!is_the_squares_valid(&player->move)){

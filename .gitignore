@@ -2,6 +2,7 @@
 a.out
 *.exe
 *.bat
+*.swp
 .objects
 chess
 input
