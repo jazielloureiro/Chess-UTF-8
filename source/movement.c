@@ -88,11 +88,11 @@ bool is_king_movement_valid(move_coordinates move){
 	return false;
 }
 
-bool are_there_pieces_between(square board[][BOARD_SIZE], int start, int end, int row){
-	int i;
+bool are_there_pieces_between(square row[], char start, char end){
+	char i = start;
 
-	for(i = start + 1; i < end; i++)
-		if(board[row][i].name != NO_PIECE)
+	for(advance_to(&i, end); i != end; advance_to(&i, end))
+		if(row[i].name != NO_PIECE)
 			return true;
 
 	return false;
@@ -113,38 +113,40 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 }
 
 bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player){
+	const int king_column = 4;
+	int row, rook_column;
+	bool is_valid = true;
+
 	if(player.turn == WHITE &&
 	   !history->castle.has_white_king_moved &&
 	   player.move.to_row == 7){
-		if(!history->castle.has_left_white_rook_moved && player.move.to_column == 2){
-			if(!are_there_pieces_between(board, 0, player.move.from_column, 7) &&
-			   is_king_safe(board, history, player)){
-			   	history->castle.has_occurred = true;
-				return true;
-			}
-		}else if(!history->castle.has_right_white_rook_moved && player.move.to_column == 6){
-			if(!are_there_pieces_between(board, player.move.from_column, 7, 7) &&
-			   is_king_safe(board, history, player)){
-			   	history->castle.has_occurred = true;
-				return true;
-			}
-		}
+		row = 7;
+
+		if(!history->castle.has_left_white_rook_moved && player.move.to_column == 2)
+			rook_column = 0;
+		else if(!history->castle.has_right_white_rook_moved && player.move.to_column == 6)
+			rook_column = 7;
+		else
+			is_valid = false;
 	}else if(player.turn == BLACK &&
 	         !history->castle.has_black_king_moved &&
 	         player.move.to_row == 0){
-		if(!history->castle.has_left_black_rook_moved && player.move.to_column == 2){
-			if(!are_there_pieces_between(board, 0, player.move.from_column, 0) &&
-			   is_king_safe(board, history, player)){
-			   	history->castle.has_occurred = true;
-				return true;
-			}
-		}else if(!history->castle.has_right_black_rook_moved && player.move.to_column == 6){
-			if(!are_there_pieces_between(board, player.move.from_column, 7, 0) &&
-			   is_king_safe(board, history, player)){
-			   	history->castle.has_occurred = true;
-				return true;
-			}
-		}
+		row = 0;
+
+		if(!history->castle.has_left_black_rook_moved && player.move.to_column == 2)
+			rook_column = 0;
+		else if(!history->castle.has_right_black_rook_moved && player.move.to_column == 6)
+			rook_column = 7;
+		else
+			is_valid = false;
+	}else
+		is_valid = false;
+
+	if(is_valid &&
+	   !are_there_pieces_between(board[row], king_column, rook_column) &&
+	   is_king_safe(board, history, player)){
+	   	history->castle.has_occurred = true;
+		return true;
 	}
 
 	return false;

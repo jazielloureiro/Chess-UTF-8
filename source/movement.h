@@ -5,7 +5,7 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *pla
 bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, Player player);
 bool is_bishop_movement_valid(move_coordinates move);
 bool is_king_movement_valid(move_coordinates move);
-bool are_there_pieces_between(square board[][BOARD_SIZE], int start, int end, int row);
+bool are_there_pieces_between(square row[], char start, char end);
 bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player);
 bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player);
 bool is_knight_movement_valid(move_coordinates move);
