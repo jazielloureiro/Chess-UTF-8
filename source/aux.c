@@ -12,7 +12,11 @@ void clear_input_buffer(){
 }
 
 void clear_screen(){
-	system("clear");
+	#if defined(_WIN32)
+		system("cls");
+	#else
+		system("clear");
+	#endif
 }
 
 void pause_screen(){
