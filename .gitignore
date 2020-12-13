@@ -1,4 +1,3 @@
-
 a.out
 *.exe
 *.bat
@@ -6,3 +5,4 @@ a.out
 .objects
 chess
 input
+tests
