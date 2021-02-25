@@ -2,6 +2,8 @@
 
 Chess game using UTF-8 characters.
 
+![gameplay](https://i.ibb.co/MgnxS1n/chess.gif)
+
 ## Install
 
 1. Clone this repository:
