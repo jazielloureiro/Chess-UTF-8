@@ -66,26 +66,15 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 }
 
 bool is_bishop_movement_valid(move_coordinates move){
-	int diff_row, diff_column;
-	
-	diff_row    = abs(move.to_row    - move.from_row);
-	diff_column = abs(move.to_column - move.from_column);
-
-	if(diff_row == diff_column)
-		return true;
-
-	return false;
+	return abs(move.to_row - move.from_row) ==
+	       abs(move.to_column - move.from_column);
 }
 
 bool is_king_movement_valid(move_coordinates move){
-	int i, j;
-
-	for(i = move.from_row - 1; i <= move.from_row + 1; i++)
-		for(j = move.from_column - 1; j <= move.from_column + 1; j++)
-			if(i == move.to_row && j == move.to_column)
-				return true;
-
-	return false;
+	return move.from_row - 1 <= move.to_row &&
+	       move.from_row + 1 >= move.to_row &&
+	       move.from_column - 1 <= move.to_column &&
+	       move.from_column + 1 >= move.to_column;
 }
 
 bool are_there_pieces_between(square row[], char start, char end){
@@ -153,16 +142,11 @@ bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player
 }
 
 bool is_knight_movement_valid(move_coordinates move){
-	int diff_row, diff_column;
-	
-	diff_row    = abs(move.to_row    - move.from_row);
-	diff_column = abs(move.to_column - move.from_column);
+	int diff_row = abs(move.to_row - move.from_row),
+	    diff_column = abs(move.to_column - move.from_column);
 
-	if(diff_row == 2 && diff_column == 1 ||
-	   diff_row == 1 && diff_column == 2)
-		return true;
-
-	return false;
+	return diff_row == 2 && diff_column == 1 ||
+	       diff_row == 1 && diff_column == 2;
 }
 
 bool is_pawn_movement_valid(Player player){
@@ -174,15 +158,9 @@ bool is_pawn_movement_valid(Player player){
 		   player.move.from_column == player.move.to_column)
 		   	return true;
 			
-	if(player.move.from_row + advance1Square == player.move.to_row){
-		int j;
-
-		for(j = player.move.from_column - 1;
-		    j <= player.move.from_column + 1;
-		    j++)
-			if(j == player.move.to_column)
-		    		return true;
-	}
+	if(player.move.from_row + advance1Square == player.move.to_row)
+		return player.move.from_column - 1 <= player.move.to_column &&
+		       player.move.from_column + 1 >= player.move.to_column;
 	
 	return false;
 }
@@ -226,20 +204,13 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 }
 
 bool is_queen_movement_valid(move_coordinates move){
-	if(is_bishop_movement_valid(move))
-		return true;
-	if(is_rook_movement_valid(move))
-		return true;
-		
-	return false;
+	return is_bishop_movement_valid(move) ||
+	       is_rook_movement_valid(move);
 }
 
 bool is_rook_movement_valid(move_coordinates move){
-	if(move.from_row    == move.to_row ||
-	   move.from_column == move.to_column)
-		return true;
-
-	return false;
+	return move.from_row == move.to_row ||
+	       move.from_column == move.to_column;
 }
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
