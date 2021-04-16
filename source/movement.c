@@ -159,7 +159,7 @@ bool is_pawn_movement_valid(Player player){
 	       player.move.from_column + 1 >= player.move.to_column ||
 	       player.move.from_row == ORIGIN_ROW &&
 	       player.move.from_row + TWO_SQUARES == player.move.to_row &&
-		   player.move.from_column == player.move.to_column;
+	       player.move.from_column == player.move.to_column;
 }
 
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
@@ -214,13 +214,11 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
 	if(board[move.from_row][move.from_column].name != KNIGHT){
 		char i = move.from_row, j = move.from_column;
 		
-		do{
-			advance_to(&i, move.to_row);
-			advance_to(&j, move.to_column);
-			
-			if(board[i][j].name != NO_PIECE && (i != move.to_row || j != move.to_column))
+		for(advance_to(&i, move.to_row), advance_to(&j, move.to_column);
+		    i != move.to_row || j != move.to_column;
+			advance_to(&i, move.to_row), advance_to(&j, move.to_column))
+			if(board[i][j].name != NO_PIECE)
 				return true;
-		}while(i != move.to_row || j != move.to_column);
 	}
 	
 	return false;
