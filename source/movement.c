@@ -150,19 +150,16 @@ bool is_knight_movement_valid(move_coordinates move){
 }
 
 bool is_pawn_movement_valid(Player player){
-	int advance2Squares = (player.turn == WHITE? -2 : 2),
-	    advance1Square  = (player.turn == WHITE? -1 : 1);
+	const int ORIGIN_ROW = (player.turn == WHITE? 6 : 1),
+	          TWO_SQUARES = (player.turn == WHITE? -2 : 2),
+	          ONE_SQUARE = (player.turn == WHITE? -1 : 1);
 
-	if(player.move.from_row == 6 || player.move.from_row == 1)
-		if(player.move.from_row + advance2Squares == player.move.to_row &&
-		   player.move.from_column == player.move.to_column)
-		   	return true;
-			
-	if(player.move.from_row + advance1Square == player.move.to_row)
-		return player.move.from_column - 1 <= player.move.to_column &&
-		       player.move.from_column + 1 >= player.move.to_column;
-	
-	return false;
+	return player.move.from_row + ONE_SQUARE == player.move.to_row &&
+	       player.move.from_column - 1 <= player.move.to_column &&
+	       player.move.from_column + 1 >= player.move.to_column ||
+	       player.move.from_row == ORIGIN_ROW &&
+	       player.move.from_row + TWO_SQUARES == player.move.to_row &&
+		   player.move.from_column == player.move.to_column;
 }
 
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
