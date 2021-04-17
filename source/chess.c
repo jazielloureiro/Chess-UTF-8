@@ -201,3 +201,11 @@ void advance_to(char *from, char to){
 	else if(*from > to)
 		(*from)--;
 }
+
+void free_history(h_board *aux){
+	if(aux != NULL){
+		free_history(aux->prev);
+		free(aux->pieces);
+		free(aux);
+	}
+}

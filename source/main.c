@@ -24,12 +24,12 @@ void play(){
 		if(is_check){
 			if(is_there_checkmate(board, history, player.turn)){
 				print_final_board(board, player.turn);
-				return;
+				break;
 			}
 		}else{
 			if(is_there_stalemate(board, history, player.turn)){
 				print_final_board(board, STALEMATE);
-				return;
+				break;
 			}
 		}
 
@@ -40,8 +40,10 @@ void play(){
 
 			read_movement_input(&player.move);
 
-			if(is_there_player_action(player))
+			if(is_there_player_action(player)){
+				free_history(history.board);
 				return;
+			}
 		}while(!is_movement_valid(board, &history, &player));
 
 		update_history(board, &history, player);
@@ -63,6 +65,8 @@ void play(){
 
 		player.turn == WHITE? (player.turn = BLACK) : (player.turn = WHITE);
 	}while(!is_there_special_final(board, &history));
+
+	free_history(history.board);
 }
 
 void help(){
