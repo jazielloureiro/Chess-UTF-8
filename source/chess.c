@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "aux.h"
@@ -86,112 +87,56 @@ void init_board(square board[][BOARD_SIZE]){
 	board[7][7].name = ROOK;
 }
 
-void init_history(square board[][BOARD_SIZE], History *history){
+void init_history(History *history){
+	history->board = NULL;
+
 	history->moves_counter = 0;
-	history->pieces_counter = MAX_PIECES;
-	get_current_board(board, history);
-
-	history->castle.has_left_black_rook_moved = false;
-	history->castle.has_right_black_rook_moved = false;
-	history->castle.has_black_king_moved = false;
-	history->castle.has_left_white_rook_moved = false;
-	history->castle.has_right_white_rook_moved = false;
-	history->castle.has_white_king_moved = false;
-	history->castle.has_occurred = false;
-
-	history->has_en_passant_occurred = false;
 }
 
-bool has_pawn_moved(History history, move_coordinates move){
-	int i, last_board;
-
-	for(i = 0, last_board = history.moves_counter - 1;
-	    i < history.pieces_counter;
-	    i++){
-		if(history.board[last_board][i].row    == move.from_row &&
-		   history.board[last_board][i].column == move.from_column){
-			if(history.board[last_board][i].name == PAWN)
-				return true;
-			else
-				break;
-		}
-	}
-
-	return false;
-}
-
-void update_castle_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
-	if(board[move.to_row][move.to_column].name == KING){
-		if(move.from_row == 0 && move.from_column == 4)
-			history->castle.has_black_king_moved = true;
-		else if(move.from_row == 7 && move.from_column == 4)
-			history->castle.has_white_king_moved = true;
-	}else if(board[move.to_row][move.to_column].name == ROOK){
-		if(move.from_row == 0 && move.from_column == 0)
-			history->castle.has_left_black_rook_moved = true;
-		else if(move.from_row == 0 && move.from_column == 7)
-			history->castle.has_right_black_rook_moved = true;
-		else if(move.from_row == 7 && move.from_column == 0)
-			history->castle.has_left_white_rook_moved = true;
-		else if(move.from_row == 7 && move.from_column == 7)
-			history->castle.has_right_white_rook_moved = true;
-	}
-
-	history->castle.has_occurred = false;
-}
-
-void copy_move_coordinates(move_coordinates *to, move_coordinates from){
-	to->from_row    = from.from_row;
-	to->from_column = from.from_column;
-	to->to_row      = from.to_row;
-	to->to_column   = from.to_column;
-}
-
-void update_history(square board[][BOARD_SIZE], History *history, move_coordinates move){
-	if(count_pieces(board) < history->pieces_counter){
-		history->pieces_counter--;
-		history->moves_counter = 0;
-	}else if(has_pawn_moved(*history, move))
+void update_history(square board[][BOARD_SIZE], History *history, Player player){
+	if(board[player.move.from_row][player.move.from_column].name == PAWN ||
+	   board[player.move.to_row][player.move.to_column].name != NO_PIECE)
 		history->moves_counter = 0;
 
 	get_current_board(board, history);
 
-	update_castle_history(board, history, move);
+	history->board->player = player;
 
-	copy_move_coordinates(&history->last_input, move);
-
-	history->has_en_passant_occurred = false;
+	history->moves_counter++;
 }
 
 void get_current_board(square board[][BOARD_SIZE], History *history){
-	int i, j, sqr_counter, *move;
+	h_board *Hboard = malloc(sizeof(h_board));
 
-	move = &history->moves_counter;
+	Hboard->pieces_qty = count_pieces(board);
 
-	for(i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	Hboard->pieces = malloc(sizeof(h_square) * Hboard->pieces_qty);
+
+	for(int i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].name != NO_PIECE){
-				history->board[*move][sqr_counter].name = board[i][j].name;
-				history->board[*move][sqr_counter].color = board[i][j].color;
-				history->board[*move][sqr_counter].row = i;
-				history->board[*move][sqr_counter].column = j;
+				Hboard->pieces[sqr_counter].name = board[i][j].name;
+				Hboard->pieces[sqr_counter].color = board[i][j].color;
+				Hboard->pieces[sqr_counter].row = i;
+				Hboard->pieces[sqr_counter].column = j;
 				sqr_counter++;
 			}
 		}
 	}
 
-	(*move)++;
+	Hboard->prev = history->board;
+	history->board = Hboard;
 }
 
 int count_pieces(square board[][BOARD_SIZE]){
-	int i, j, pieces_amount;
+	int pieces_qty = 0;
 
-	for(i = 0, pieces_amount = 0; i < BOARD_SIZE; i++)
-		for(j = 0; j < BOARD_SIZE; j++)
+	for(int i = 0; i < BOARD_SIZE; i++)
+		for(int j = 0; j < BOARD_SIZE; j++)
 			if(board[i][j].name != NO_PIECE)
-				pieces_amount++;
+				pieces_qty++;
 	
-	return pieces_amount;
+	return pieces_qty;
 }
 
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move){

@@ -45,8 +45,12 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 		case KING:{
 			bool is_valid = is_king_movement_valid(player.move);
 
-			if(!is_valid)
+			if(!is_valid){
 				is_valid = is_castle_valid(board, history, player);
+
+				if(is_valid)
+					history->has_castle_occurred = true;
+			}
 
 			return is_valid;
 		}case KNIGHT:
@@ -108,6 +112,35 @@ bool is_rook_movement_valid(move_coordinates move){
 	       move.from_column == move.to_column;
 }
 
+bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player){
+	const int START_ROW = (player.turn == WHITE? 7 : 0);
+	const int START_KING_COL = 4;
+	const int START_ROOK_COL = (START_KING_COL - 2 == player.move.to_column? 0 : 7);
+
+	if(START_ROW != player.move.from_row ||
+	   START_ROW != player.move.to_row ||
+	   START_KING_COL != player.move.from_column ||
+	   START_KING_COL - 2 != player.move.to_column &&
+	   START_KING_COL + 2 != player.move.to_column)
+		return false;
+
+	return !has_castle_pieces_moved(history, START_ROW, START_KING_COL) &&
+	       !are_there_pieces_between(board[START_ROW], START_KING_COL, START_ROOK_COL) &&
+	       is_king_safe(board, history, player);
+}
+
+bool has_castle_pieces_moved(History *history, int row, int rook_col){
+	const int KING_COL = 4;
+
+	for(h_board *aux = history->board; aux != NULL; aux = aux->prev)
+		if((aux->player.move.from_column == KING_COL ||
+		   aux->player.move.from_column == rook_col) &&
+		   aux->player.move.from_row == row)
+			return true;
+
+	return false;
+}
+
 bool are_there_pieces_between(square row[], char start, char end){
 	char i = start;
 
@@ -132,66 +165,19 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 	return true;
 }
 
-bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player){
-	const int king_column = 4;
-	int row, rook_column;
-	bool is_valid = true;
-
-	if(player.turn == WHITE &&
-	   !history->castle.has_white_king_moved &&
-	   player.move.to_row == 7){
-		row = 7;
-
-		if(!history->castle.has_left_white_rook_moved && player.move.to_column == 2)
-			rook_column = 0;
-		else if(!history->castle.has_right_white_rook_moved && player.move.to_column == 6)
-			rook_column = 7;
-		else
-			is_valid = false;
-	}else if(player.turn == BLACK &&
-	         !history->castle.has_black_king_moved &&
-	         player.move.to_row == 0){
-		row = 0;
-
-		if(!history->castle.has_left_black_rook_moved && player.move.to_column == 2)
-			rook_column = 0;
-		else if(!history->castle.has_right_black_rook_moved && player.move.to_column == 6)
-			rook_column = 7;
-		else
-			is_valid = false;
-	}else
-		is_valid = false;
-
-	if(is_valid &&
-	   !are_there_pieces_between(board[row], king_column, rook_column) &&
-	   is_king_safe(board, history, player)){
-	   	history->castle.has_occurred = true;
-		return true;
-	}
-
-	return false;
-}
-
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
-	if(move.from_column == move.to_column &&
-	   board[move.to_row][move.to_column].name == NO_PIECE)
-		return true;
-
-	if(move.from_column != move.to_column &&
-	   board[move.to_row][move.to_column].name != NO_PIECE)
-	   	return true;
-
-	if(is_en_passant_valid(board, history, move))
-		return true;
-
-	return false;
+	return move.from_column == move.to_column &&
+	       board[move.to_row][move.to_column].name == NO_PIECE ||
+	       move.from_column != move.to_column &&
+	       board[move.to_row][move.to_column].name != NO_PIECE ||
+	       is_en_passant_valid(board, history, move);
 }
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
-	int from_row = history->last_input.from_row,
-	    from_column = history->last_input.from_column,
-	    to_row = history->last_input.to_row,
-	    to_column = history->last_input.to_column,
+	int from_row = history->board->player.move.from_row,
+	    from_column = history->board->player.move.from_column,
+	    to_row = history->board->player.move.to_row,
+	    to_column = history->board->player.move.to_column,
 	    advance2Squares = (board[move.from_row][move.from_column].color == WHITE? 2 : -2),
 	    origin_row = (board[move.from_row][move.from_column].color == WHITE? 1 : 6);
 

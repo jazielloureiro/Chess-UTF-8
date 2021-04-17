@@ -16,12 +16,12 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 	move_piece(board, player.move);
 
-	if(history.castle.has_occurred ||
+	if(history.has_castle_occurred ||
 	   history.has_en_passant_occurred){
-		if(history.castle.has_occurred)
+		if(history.has_castle_occurred)
 			find_castle_rook(player.move, &aux_move);
 		else
-			copy_move_coordinates(&aux_move, history.last_input);
+			aux_move = history.board->player.move;
 
 		save_move_squares(board, &aux_squares, aux_move);
 
@@ -32,7 +32,7 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 	return_move_squares(board, move_squares, player.move);
 
-	if(history.castle.has_occurred ||
+	if(history.has_castle_occurred ||
 	   history.has_en_passant_occurred)
 		return_move_squares(board, aux_squares, aux_move);
 
@@ -41,13 +41,12 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char turn){
 	Player opponent;
-	int i, j;
 
 	opponent.turn = (turn == WHITE? BLACK : WHITE);
 	
 	// Searching where the king is
-	for(i = 0; i < BOARD_SIZE; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	for(int i = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].name == KING && board[i][j].color == turn){
 				opponent.move.to_row = i;
 				opponent.move.to_column = j;
@@ -57,15 +56,15 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 	}
 	
 	// Verify if the opponent's pieces are threatening the king
-	for(i = 0; i < BOARD_SIZE; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	for(int i = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == opponent.turn){
 				opponent.move.from_row = i;
 				opponent.move.from_column = j;
 
 				if(is_piece_movement_compatible(board, history, opponent) &&
 				   !is_jump_other_pieces(board, opponent.move)){
-					copy_move_coordinates(&history->check, opponent.move);
+					history->last_check = opponent.move;
 					
 				   	return true;
 				}
@@ -77,19 +76,21 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 }
 
 bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
-	int i, j;
-
-	for(i = history.check.to_row - 1; i <= history.check.to_row + 1; i++){
-		for(j = history.check.to_column - 1; j <= history.check.to_column + 1; j++){
+	for(int i = history.last_check.to_row - 1;
+	    i <= history.last_check.to_row + 1;
+		i++){
+		for(int j = history.last_check.to_column - 1;
+		    j <= history.last_check.to_column + 1;
+			j++){
 			if(i >= 0 && i <= 7 && j >= 0 && j <= 7 &&
-			   board[i][j].color != board[history.check.to_row][history.check.to_column].color){
+			   board[i][j].color != board[history.last_check.to_row][history.last_check.to_column].color){
 				Player temp;
 
 				temp.turn = turn;
 				temp.move.to_row = i;
 				temp.move.to_column = j;
-				temp.move.from_row = history.check.to_row;
-				temp.move.from_column = history.check.to_column;
+				temp.move.from_row = history.last_check.to_row;
+				temp.move.from_column = history.last_check.to_column;
 
 				if(!will_king_be_in_check(board, history, temp))
 				   	return true;
@@ -105,8 +106,8 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history
 	Player piece;
 
 	piece.turn = turn;
-	piece.move.to_row = history.check.from_row;
-	piece.move.to_column = history.check.from_column;
+	piece.move.to_row = history.last_check.from_row;
+	piece.move.to_column = history.last_check.from_column;
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
@@ -126,17 +127,17 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history
 }
 
 bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char turn){
-	char *i = &history.check.from_row, *j = &history.check.from_column;
+	char *i = &history.last_check.from_row, *j = &history.last_check.from_column;
 
 	if(board[*i][*j].name != KNIGHT){
 		do{
-			advance_to(i, history.check.to_row);
-			advance_to(j, history.check.to_column);
+			advance_to(i, history.last_check.to_row);
+			advance_to(j, history.last_check.to_column);
 			
-			if((*i) != history.check.to_row || (*j) != history.check.to_column)
+			if((*i) != history.last_check.to_row || (*j) != history.last_check.to_column)
 				if(can_attacking_piece_be_captured(board, history, turn))
 					return true;
-		}while(*i != history.check.to_row || *j != history.check.to_column);
+		}while(*i != history.last_check.to_row || *j != history.last_check.to_column);
 	}
 
 	return false;
@@ -194,21 +195,25 @@ bool is_there_stalemate(square board[][BOARD_SIZE], History history, char turn){
 	return true;
 }
 
-bool is_there_threefold_repetition(History *history){
-	square_hist *current_state = history->board[history->moves_counter - 1];
-	int repetition_counter, i;
+bool is_there_threefold_repetition(square board[][BOARD_SIZE], History *history){
+	int repetition_counter = 1;
 
-	for(repetition_counter = 1, i = 0; i < history->moves_counter - 1; i++){
-		bool is_different;
-		int j;
+	for(h_board *aux = history->board; aux != NULL; aux = aux->prev){
+		bool is_different = false;
+		int k = 0;
 
-		for(is_different = false, j = 0; j < history->pieces_counter; j++){
-			if(current_state[j].name   != history->board[i][j].name ||
-			   current_state[j].color  != history->board[i][j].color ||
-			   current_state[j].row    != history->board[i][j].row ||
-			   current_state[j].column != history->board[i][j].column){
-				is_different = true;
-				break;
+		for(int i = 0; i < BOARD_SIZE && !is_different; i++){
+			for(int j = 0; j < BOARD_SIZE; j++){
+				if(board[i][j].name != NO_PIECE){
+					if(aux->pieces[k].name != board[i][j].name ||
+					   aux->pieces[k].color != board[i][j].color ||
+					   aux->pieces[k].row != i ||
+					   aux->pieces[k].column != j){
+						is_different = true;
+						break;
+					}else
+						k++;
+				}
 			}
 		}
 
@@ -256,10 +261,12 @@ bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 }
 
 bool is_there_special_final(square board[][BOARD_SIZE], History *history){
+	const int MAX_MOVES = 100;
+
 	if(history->moves_counter == MAX_MOVES){
 		print_final_board(board, FIFTY_MOVES);
 		return true;
-	}else if(is_there_threefold_repetition(history)){
+	}else if(is_there_threefold_repetition(board, history)){
 		print_final_board(board, THREEFOLD_REP);
 		return true;
 	}else if(is_there_insufficient_material(board)){
