@@ -89,6 +89,9 @@ void init_board(square board[][BOARD_SIZE]){
 void init_history(History *history){
 	history->board = NULL;
 
+	history->has_castle_occurred = false;
+	history->has_en_passant_occurred = false;
+
 	history->moves_counter = 0;
 }
 
@@ -140,11 +143,11 @@ int count_pieces(square board[][BOARD_SIZE]){
 
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move){
 	move_squares->from.image = board[move.from_row][move.from_column].image;
-	move_squares->from.name  = board[move.from_row][move.from_column].name;
+	move_squares->from.name = board[move.from_row][move.from_column].name;
 	move_squares->from.color = board[move.from_row][move.from_column].color;
 	
 	move_squares->to.image = board[move.to_row][move.to_column].image;
-	move_squares->to.name  = board[move.to_row][move.to_column].name;
+	move_squares->to.name = board[move.to_row][move.to_column].name;
 	move_squares->to.color = board[move.to_row][move.to_column].color;
 }
 
@@ -155,7 +158,7 @@ void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squar
 	
 	board[move.to_row][move.to_column].image = move_squares.to.image;
 	board[move.to_row][move.to_column].name = move_squares.to.name;
-	board[move.to_row][move.to_column].color  = move_squares.to.color;
+	board[move.to_row][move.to_column].color = move_squares.to.color;
 }
 
 void find_castle_rook(move_coordinates move, move_coordinates *rook){

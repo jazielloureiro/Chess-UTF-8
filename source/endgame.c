@@ -8,7 +8,8 @@
 #include "movement.h"
 
 bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player player){
-	bool is_check;
+	bool is_check,
+	     has_special_move = history.has_castle_occurred || history.has_en_passant_occurred;
 	movement_squares move_squares, aux_squares;
 	move_coordinates aux_move;
 
@@ -16,8 +17,7 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 	move_piece(board, player.move);
 
-	if(history.has_castle_occurred ||
-	   history.has_en_passant_occurred){
+	if(has_special_move){
 		if(history.has_castle_occurred)
 			find_castle_rook(player.move, &aux_move);
 		else
@@ -32,8 +32,7 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 	return_move_squares(board, move_squares, player.move);
 
-	if(history.has_castle_occurred ||
-	   history.has_en_passant_occurred)
+	if(has_special_move)
 		return_move_squares(board, aux_squares, aux_move);
 
 	return is_check;

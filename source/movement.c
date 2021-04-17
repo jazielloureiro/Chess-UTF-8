@@ -41,27 +41,21 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 	switch(board[player.move.from_row][player.move.from_column].name){
 		case BISHOP:
 			return is_bishop_movement_valid(player.move);
-		case KING:{
-			bool is_valid = is_king_movement_valid(player.move);
+		case KING:
+			history->has_castle_occurred = is_castle_valid(board, history, player);
 
-			if(!is_valid){
-				is_valid = is_castle_valid(board, history, player);
-
-				if(is_valid)
-					history->has_castle_occurred = true;
-			}
-
-			return is_valid;
-		}case KNIGHT:
+			return is_king_movement_valid(player.move) ||
+			       history->has_castle_occurred;
+		case KNIGHT:
 			return is_knight_movement_valid(player.move);
-		case PAWN:{
-			bool is_valid = is_pawn_movement_valid(player);
+		case PAWN:
+			history->has_en_passant_occurred = is_en_passant_valid(board, history, player.move);
 
-			if(is_valid)
-				is_valid = is_pawn_capture_valid(board, history, player.move);
-
-			return is_valid;
-		}case QUEEN:
+			return is_pawn_movement_valid(player) &&
+			       (is_pawn_advance_valid(board, player.move) ||
+			       is_pawn_capture_valid(board, player.move) ||
+			       history->has_en_passant_occurred);
+		case QUEEN:
 			return is_queen_movement_valid(player.move);
 		case ROOK:
 			return is_rook_movement_valid(player.move);
@@ -164,15 +158,20 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 	return true;
 }
 
-bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
+bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coordinates move){
 	return move.from_column == move.to_column &&
-	       board[move.to_row][move.to_column].name == NO_PIECE ||
-	       move.from_column != move.to_column &&
-	       board[move.to_row][move.to_column].name != NO_PIECE ||
-	       is_en_passant_valid(board, history, move);
+	       board[move.to_row][move.to_column].name == NO_PIECE;
+}
+
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coordinates move){
+	return move.from_column != move.to_column &&
+	       board[move.to_row][move.to_column].name != NO_PIECE;
 }
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
+	if(history->board == NULL)
+		return false;
+
 	int from_row = history->board->player.move.from_row,
 	    from_column = history->board->player.move.from_column,
 	    to_row = history->board->player.move.to_row,
@@ -180,19 +179,14 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 	    advance2Squares = (board[move.from_row][move.from_column].color == WHITE? 2 : -2),
 	    origin_row = (board[move.from_row][move.from_column].color == WHITE? 1 : 6);
 
-	if(board[to_row][to_column].name == PAWN &&
-	   from_row + advance2Squares == to_row &&
-	   from_row == origin_row &&
-	   from_column == to_column &&
-	   to_row == move.from_row &&
-	   (to_column - move.from_column == 1 ||
-	   to_column - move.from_column == -1) &&
-	   to_column == move.to_column){
-		history->has_en_passant_occurred = true;
-	   	return true;
-	}
-
-	return false;
+	return board[to_row][to_column].name == PAWN &&
+	       from_row + advance2Squares == to_row &&
+	       from_row == origin_row &&
+	       from_column == to_column &&
+	       to_row == move.from_row &&
+	       (to_column - move.from_column == 1 ||
+	       to_column - move.from_column == -1) &&
+	       to_column == move.to_column;
 }
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){

@@ -17,8 +17,6 @@ void play(){
 	player.turn = WHITE;
 
 	do{
-		history.has_en_passant_occurred = false;
-		history.has_castle_occurred = false;
 		bool is_check;
 
 		is_check = is_player_king_in_check(board, &history, player.turn);
@@ -50,11 +48,15 @@ void play(){
 		
 		move_piece(board, player.move);
 
-		if(history.has_castle_occurred)
+		if(history.has_castle_occurred){
 			castle(board, player.move);
+			history.has_castle_occurred = false;
+		}
 
-		if(history.has_en_passant_occurred)
+		if(history.has_en_passant_occurred){
 			move_piece(board, history.board->player.move);
+			history.has_en_passant_occurred = false;
+		}
 
 		if(is_there_promotion(board, player.move))
 			promotion(&board[player.move.to_row][player.move.to_column], player.turn);

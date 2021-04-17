@@ -25,7 +25,9 @@ bool are_there_pieces_between(square row[], char start, char end);
 
 bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player);
 
-bool is_pawn_capture_valid(square board[][BOARD_SIZE], History *history, move_coordinates move);
+bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coordinates move);
+
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coordinates move);
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coordinates move);
 
