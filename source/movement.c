@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "aux.h"
 #include "chess.h"
@@ -211,8 +210,8 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
 }
 
 void move_piece(square board[][BOARD_SIZE], move_coordinates move){
-	strcpy(board[move.to_row][move.to_column].image,
-	       board[move.from_row][move.from_column].image);
+	board[move.to_row][move.to_column].image =
+	board[move.from_row][move.from_column].image;
 
 	board[move.to_row][move.to_column].name = 
 	board[move.from_row][move.from_column].name;
@@ -220,7 +219,7 @@ void move_piece(square board[][BOARD_SIZE], move_coordinates move){
 	board[move.to_row][move.to_column].color = 
 	board[move.from_row][move.from_column].color;
 
-	strcpy(board[move.from_row][move.from_column].image, " \0");
+	board[move.from_row][move.from_column].image = " ";
 
 	board[move.from_row][move.from_column].name = NO_PIECE;
 
@@ -245,19 +244,19 @@ void promotion(square *piece, char turn){
 	       
 	switch(choose){
 		case '1':
-			sprintf(piece->image, turn == WHITE? "♕" : "♛");
+			piece->image = (turn == WHITE? "♕" : "♛");
 			piece->name = QUEEN;
 			break;
 		case '2':
-			sprintf(piece->image, turn == WHITE? "♖" : "♜");
+			piece->image = (turn == WHITE? "♖" : "♜");
 			piece->name = ROOK;
 			break;
 		case '3':
-			sprintf(piece->image, turn == WHITE? "♗" : "♝");
+			piece->image = (turn == WHITE? "♗" : "♝");
 			piece->name = BISHOP;
 			break;
 		case '4':
-			sprintf(piece->image, turn == WHITE? "♘" : "♞");
+			piece->image = (turn == WHITE? "♘" : "♞");
 			piece->name = KNIGHT;
 	}       
 }

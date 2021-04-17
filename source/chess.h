@@ -2,7 +2,6 @@
 #define CHESS_H
 
 #define BOARD_SIZE 8
-#define IMAGE_SIZE 7
 
 #define BISHOP 'B'
 #define KING   'K'
@@ -28,7 +27,7 @@
 #define STALEMATE          -10
 
 typedef struct{
-	char image[IMAGE_SIZE];
+	char *image;
 	char name;
 	char color;
 } square;

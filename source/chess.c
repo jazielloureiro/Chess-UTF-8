@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "aux.h"
 #include "chess.h"
@@ -16,38 +15,38 @@ void init_board(square board[][BOARD_SIZE]){
 		for(j = 0; j < BOARD_SIZE; j++)
 			board[i][j].color = BLACK;
 
-	sprintf(board[0][0].image, "♜");
+	board[0][0].image = "♜";
 	board[0][0].name = ROOK;
 
-	sprintf(board[0][1].image, "♞");
+	board[0][1].image = "♞";
 	board[0][1].name = KNIGHT;
 
-	sprintf(board[0][2].image, "♝");
+	board[0][2].image = "♝";
 	board[0][2].name = BISHOP;
 
-	sprintf(board[0][3].image, "♛");
+	board[0][3].image = "♛";
 	board[0][3].name = QUEEN;
 
-	sprintf(board[0][4].image, "♚");
+	board[0][4].image = "♚";
 	board[0][4].name = KING;
 
-	sprintf(board[0][5].image, "♝");
+	board[0][5].image = "♝";
 	board[0][5].name = BISHOP;
 
-	sprintf(board[0][6].image, "♞");
+	board[0][6].image = "♞";
 	board[0][6].name = KNIGHT;
 
-	sprintf(board[0][7].image, "♜");
+	board[0][7].image = "♜";
 	board[0][7].name = ROOK;
 
 	for(j = 0; j < BOARD_SIZE; j++){
-		sprintf(board[1][j].image, "♟");
+		board[1][j].image = "♟";
 		board[1][j].name = PAWN;
 	}
 
 	for(i = 2; i < 6; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
-			sprintf(board[i][j].image, " ");
+			board[i][j].image = " ";
 			board[i][j].name = NO_PIECE;
 			board[i][j].color = NO_PIECE;
 		}
@@ -58,32 +57,32 @@ void init_board(square board[][BOARD_SIZE]){
 			board[i][j].color = WHITE;
 
 	for(j = 0; j < BOARD_SIZE; j++){
-		sprintf(board[6][j].image, "♙");
+		board[6][j].image = "♙";
 		board[6][j].name = PAWN;
 	}
 
-	sprintf(board[7][0].image, "♖");
+	board[7][0].image = "♖";
 	board[7][0].name = ROOK;
 
-	sprintf(board[7][1].image, "♘");
+	board[7][1].image = "♘";
 	board[7][1].name = KNIGHT;
 
-	sprintf(board[7][2].image, "♗");
+	board[7][2].image = "♗";
 	board[7][2].name = BISHOP;
 
-	sprintf(board[7][3].image, "♕");
+	board[7][3].image = "♕";
 	board[7][3].name = QUEEN;
 
-	sprintf(board[7][4].image, "♔");
+	board[7][4].image = "♔";
 	board[7][4].name = KING;
 
-	sprintf(board[7][5].image, "♗");
+	board[7][5].image = "♗";
 	board[7][5].name = BISHOP;
 
-	sprintf(board[7][6].image, "♘");
+	board[7][6].image = "♘";
 	board[7][6].name = KNIGHT;
 
-	sprintf(board[7][7].image, "♖");
+	board[7][7].image = "♖";
 	board[7][7].name = ROOK;
 }
 
@@ -140,21 +139,21 @@ int count_pieces(square board[][BOARD_SIZE]){
 }
 
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move){
-	strcpy(move_squares->from.image, board[move.from_row][move.from_column].image);
+	move_squares->from.image = board[move.from_row][move.from_column].image;
 	move_squares->from.name  = board[move.from_row][move.from_column].name;
 	move_squares->from.color = board[move.from_row][move.from_column].color;
 	
-	strcpy(move_squares->to.image, board[move.to_row][move.to_column].image);
+	move_squares->to.image = board[move.to_row][move.to_column].image;
 	move_squares->to.name  = board[move.to_row][move.to_column].name;
 	move_squares->to.color = board[move.to_row][move.to_column].color;
 }
 
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move){
-	strcpy(board[move.from_row][move.from_column].image, move_squares.from.image);
+	board[move.from_row][move.from_column].image = move_squares.from.image;
 	board[move.from_row][move.from_column].name = move_squares.from.name;
-	board[move.from_row][move.from_column].color  = move_squares.from.color;
+	board[move.from_row][move.from_column].color = move_squares.from.color;
 	
-	strcpy(board[move.to_row][move.to_column].image, move_squares.to.image);
+	board[move.to_row][move.to_column].image = move_squares.to.image;
 	board[move.to_row][move.to_column].name = move_squares.to.name;
 	board[move.to_row][move.to_column].color  = move_squares.to.color;
 }
