@@ -95,6 +95,11 @@ void init_history(History *history){
 	history->moves_counter = 0;
 }
 
+void init_player(Player *player){
+	player->turn = WHITE;
+	player->is_in_check = false;
+}
+
 void update_history(square board[][BOARD_SIZE], History *history, Player player){
 	if(board[player.move.from_row][player.move.from_column].name == PAWN ||
 	   board[player.move.to_row][player.move.to_column].name != NO_PIECE)

@@ -14,28 +14,12 @@ void play(){
 
 	init_board(board);
 	init_history(&history);
-	player.turn = WHITE;
+	init_player(&player);
 
 	do{
-		bool is_check;
-
-		is_check = is_player_king_in_check(board, &history, player.turn);
-
-		if(is_check){
-			if(is_there_checkmate(board, history, player.turn)){
-				print_final_board(board, player.turn);
-				break;
-			}
-		}else{
-			if(is_there_stalemate(board, history, player.turn)){
-				print_final_board(board, STALEMATE);
-				break;
-			}
-		}
-
 		do{
 			clear_screen();
-			print_top_menu(player.turn, is_check);
+			print_top_menu(player.turn, player.is_in_check);
 			print_board(board);
 
 			read_movement_input(&player.move);
@@ -64,7 +48,7 @@ void play(){
 			promotion(&board[player.move.to_row][player.move.to_column], player.turn);
 
 		player.turn == WHITE? (player.turn = BLACK) : (player.turn = WHITE);
-	}while(!is_there_special_final(board, &history));
+	}while(!is_game_done(board, &history, &player));
 
 	free_history(history.board);
 }

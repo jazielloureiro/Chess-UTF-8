@@ -74,6 +74,37 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 	return false;
 }
 
+bool is_game_done(square board[][BOARD_SIZE], History *history, Player *player){
+	const int MAX_MOVES = 100;
+
+	player->is_in_check = is_player_king_in_check(board, history, player->turn);
+
+	if(player->is_in_check){
+		if(is_checkmate(board, *history, player->turn)){
+			print_final_board(board, player->turn);
+			return true;
+		}
+	}else{
+		if(is_stalemate(board, *history, player->turn)){
+			print_final_board(board, STALEMATE);
+			return true;
+		}
+	}
+
+	if(history->moves_counter == MAX_MOVES){
+		print_final_board(board, FIFTY_MOVES);
+		return true;
+	}else if(is_threefold_repetition(board, history)){
+		print_final_board(board, THREEFOLD_REP);
+		return true;
+	}else if(is_insufficient_material(board)){
+		print_final_board(board, INSUFFICIENT_MAT);
+		return true;
+	}
+
+	return false;
+}
+
 bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 	for(int i = history.last_check.to_row - 1;
 	    i <= history.last_check.to_row + 1;
@@ -142,7 +173,7 @@ bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char tur
 	return false;
 }
 
-bool is_there_checkmate(square board[][BOARD_SIZE], History history, char turn){
+bool is_checkmate(square board[][BOARD_SIZE], History history, char turn){
 	if(can_king_move(board, history, turn))
 		return false;
 	else if(can_piece_cover_check(board, history, turn))
@@ -173,7 +204,7 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History history, Player 
 	return false;
 }
 
-bool is_there_stalemate(square board[][BOARD_SIZE], History history, char turn){
+bool is_stalemate(square board[][BOARD_SIZE], History history, char turn){
 	int i, j;
 
 	for(i = 0; i < BOARD_SIZE; i++){
@@ -194,7 +225,7 @@ bool is_there_stalemate(square board[][BOARD_SIZE], History history, char turn){
 	return true;
 }
 
-bool is_there_threefold_repetition(square board[][BOARD_SIZE], History *history){
+bool is_threefold_repetition(square board[][BOARD_SIZE], History *history){
 	int repetition_counter = 1;
 
 	for(h_board *aux = history->board; aux != NULL; aux = aux->prev){
@@ -226,7 +257,7 @@ bool is_there_threefold_repetition(square board[][BOARD_SIZE], History *history)
 	return false;
 }
 
-bool is_there_insufficient_material(square board[][BOARD_SIZE]){
+bool is_insufficient_material(square board[][BOARD_SIZE]){
 	int white_minor_pieces = 0, black_minor_pieces = 0, i, j;
 	bool has_white_sufficient_material = false, has_black_sufficient_material = false;
 
@@ -257,21 +288,4 @@ bool is_there_insufficient_material(square board[][BOARD_SIZE]){
 		return false;
 
 	return true;
-}
-
-bool is_there_special_final(square board[][BOARD_SIZE], History *history){
-	const int MAX_MOVES = 100;
-
-	if(history->moves_counter == MAX_MOVES){
-		print_final_board(board, FIFTY_MOVES);
-		return true;
-	}else if(is_there_threefold_repetition(board, history)){
-		print_final_board(board, THREEFOLD_REP);
-		return true;
-	}else if(is_there_insufficient_material(board)){
-		print_final_board(board, INSUFFICIENT_MAT);
-		return true;
-	}
-
-	return false;
 }

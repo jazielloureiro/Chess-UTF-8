@@ -42,6 +42,7 @@ typedef struct{
 typedef struct{
 	move_coordinates move;
 	char turn;
+	bool is_in_check;
 } Player;
 	
 typedef struct{
@@ -73,6 +74,8 @@ typedef struct{
 void init_board(square board[][BOARD_SIZE]);
 
 void init_history(History *history);
+
+void init_player(Player *player);
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player);
 
