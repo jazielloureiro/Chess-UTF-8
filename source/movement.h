@@ -33,8 +33,8 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move);
 
-void move_piece(square board[][BOARD_SIZE], move_coordinates move);
+bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player player);
 
-void promotion(square *piece, char turn);
+bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char turn);
 
 #endif

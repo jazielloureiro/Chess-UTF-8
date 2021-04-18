@@ -203,54 +203,69 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
 	return false;
 }
 
-void move_piece(square board[][BOARD_SIZE], move_coordinates move){
-	board[move.to_row][move.to_column].image =
-	board[move.from_row][move.from_column].image;
+bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player player){
+	bool is_check,
+	     has_special_move = history.has_castle_occurred || history.has_en_passant_occurred;
+	movement_squares move_squares, aux_squares;
+	move_coordinates aux_move;
 
-	board[move.to_row][move.to_column].name = 
-	board[move.from_row][move.from_column].name;
+	save_move_squares(board, &move_squares, player.move);
 
-	board[move.to_row][move.to_column].color = 
-	board[move.from_row][move.from_column].color;
+	move_piece(board, player.move);
 
-	board[move.from_row][move.from_column].image = " ";
+	if(has_special_move){
+		if(history.has_castle_occurred)
+			find_castle_rook(player.move, &aux_move);
+		else
+			aux_move = history.board->player.move;
 
-	board[move.from_row][move.from_column].name = NO_PIECE;
+		save_move_squares(board, &aux_squares, aux_move);
 
-	board[move.from_row][move.from_column].color = NO_PIECE;
+		move_piece(board, aux_move);
+	}
+
+	is_check = is_player_king_in_check(board, &history, player.turn);
+
+	return_move_squares(board, move_squares, player.move);
+
+	if(has_special_move)
+		return_move_squares(board, aux_squares, aux_move);
+
+	return is_check;
 }
 
-void promotion(square *piece, char turn){
-	char choose;
+bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char turn){
+	Player opponent;
 
-	puts("\nFor which piece do you want to promove?");
+	opponent.turn = (turn == WHITE? BLACK : WHITE);
 	
-	if(turn == WHITE)
-		puts("1. ♕\n2. ♖\n3. ♗\n4. ♘\n");
-	else
-		puts("1. ♛\n2. ♜\n3. ♝\n4. ♞\n");
-	       
-	do{
-		printf("> ");
-		choose = getchar();
-		clear_input_buffer();
-	}while(choose < '1' || choose > '4');
-	       
-	switch(choose){
-		case '1':
-			piece->image = (turn == WHITE? "♕" : "♛");
-			piece->name = QUEEN;
-			break;
-		case '2':
-			piece->image = (turn == WHITE? "♖" : "♜");
-			piece->name = ROOK;
-			break;
-		case '3':
-			piece->image = (turn == WHITE? "♗" : "♝");
-			piece->name = BISHOP;
-			break;
-		case '4':
-			piece->image = (turn == WHITE? "♘" : "♞");
-			piece->name = KNIGHT;
-	}       
+	// Searching where the king is
+	for(int i = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
+			if(board[i][j].name == KING && board[i][j].color == turn){
+				opponent.move.to_row = i;
+				opponent.move.to_column = j;
+				break;
+			}
+		}
+	}
+	
+	// Verify if the opponent's pieces are threatening the king
+	for(int i = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
+			if(board[i][j].color == opponent.turn){
+				opponent.move.from_row = i;
+				opponent.move.from_column = j;
+
+				if(is_piece_movement_compatible(board, history, opponent) &&
+				   !is_jump_other_pieces(board, opponent.move)){
+					history->last_check = opponent.move;
+					
+				   	return true;
+				}
+			}
+		}
+	}
+				   	
+	return false;
 }

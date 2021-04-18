@@ -146,6 +146,23 @@ int count_pieces(square board[][BOARD_SIZE]){
 	return pieces_qty;
 }
 
+void move_piece(square board[][BOARD_SIZE], move_coordinates move){
+	board[move.to_row][move.to_column].image =
+	board[move.from_row][move.from_column].image;
+
+	board[move.to_row][move.to_column].name = 
+	board[move.from_row][move.from_column].name;
+
+	board[move.to_row][move.to_column].color = 
+	board[move.from_row][move.from_column].color;
+
+	board[move.from_row][move.from_column].image = " ";
+
+	board[move.from_row][move.from_column].name = NO_PIECE;
+
+	board[move.from_row][move.from_column].color = NO_PIECE;
+}
+
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move){
 	move_squares->from.image = board[move.from_row][move.from_column].image;
 	move_squares->from.name = board[move.from_row][move.from_column].name;

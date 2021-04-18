@@ -83,6 +83,8 @@ void get_current_board(square board[][BOARD_SIZE], History *history);
 
 int count_pieces(square board[][BOARD_SIZE]);
 
+void move_piece(square board[][BOARD_SIZE], move_coordinates move);
+
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input);
 
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input);

@@ -24,14 +24,13 @@ void read_movement_input(move_coordinates *move_input){
 	clear_input_buffer();
 }
 
-bool is_the_squares_valid(move_coordinates *move_input){
-	if(move_input->from_column == INVALID_SQUARE ||
-	   move_input->from_row    == INVALID_SQUARE ||
-	   move_input->to_column   == INVALID_SQUARE ||
-	   move_input->to_row      == INVALID_SQUARE)
-	   	return false;
-
-	return true;
+bool is_there_player_action(Player player){
+	if(player.move.from_column == ':' &&
+	   (player.move.from_row == 'r' ||
+	   player.move.from_row == 'd'))
+		return is_player_action_valid(player.move.from_row, player.turn);
+		
+	return false;
 }
 
 bool is_player_action_valid(char action, char turn){
@@ -64,13 +63,11 @@ bool is_player_action_valid(char action, char turn){
 	return false;
 }
 
-bool is_there_player_action(Player player){
-	if(player.move.from_column == ':' &&
-	   (player.move.from_row == 'r' ||
-	   player.move.from_row == 'd'))
-		return is_player_action_valid(player.move.from_row, player.turn);
-		
-	return false;
+void convert_movement_input(move_coordinates *move){
+	convert_row(&move->from_row);
+	convert_column(&move->from_column);
+	convert_row(&move->to_row);
+	convert_column(&move->to_column);
 }
 
 void convert_row(char *row){
@@ -94,11 +91,14 @@ void convert_column(char *column){
 		*column -= 'a';
 }
 
-void convert_movement_input(move_coordinates *move){
-	convert_row(&move->from_row);
-	convert_column(&move->from_column);
-	convert_row(&move->to_row);
-	convert_column(&move->to_column);
+bool is_the_squares_valid(move_coordinates *move_input){
+	if(move_input->from_column == INVALID_SQUARE ||
+	   move_input->from_row    == INVALID_SQUARE ||
+	   move_input->to_column   == INVALID_SQUARE ||
+	   move_input->to_row      == INVALID_SQUARE)
+	   	return false;
+
+	return true;
 }
 
 bool is_there_promotion(square board[][BOARD_SIZE], move_coordinates move){
@@ -107,4 +107,39 @@ bool is_there_promotion(square board[][BOARD_SIZE], move_coordinates move){
 		return true;
 
 	return false;
+}
+
+void promotion(square *piece, char turn){
+	char choose;
+
+	puts("\nFor which piece do you want to promove?");
+	
+	if(turn == WHITE)
+		puts("1. ♕\n2. ♖\n3. ♗\n4. ♘\n");
+	else
+		puts("1. ♛\n2. ♜\n3. ♝\n4. ♞\n");
+	       
+	do{
+		printf("> ");
+		choose = getchar();
+		clear_input_buffer();
+	}while(choose < '1' || choose > '4');
+	       
+	switch(choose){
+		case '1':
+			piece->image = (turn == WHITE? "♕" : "♛");
+			piece->name = QUEEN;
+			break;
+		case '2':
+			piece->image = (turn == WHITE? "♖" : "♜");
+			piece->name = ROOK;
+			break;
+		case '3':
+			piece->image = (turn == WHITE? "♗" : "♝");
+			piece->name = BISHOP;
+			break;
+		case '4':
+			piece->image = (turn == WHITE? "♘" : "♞");
+			piece->name = KNIGHT;
+	}       
 }
