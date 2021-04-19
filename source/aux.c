@@ -46,31 +46,6 @@ void print_board(square board[][BOARD_SIZE]){
 	       "\t    a   b   c   d   e   f   g   h\n");
 }
 
-void print_error_message(int message){
-	switch(message){
-		case INVALID_SQUARE:
-			puts("\nYou've entered an invalid square!");
-			break;
-		case CHOOSE_WRONG_COLOR:
-			puts("\nYou must choose a piece of your color.");
-			break;
-		case CAPTURE_OWN_PIECE:
-			puts("\nYou can't capture your own piece!");
-			break;
-		case INCOMPATIBLE_MOVE:
-			puts("\nThis movement is incompatible with your piece.");
-			break;
-		case JUMP_OTHER_PIECES:
-			puts("\nYour piece can't jump over other pieces!");
-			break;
-		case KING_IN_CHECK:
-			puts("\nYour can't do this move, because your king will be in check.");
-			break;
-	}
-
-	pause_screen();
-}
-
 void print_final_board(square board[][BOARD_SIZE], char final){
 	clear_screen();
 	putchar('\n');

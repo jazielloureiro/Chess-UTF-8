@@ -14,27 +14,24 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *pla
 
 	convert_movement_input(&player->move);
 
-	if(!is_the_squares_valid(&player->move)){
-		print_error_message(INVALID_SQUARE);
-		return false;
-	}else if(board[player->move.from_row][player->move.from_column].color != player->turn){
-		print_error_message(CHOOSE_WRONG_COLOR);
-		return false;
-	}else if(board[player->move.to_row][player->move.to_column].color == player->turn){
-		print_error_message(CAPTURE_OWN_PIECE);
-		return false;
-	}else if(!is_piece_movement_compatible(board, history, *player)){
-		print_error_message(INCOMPATIBLE_MOVE);
-		return false;
-	}else if(is_jump_other_pieces(board, player->move)){
-		print_error_message(JUMP_OTHER_PIECES);
-		return false;
-	}else if(will_king_be_in_check(board, *history, *player)){
-		print_error_message(KING_IN_CHECK);
-		return false;
-	}
+	if(!is_the_squares_valid(&player->move))
+		puts("\nYou've entered an invalid square!");
+	else if(board[player->move.from_row][player->move.from_column].color != player->turn)
+		puts("\nYou must choose a piece of your color.");
+	else if(board[player->move.to_row][player->move.to_column].color == player->turn)
+		puts("\nYou can't capture your own piece!");
+	else if(!is_piece_movement_compatible(board, history, *player))
+		puts("\nThis movement is incompatible with your piece.");
+	else if(is_jump_other_pieces(board, player->move))
+		puts("\nYour piece can't jump over other pieces!");
+	else if(will_king_be_in_check(board, *history, *player))
+		puts("\nYour can't do this move, because your king will be in check.");
+	else
+		return true;
 
-	return true;
+	pause_screen();
+
+	return false;
 }
 
 bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, Player player){
