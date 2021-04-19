@@ -138,7 +138,7 @@ bool are_there_pieces_between(square row[], char start, char end){
 	char i = start;
 
 	for(advance_to(&i, end); i != end; advance_to(&i, end))
-		if(row[i].name != NO_PIECE)
+		if(row[i].name != EMPTY_P)
 			return true;
 
 	return false;
@@ -160,12 +160,12 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 
 bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coordinates move){
 	return move.from_column == move.to_column &&
-	       board[move.to_row][move.to_column].name == NO_PIECE;
+	       board[move.to_row][move.to_column].name == EMPTY_P;
 }
 
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coordinates move){
 	return move.from_column != move.to_column &&
-	       board[move.to_row][move.to_column].name != NO_PIECE;
+	       board[move.to_row][move.to_column].name != EMPTY_P;
 }
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
@@ -196,7 +196,7 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
 		for(advance_to(&i, move.to_row), advance_to(&j, move.to_column);
 		    i != move.to_row || j != move.to_column;
 		    advance_to(&i, move.to_row), advance_to(&j, move.to_column))
-			if(board[i][j].name != NO_PIECE)
+			if(board[i][j].name != EMPTY_P)
 				return true;
 	}
 	

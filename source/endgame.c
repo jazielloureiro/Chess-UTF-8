@@ -167,7 +167,7 @@ bool is_threefold_repetition(square board[][BOARD_SIZE], History *history){
 
 		for(int i = 0; i < BOARD_SIZE && !is_different; i++){
 			for(int j = 0; j < BOARD_SIZE; j++){
-				if(board[i][j].name != NO_PIECE){
+				if(board[i][j].name != EMPTY_P){
 					if(aux->pieces[k].name != board[i][j].name ||
 					   aux->pieces[k].color != board[i][j].color ||
 					   aux->pieces[k].row != i ||

@@ -3,33 +3,39 @@
 
 #define BOARD_SIZE 8
 
-#define BISHOP 'B'
-#define KING   'K'
-#define KNIGHT 'N'
-#define PAWN   'P'
-#define QUEEN  'Q'
-#define ROOK   'R'
+typedef enum{
+	EMPTY_P,
+	BISHOP = 'B',
+	KING = 'K',
+	KNIGHT = 'N',
+	PAWN = 'P',
+	QUEEN = 'Q',
+	ROOK = 'R'
+} Piece;
 
-#define WHITE 'W'
-#define BLACK 'B'
+typedef enum{
+	EMPTY_C,
+	WHITE = 'W',
+	BLACK = 'B'
+} Color;
 
-#define NO_PIECE 0
-
-#define INVALID_SQUARE     -1
-#define CHOOSE_WRONG_COLOR -2
-#define CAPTURE_OWN_PIECE  -3
-#define INCOMPATIBLE_MOVE  -4
-#define JUMP_OTHER_PIECES  -5
-#define KING_IN_CHECK      -6
-#define FIFTY_MOVES        -7
-#define THREEFOLD_REP      -8
-#define INSUFFICIENT_MAT   -9
-#define STALEMATE          -10
+enum flags{
+	INVALID_SQUARE = -1,
+	CHOOSE_WRONG_COLOR,
+	CAPTURE_OWN_PIECE,
+	INCOMPATIBLE_MOVE,
+	JUMP_OTHER_PIECES,
+	KING_IN_CHECK,
+	FIFTY_MOVES,
+	THREEFOLD_REP,
+	INSUFFICIENT_MAT,
+	STALEMATE
+};
 
 typedef struct{
 	char *image;
-	char name;
-	char color;
+	Piece name;
+	Color color;
 } square;
 
 typedef struct{
@@ -41,7 +47,7 @@ typedef struct{
 
 typedef struct{
 	move_coordinates move;
-	char turn;
+	Color turn;
 	bool is_in_check;
 } Player;
 	
@@ -51,8 +57,8 @@ typedef struct{
 } movement_squares;
 
 typedef struct{
-	char name;
-	char color;
+	Piece name;
+	Color color;
 	char row;
 	char column;
 } h_square;
