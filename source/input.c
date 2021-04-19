@@ -64,49 +64,36 @@ bool is_player_action_valid(char action, char turn){
 }
 
 void convert_movement_input(move_coordinates *move){
-	convert_row(&move->from_row);
-	convert_column(&move->from_column);
-	convert_row(&move->to_row);
-	convert_column(&move->to_column);
+	move->from_row = convert_row(move->from_row);
+	move->from_column = convert_column(move->from_column);
+	move->to_row = convert_row(move->to_row);
+	move->to_column = convert_column(move->to_column);
 }
 
-void convert_row(char *row){
-	switch(*row){
-		case '8': *row = 0; break;
-		case '7': *row = 1; break;
-		case '6': *row = 2; break;
-		case '5': *row = 3; break;
-		case '4': *row = 4; break;
-		case '3': *row = 5; break;
-		case '2': *row = 6; break;
-		case '1': *row = 7; break;
-		default:  *row = INVALID_SQUARE;
-	}
+char convert_row(char row){
+	if(row < '1' || row > '8')
+		return INVALID_SQUARE;
+
+	return '8' - row;
 }
 
-void convert_column(char *column){
-	if(*column < 'a' || *column > 'h')
-		*column = INVALID_SQUARE;
-	else
-		*column -= 'a';
+char convert_column(char column){
+	if(column < 'a' || column > 'h')
+		return INVALID_SQUARE;
+
+	return column - 'a';
 }
 
-bool is_the_squares_valid(move_coordinates *move_input){
-	if(move_input->from_column == INVALID_SQUARE ||
-	   move_input->from_row    == INVALID_SQUARE ||
-	   move_input->to_column   == INVALID_SQUARE ||
-	   move_input->to_row      == INVALID_SQUARE)
-	   	return false;
-
-	return true;
+bool is_the_squares_valid(move_coordinates move_input){
+	return move_input.from_column != INVALID_SQUARE &&
+	       move_input.from_row != INVALID_SQUARE &&
+	       move_input.to_column != INVALID_SQUARE &&
+	       move_input.to_row != INVALID_SQUARE;
 }
 
 bool is_there_promotion(square board[][BOARD_SIZE], move_coordinates move){
-	if(board[move.to_row][move.to_column].name == PAWN &&
-	   (move.to_row == 0 || move.to_row == 7))
-		return true;
-
-	return false;
+	return board[move.to_row][move.to_column].name == PAWN &&
+	       (move.to_row == 0 || move.to_row == 7);
 }
 
 void promotion(square *piece, char turn){

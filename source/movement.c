@@ -14,7 +14,7 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *pla
 
 	convert_movement_input(&player->move);
 
-	if(!is_the_squares_valid(&player->move))
+	if(!is_the_squares_valid(player->move))
 		puts("\nYou've entered an invalid square!");
 	else if(board[player->move.from_row][player->move.from_column].color != player->turn)
 		puts("\nYou must choose a piece of your color.");
