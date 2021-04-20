@@ -34,9 +34,9 @@ typedef struct{
 } square;
 
 typedef struct{
-	char from_row;
+	char from_rank;
 	char from_column;
-	char to_row;
+	char to_rank;
 	char to_column;
 } move_coord;
 
@@ -54,7 +54,7 @@ typedef struct{
 typedef struct{
 	Piece name;
 	Color color;
-	char row;
+	char rank;
 	char column;
 } h_square;
 	

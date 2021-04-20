@@ -19,9 +19,9 @@ bool is_rook_movement_valid(move_coord move);
 
 bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player);
 
-bool has_castle_pieces_moved(History *history, int row, int rook_col);
+bool has_castle_pieces_moved(History *history, int rank, int rook_col);
 
-bool are_there_pieces_between(square row[], char start, char end);
+bool are_there_pieces_between(square rank[], char start, char end);
 
 bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player);
 

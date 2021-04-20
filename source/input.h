@@ -9,7 +9,7 @@ bool is_player_action_valid(char action, char turn);
 
 void convert_movement_input(move_coord *move);
 
-char convert_row(char row);
+char convert_rank(char rank);
 
 char convert_column(char column);
 

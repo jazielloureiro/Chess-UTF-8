@@ -101,8 +101,8 @@ void init_player(Player *player){
 }
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player){
-	if(board[player.move.from_row][player.move.from_column].name == PAWN ||
-	   board[player.move.to_row][player.move.to_column].name != EMPTY_P)
+	if(board[player.move.from_rank][player.move.from_column].name == PAWN ||
+	   board[player.move.to_rank][player.move.to_column].name != EMPTY_P)
 		history->moves_counter = 0;
 
 	get_current_board(board, history);
@@ -124,7 +124,7 @@ void get_current_board(square board[][BOARD_SIZE], History *history){
 			if(board[i][j].name != EMPTY_P){
 				Hboard->pieces[sqr_counter].name = board[i][j].name;
 				Hboard->pieces[sqr_counter].color = board[i][j].color;
-				Hboard->pieces[sqr_counter].row = i;
+				Hboard->pieces[sqr_counter].rank = i;
 				Hboard->pieces[sqr_counter].column = j;
 				sqr_counter++;
 			}
@@ -147,46 +147,46 @@ int count_pieces(square board[][BOARD_SIZE]){
 }
 
 void move_piece(square board[][BOARD_SIZE], move_coord move){
-	board[move.to_row][move.to_column].image =
-	board[move.from_row][move.from_column].image;
+	board[move.to_rank][move.to_column].image =
+	board[move.from_rank][move.from_column].image;
 
-	board[move.to_row][move.to_column].name = 
-	board[move.from_row][move.from_column].name;
+	board[move.to_rank][move.to_column].name = 
+	board[move.from_rank][move.from_column].name;
 
-	board[move.to_row][move.to_column].color = 
-	board[move.from_row][move.from_column].color;
+	board[move.to_rank][move.to_column].color = 
+	board[move.from_rank][move.from_column].color;
 
-	board[move.from_row][move.from_column].image = " ";
+	board[move.from_rank][move.from_column].image = " ";
 
-	board[move.from_row][move.from_column].name = EMPTY_P;
+	board[move.from_rank][move.from_column].name = EMPTY_P;
 
-	board[move.from_row][move.from_column].color = EMPTY_C;
+	board[move.from_rank][move.from_column].color = EMPTY_C;
 }
 
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move){
-	move_squares->from.image = board[move.from_row][move.from_column].image;
-	move_squares->from.name = board[move.from_row][move.from_column].name;
-	move_squares->from.color = board[move.from_row][move.from_column].color;
+	move_squares->from.image = board[move.from_rank][move.from_column].image;
+	move_squares->from.name = board[move.from_rank][move.from_column].name;
+	move_squares->from.color = board[move.from_rank][move.from_column].color;
 	
-	move_squares->to.image = board[move.to_row][move.to_column].image;
-	move_squares->to.name = board[move.to_row][move.to_column].name;
-	move_squares->to.color = board[move.to_row][move.to_column].color;
+	move_squares->to.image = board[move.to_rank][move.to_column].image;
+	move_squares->to.name = board[move.to_rank][move.to_column].name;
+	move_squares->to.color = board[move.to_rank][move.to_column].color;
 }
 
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move){
-	board[move.from_row][move.from_column].image = move_squares.from.image;
-	board[move.from_row][move.from_column].name = move_squares.from.name;
-	board[move.from_row][move.from_column].color = move_squares.from.color;
+	board[move.from_rank][move.from_column].image = move_squares.from.image;
+	board[move.from_rank][move.from_column].name = move_squares.from.name;
+	board[move.from_rank][move.from_column].color = move_squares.from.color;
 	
-	board[move.to_row][move.to_column].image = move_squares.to.image;
-	board[move.to_row][move.to_column].name = move_squares.to.name;
-	board[move.to_row][move.to_column].color = move_squares.to.color;
+	board[move.to_rank][move.to_column].image = move_squares.to.image;
+	board[move.to_rank][move.to_column].name = move_squares.to.name;
+	board[move.to_rank][move.to_column].color = move_squares.to.color;
 }
 
 void find_castle_rook(move_coord move, move_coord *rook){
-	if(move.to_row == 0){
-		rook->from_row = 0;
-		rook->to_row = 0;
+	if(move.to_rank == 0){
+		rook->from_rank = 0;
+		rook->to_rank = 0;
 
 		if(move.to_column == 2){
 			rook->from_column = 0;
@@ -196,8 +196,8 @@ void find_castle_rook(move_coord move, move_coord *rook){
 			rook->to_column = 5;
 		}
 	}else{
-		rook->from_row = 7;
-		rook->to_row = 7;
+		rook->from_rank = 7;
+		rook->to_rank = 7;
 
 		if(move.to_column == 2){
 			rook->from_column = 0;
