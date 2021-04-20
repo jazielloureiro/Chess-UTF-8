@@ -35,9 +35,9 @@ typedef struct{
 
 typedef struct{
 	char from_rank;
-	char from_column;
+	char from_file;
 	char to_rank;
-	char to_column;
+	char to_file;
 } move_coord;
 
 typedef struct{
@@ -55,7 +55,7 @@ typedef struct{
 	Piece name;
 	Color color;
 	char rank;
-	char column;
+	char file;
 } h_square;
 	
 typedef struct H_board{

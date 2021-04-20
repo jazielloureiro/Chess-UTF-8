@@ -9,16 +9,16 @@
 #include "movement.h"
 
 bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *player){
-	if(player->move.from_column == ':')
+	if(player->move.from_file == ':')
 		return false;
 
 	convert_movement_input(&player->move);
 
 	if(!is_the_squares_valid(player->move))
 		puts("\nYou've entered an invalid square!");
-	else if(board[player->move.from_rank][player->move.from_column].color != player->turn)
+	else if(board[player->move.from_rank][player->move.from_file].color != player->turn)
 		puts("\nYou must choose a piece of your color.");
-	else if(board[player->move.to_rank][player->move.to_column].color == player->turn)
+	else if(board[player->move.to_rank][player->move.to_file].color == player->turn)
 		puts("\nYou can't capture your own piece!");
 	else if(!is_piece_movement_compatible(board, history, *player))
 		puts("\nThis movement is incompatible with your piece.");
@@ -35,7 +35,7 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *pla
 }
 
 bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, Player player){
-	switch(board[player.move.from_rank][player.move.from_column].name){
+	switch(board[player.move.from_rank][player.move.from_file].name){
 		case BISHOP:
 			return is_bishop_movement_valid(player.move);
 		case KING:
@@ -61,19 +61,19 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 
 bool is_bishop_movement_valid(move_coord move){
 	return abs(move.to_rank - move.from_rank) ==
-	       abs(move.to_column - move.from_column);
+	       abs(move.to_file - move.from_file);
 }
 
 bool is_king_movement_valid(move_coord move){
 	return move.from_rank - 1 <= move.to_rank &&
 	       move.from_rank + 1 >= move.to_rank &&
-	       move.from_column - 1 <= move.to_column &&
-	       move.from_column + 1 >= move.to_column;
+	       move.from_file - 1 <= move.to_file &&
+	       move.from_file + 1 >= move.to_file;
 }
 
 bool is_knight_movement_valid(move_coord move){
 	const int DIFF_ROW = abs(move.to_rank - move.from_rank),
-	          DIFF_COL = abs(move.to_column - move.from_column);
+	          DIFF_COL = abs(move.to_file - move.from_file);
 
 	return DIFF_ROW == 2 && DIFF_COL == 1 ||
 	       DIFF_ROW == 1 && DIFF_COL == 2;
@@ -85,11 +85,11 @@ bool is_pawn_movement_valid(Player player){
 	          ONE_SQUARE = (player.turn == WHITE? -1 : 1);
 
 	return player.move.from_rank + ONE_SQUARE == player.move.to_rank &&
-	       player.move.from_column - 1 <= player.move.to_column &&
-	       player.move.from_column + 1 >= player.move.to_column ||
+	       player.move.from_file - 1 <= player.move.to_file &&
+	       player.move.from_file + 1 >= player.move.to_file ||
 	       player.move.from_rank == ORIGIN_ROW &&
 	       player.move.from_rank + TWO_SQUARES == player.move.to_rank &&
-	       player.move.from_column == player.move.to_column;
+	       player.move.from_file == player.move.to_file;
 }
 
 bool is_queen_movement_valid(move_coord move){
@@ -99,19 +99,19 @@ bool is_queen_movement_valid(move_coord move){
 
 bool is_rook_movement_valid(move_coord move){
 	return move.from_rank == move.to_rank ||
-	       move.from_column == move.to_column;
+	       move.from_file == move.to_file;
 }
 
 bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player){
 	const int START_ROW = (player.turn == WHITE? 7 : 0);
 	const int START_KING_COL = 4;
-	const int START_ROOK_COL = (START_KING_COL - 2 == player.move.to_column? 0 : 7);
+	const int START_ROOK_COL = (START_KING_COL - 2 == player.move.to_file? 0 : 7);
 
 	if(START_ROW != player.move.from_rank ||
 	   START_ROW != player.move.to_rank ||
-	   START_KING_COL != player.move.from_column ||
-	   START_KING_COL - 2 != player.move.to_column &&
-	   START_KING_COL + 2 != player.move.to_column)
+	   START_KING_COL != player.move.from_file ||
+	   START_KING_COL - 2 != player.move.to_file &&
+	   START_KING_COL + 2 != player.move.to_file)
 		return false;
 
 	return !has_castle_pieces_moved(history, START_ROW, START_KING_COL) &&
@@ -123,8 +123,8 @@ bool has_castle_pieces_moved(History *history, int rank, int rook_col){
 	const int KING_COL = 4;
 
 	for(h_board *aux = history->board; aux != NULL; aux = aux->prev)
-		if((aux->player.move.from_column == KING_COL ||
-		   aux->player.move.from_column == rook_col) &&
+		if((aux->player.move.from_file == KING_COL ||
+		   aux->player.move.from_file == rook_col) &&
 		   aux->player.move.from_rank == rank)
 			return true;
 
@@ -146,23 +146,23 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 		return false;
 
 	do{
-		advance_to(&player.move.from_column, player.move.to_column);
+		advance_to(&player.move.from_file, player.move.to_file);
 
 		if(will_king_be_in_check(board, *history, player))
 			return false;
-	}while(player.move.from_column != player.move.to_column);
+	}while(player.move.from_file != player.move.to_file);
 
 	return true;
 }
 
 bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coord move){
-	return move.from_column == move.to_column &&
-	       board[move.to_rank][move.to_column].name == EMPTY_P;
+	return move.from_file == move.to_file &&
+	       board[move.to_rank][move.to_file].name == EMPTY_P;
 }
 
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
-	return move.from_column != move.to_column &&
-	       board[move.to_rank][move.to_column].name != EMPTY_P;
+	return move.from_file != move.to_file &&
+	       board[move.to_rank][move.to_file].name != EMPTY_P;
 }
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coord move){
@@ -170,29 +170,29 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 		return false;
 
 	int from_rank = history->board->player.move.from_rank,
-	    from_column = history->board->player.move.from_column,
+	    from_file = history->board->player.move.from_file,
 	    to_rank = history->board->player.move.to_rank,
-	    to_column = history->board->player.move.to_column,
-	    advance2Squares = (board[move.from_rank][move.from_column].color == WHITE? 2 : -2),
-	    origin_rank = (board[move.from_rank][move.from_column].color == WHITE? 1 : 6);
+	    to_file = history->board->player.move.to_file,
+	    advance2Squares = (board[move.from_rank][move.from_file].color == WHITE? 2 : -2),
+	    origin_rank = (board[move.from_rank][move.from_file].color == WHITE? 1 : 6);
 
-	return board[to_rank][to_column].name == PAWN &&
+	return board[to_rank][to_file].name == PAWN &&
 	       from_rank + advance2Squares == to_rank &&
 	       from_rank == origin_rank &&
-	       from_column == to_column &&
+	       from_file == to_file &&
 	       to_rank == move.from_rank &&
-	       (to_column - move.from_column == 1 ||
-	       to_column - move.from_column == -1) &&
-	       to_column == move.to_column;
+	       (to_file - move.from_file == 1 ||
+	       to_file - move.from_file == -1) &&
+	       to_file == move.to_file;
 }
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
-	if(board[move.from_rank][move.from_column].name != KNIGHT){
-		char i = move.from_rank, j = move.from_column;
+	if(board[move.from_rank][move.from_file].name != KNIGHT){
+		char i = move.from_rank, j = move.from_file;
 		
-		for(advance_to(&i, move.to_rank), advance_to(&j, move.to_column);
-		    i != move.to_rank || j != move.to_column;
-		    advance_to(&i, move.to_rank), advance_to(&j, move.to_column))
+		for(advance_to(&i, move.to_rank), advance_to(&j, move.to_file);
+		    i != move.to_rank || j != move.to_file;
+		    advance_to(&i, move.to_rank), advance_to(&j, move.to_file))
 			if(board[i][j].name != EMPTY_P)
 				return true;
 	}
@@ -241,7 +241,7 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 		for(int j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].name == KING && board[i][j].color == turn){
 				opponent.move.to_rank = i;
-				opponent.move.to_column = j;
+				opponent.move.to_file = j;
 				break;
 			}
 		}
@@ -252,7 +252,7 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 		for(int j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == opponent.turn){
 				opponent.move.from_rank = i;
-				opponent.move.from_column = j;
+				opponent.move.from_file = j;
 
 				if(is_piece_movement_compatible(board, history, opponent) &&
 				   !is_jump_other_pieces(board, opponent.move)){

@@ -53,18 +53,18 @@ bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 	for(int i = history.last_check.to_rank - 1;
 	    i <= history.last_check.to_rank + 1;
 		i++){
-		for(int j = history.last_check.to_column - 1;
-		    j <= history.last_check.to_column + 1;
+		for(int j = history.last_check.to_file - 1;
+		    j <= history.last_check.to_file + 1;
 			j++){
 			if(i >= 0 && i <= 7 && j >= 0 && j <= 7 &&
-			   board[i][j].color != board[history.last_check.to_rank][history.last_check.to_column].color){
+			   board[i][j].color != board[history.last_check.to_rank][history.last_check.to_file].color){
 				Player temp;
 
 				temp.turn = turn;
 				temp.move.to_rank = i;
-				temp.move.to_column = j;
+				temp.move.to_file = j;
 				temp.move.from_rank = history.last_check.to_rank;
-				temp.move.from_column = history.last_check.to_column;
+				temp.move.from_file = history.last_check.to_file;
 
 				if(!will_king_be_in_check(board, history, temp))
 				   	return true;
@@ -76,17 +76,17 @@ bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 }
 
 bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char turn){
-	char *i = &history.last_check.from_rank, *j = &history.last_check.from_column;
+	char *i = &history.last_check.from_rank, *j = &history.last_check.from_file;
 
 	if(board[*i][*j].name != KNIGHT){
 		do{
 			advance_to(i, history.last_check.to_rank);
-			advance_to(j, history.last_check.to_column);
+			advance_to(j, history.last_check.to_file);
 			
-			if((*i) != history.last_check.to_rank || (*j) != history.last_check.to_column)
+			if((*i) != history.last_check.to_rank || (*j) != history.last_check.to_file)
 				if(can_attacking_piece_be_captured(board, history, turn))
 					return true;
-		}while(*i != history.last_check.to_rank || *j != history.last_check.to_column);
+		}while(*i != history.last_check.to_rank || *j != history.last_check.to_file);
 	}
 
 	return false;
@@ -98,13 +98,13 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history
 
 	piece.turn = turn;
 	piece.move.to_rank = history.last_check.from_rank;
-	piece.move.to_column = history.last_check.from_column;
+	piece.move.to_file = history.last_check.from_file;
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == turn){
 				piece.move.from_rank = i;
-				piece.move.from_column = j;
+				piece.move.from_file = j;
 			
 				if(is_piece_movement_compatible(board, &history, piece) &&
 				   !is_jump_other_pieces(board, piece.move) &&
@@ -127,7 +127,7 @@ bool is_stalemate(square board[][BOARD_SIZE], History history, char turn){
 
 				temp.turn = turn;
 				temp.move.from_rank = i;
-				temp.move.from_column = j;
+				temp.move.from_file = j;
 				
 				if(is_there_possible_move(board, history, temp))
 					return false;
@@ -145,7 +145,7 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History history, Player 
 		for(j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color != temp.turn){
 				temp.move.to_rank = i;
-				temp.move.to_column = j;
+				temp.move.to_file = j;
 
 				if(is_piece_movement_compatible(board, &history, temp) &&
 				   !is_jump_other_pieces(board, temp.move) &&
@@ -171,7 +171,7 @@ bool is_threefold_repetition(square board[][BOARD_SIZE], History *history){
 					if(aux->pieces[k].name != board[i][j].name ||
 					   aux->pieces[k].color != board[i][j].color ||
 					   aux->pieces[k].rank != i ||
-					   aux->pieces[k].column != j){
+					   aux->pieces[k].file != j){
 						is_different = true;
 						break;
 					}else

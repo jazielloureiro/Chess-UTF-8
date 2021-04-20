@@ -8,24 +8,24 @@
 void read_movement_input(move_coord *move_input){
 	printf("\nEnter your movement: ");
 
-	move_input->from_column = getchar();
+	move_input->from_file = getchar();
 	move_input->from_rank = getchar();
 
-	if(move_input->from_column == ':'){
+	if(move_input->from_file == ':'){
 		clear_input_buffer();
 		return;
 	}
 
 	getchar();
 
-	move_input->to_column = getchar();
+	move_input->to_file = getchar();
 	move_input->to_rank = getchar();
 
 	clear_input_buffer();
 }
 
 bool is_there_player_action(Player player){
-	if(player.move.from_column == ':' &&
+	if(player.move.from_file == ':' &&
 	   (player.move.from_rank == 'r' ||
 	   player.move.from_rank == 'd'))
 		return is_player_action_valid(player.move.from_rank, player.turn);
@@ -65,9 +65,9 @@ bool is_player_action_valid(char action, char turn){
 
 void convert_movement_input(move_coord *move){
 	move->from_rank = convert_rank(move->from_rank);
-	move->from_column = convert_column(move->from_column);
+	move->from_file = convert_file(move->from_file);
 	move->to_rank = convert_rank(move->to_rank);
-	move->to_column = convert_column(move->to_column);
+	move->to_file = convert_file(move->to_file);
 }
 
 char convert_rank(char rank){
@@ -77,22 +77,22 @@ char convert_rank(char rank){
 	return '8' - rank;
 }
 
-char convert_column(char column){
-	if(column < 'a' || column > 'h')
+char convert_file(char file){
+	if(file < 'a' || file > 'h')
 		return INVALID_SQUARE;
 
-	return column - 'a';
+	return file - 'a';
 }
 
 bool is_the_squares_valid(move_coord move_input){
-	return move_input.from_column != INVALID_SQUARE &&
+	return move_input.from_file != INVALID_SQUARE &&
 	       move_input.from_rank != INVALID_SQUARE &&
-	       move_input.to_column != INVALID_SQUARE &&
+	       move_input.to_file != INVALID_SQUARE &&
 	       move_input.to_rank != INVALID_SQUARE;
 }
 
 bool is_there_promotion(square board[][BOARD_SIZE], move_coord move){
-	return board[move.to_rank][move.to_column].name == PAWN &&
+	return board[move.to_rank][move.to_file].name == PAWN &&
 	       (move.to_rank == 0 || move.to_rank == 7);
 }
 

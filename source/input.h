@@ -11,7 +11,7 @@ void convert_movement_input(move_coord *move);
 
 char convert_rank(char rank);
 
-char convert_column(char column);
+char convert_file(char file);
 
 bool is_the_squares_valid(move_coord move_input);
 
