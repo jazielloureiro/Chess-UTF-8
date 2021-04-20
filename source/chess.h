@@ -38,10 +38,10 @@ typedef struct{
 	char from_column;
 	char to_row;
 	char to_column;
-} move_coordinates;
+} move_coord;
 
 typedef struct{
-	move_coordinates move;
+	move_coord move;
 	Color turn;
 	bool is_in_check;
 } Player;
@@ -69,7 +69,7 @@ typedef struct{
 	h_board *board;
 	int moves_counter;
 	bool has_castle_occurred, has_en_passant_occurred;
-	move_coordinates last_check;
+	move_coord last_check;
 } History;
 
 void init_board(square board[][BOARD_SIZE]);
@@ -84,15 +84,15 @@ void get_current_board(square board[][BOARD_SIZE], History *history);
 
 int count_pieces(square board[][BOARD_SIZE]);
 
-void move_piece(square board[][BOARD_SIZE], move_coordinates move);
+void move_piece(square board[][BOARD_SIZE], move_coord move);
 
-void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move_input);
+void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move_input);
 
-void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move_input);
+void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move_input);
 
-void find_castle_rook(move_coordinates move, move_coordinates *rook);
+void find_castle_rook(move_coord move, move_coord *rook);
 
-void castle(square board[][BOARD_SIZE], move_coordinates move);
+void castle(square board[][BOARD_SIZE], move_coord move);
 
 void advance_to(char *from, char to);
 

@@ -146,7 +146,7 @@ int count_pieces(square board[][BOARD_SIZE]){
 	return pieces_qty;
 }
 
-void move_piece(square board[][BOARD_SIZE], move_coordinates move){
+void move_piece(square board[][BOARD_SIZE], move_coord move){
 	board[move.to_row][move.to_column].image =
 	board[move.from_row][move.from_column].image;
 
@@ -163,7 +163,7 @@ void move_piece(square board[][BOARD_SIZE], move_coordinates move){
 	board[move.from_row][move.from_column].color = EMPTY_C;
 }
 
-void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coordinates move){
+void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move){
 	move_squares->from.image = board[move.from_row][move.from_column].image;
 	move_squares->from.name = board[move.from_row][move.from_column].name;
 	move_squares->from.color = board[move.from_row][move.from_column].color;
@@ -173,7 +173,7 @@ void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_square
 	move_squares->to.color = board[move.to_row][move.to_column].color;
 }
 
-void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coordinates move){
+void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move){
 	board[move.from_row][move.from_column].image = move_squares.from.image;
 	board[move.from_row][move.from_column].name = move_squares.from.name;
 	board[move.from_row][move.from_column].color = move_squares.from.color;
@@ -183,7 +183,7 @@ void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squar
 	board[move.to_row][move.to_column].color = move_squares.to.color;
 }
 
-void find_castle_rook(move_coordinates move, move_coordinates *rook){
+void find_castle_rook(move_coord move, move_coord *rook){
 	if(move.to_row == 0){
 		rook->from_row = 0;
 		rook->to_row = 0;
@@ -209,8 +209,8 @@ void find_castle_rook(move_coordinates move, move_coordinates *rook){
 	}
 }
 
-void castle(square board[][BOARD_SIZE], move_coordinates move){
-	move_coordinates rook;
+void castle(square board[][BOARD_SIZE], move_coord move){
+	move_coord rook;
 
 	find_castle_rook(move, &rook);
 

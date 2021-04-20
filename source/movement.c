@@ -59,19 +59,19 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 	}
 }
 
-bool is_bishop_movement_valid(move_coordinates move){
+bool is_bishop_movement_valid(move_coord move){
 	return abs(move.to_row - move.from_row) ==
 	       abs(move.to_column - move.from_column);
 }
 
-bool is_king_movement_valid(move_coordinates move){
+bool is_king_movement_valid(move_coord move){
 	return move.from_row - 1 <= move.to_row &&
 	       move.from_row + 1 >= move.to_row &&
 	       move.from_column - 1 <= move.to_column &&
 	       move.from_column + 1 >= move.to_column;
 }
 
-bool is_knight_movement_valid(move_coordinates move){
+bool is_knight_movement_valid(move_coord move){
 	const int DIFF_ROW = abs(move.to_row - move.from_row),
 	          DIFF_COL = abs(move.to_column - move.from_column);
 
@@ -92,12 +92,12 @@ bool is_pawn_movement_valid(Player player){
 	       player.move.from_column == player.move.to_column;
 }
 
-bool is_queen_movement_valid(move_coordinates move){
+bool is_queen_movement_valid(move_coord move){
 	return is_bishop_movement_valid(move) ||
 	       is_rook_movement_valid(move);
 }
 
-bool is_rook_movement_valid(move_coordinates move){
+bool is_rook_movement_valid(move_coord move){
 	return move.from_row == move.to_row ||
 	       move.from_column == move.to_column;
 }
@@ -155,17 +155,17 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 	return true;
 }
 
-bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coordinates move){
+bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coord move){
 	return move.from_column == move.to_column &&
 	       board[move.to_row][move.to_column].name == EMPTY_P;
 }
 
-bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coordinates move){
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
 	return move.from_column != move.to_column &&
 	       board[move.to_row][move.to_column].name != EMPTY_P;
 }
 
-bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coordinates move){
+bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coord move){
 	if(history->board == NULL)
 		return false;
 
@@ -186,7 +186,7 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 	       to_column == move.to_column;
 }
 
-bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coordinates move){
+bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
 	if(board[move.from_row][move.from_column].name != KNIGHT){
 		char i = move.from_row, j = move.from_column;
 		
@@ -204,7 +204,7 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 	bool is_check,
 	     has_special_move = history.has_castle_occurred || history.has_en_passant_occurred;
 	movement_squares move_squares, aux_squares;
-	move_coordinates aux_move;
+	move_coord aux_move;
 
 	save_move_squares(board, &move_squares, player.move);
 

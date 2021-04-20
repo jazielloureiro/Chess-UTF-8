@@ -5,7 +5,7 @@
 #include "chess.h"
 #include "input.h"
 
-void read_movement_input(move_coordinates *move_input){
+void read_movement_input(move_coord *move_input){
 	printf("\nEnter your movement: ");
 
 	move_input->from_column = getchar();
@@ -63,7 +63,7 @@ bool is_player_action_valid(char action, char turn){
 	return false;
 }
 
-void convert_movement_input(move_coordinates *move){
+void convert_movement_input(move_coord *move){
 	move->from_row = convert_row(move->from_row);
 	move->from_column = convert_column(move->from_column);
 	move->to_row = convert_row(move->to_row);
@@ -84,14 +84,14 @@ char convert_column(char column){
 	return column - 'a';
 }
 
-bool is_the_squares_valid(move_coordinates move_input){
+bool is_the_squares_valid(move_coord move_input){
 	return move_input.from_column != INVALID_SQUARE &&
 	       move_input.from_row != INVALID_SQUARE &&
 	       move_input.to_column != INVALID_SQUARE &&
 	       move_input.to_row != INVALID_SQUARE;
 }
 
-bool is_there_promotion(square board[][BOARD_SIZE], move_coordinates move){
+bool is_there_promotion(square board[][BOARD_SIZE], move_coord move){
 	return board[move.to_row][move.to_column].name == PAWN &&
 	       (move.to_row == 0 || move.to_row == 7);
 }
