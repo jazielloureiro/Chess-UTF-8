@@ -3,9 +3,9 @@
 
 move_coord read_input();
 
-int8_t convert_rank(char rank);
-
 int8_t convert_file(char file);
+
+int8_t convert_rank(char rank);
 
 bool is_action(Player player);
 

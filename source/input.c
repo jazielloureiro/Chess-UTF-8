@@ -29,18 +29,18 @@ move_coord read_input(){
 	return input;
 }
 
-int8_t convert_rank(char rank){
-	if(rank < '1' || rank > '8')
-		return INVALID_SQUARE;
-
-	return '8' - rank;
-}
-
 int8_t convert_file(char file){
 	if(file < 'a' || file > 'h')
 		return INVALID_SQUARE;
 
 	return file - 'a';
+}
+
+int8_t convert_rank(char rank){
+	if(rank < '1' || rank > '8')
+		return INVALID_SQUARE;
+
+	return '8' - rank;
 }
 
 bool is_action(Player player){

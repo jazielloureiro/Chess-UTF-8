@@ -47,8 +47,8 @@ void init_board(square board[][BOARD_SIZE]){
 	for(i = 2; i < 6; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			board[i][j].image = " ";
-			board[i][j].name = EMPTY_P;
-			board[i][j].color = EMPTY_C;
+			board[i][j].name = EMPTY;
+			board[i][j].color = EMPTY;
 		}
 	}
 
@@ -102,7 +102,7 @@ void init_player(Player *player){
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player){
 	if(board[player.move.from_rank][player.move.from_file].name == PAWN ||
-	   board[player.move.to_rank][player.move.to_file].name != EMPTY_P)
+	   board[player.move.to_rank][player.move.to_file].name != EMPTY)
 		history->moves_counter = 0;
 
 	get_current_board(board, history);
@@ -121,7 +121,7 @@ void get_current_board(square board[][BOARD_SIZE], History *history){
 
 	for(int i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
 		for(int j = 0; j < BOARD_SIZE; j++){
-			if(board[i][j].name != EMPTY_P){
+			if(board[i][j].name != EMPTY){
 				Hboard->pieces[sqr_counter].name = board[i][j].name;
 				Hboard->pieces[sqr_counter].color = board[i][j].color;
 				Hboard->pieces[sqr_counter].rank = i;
@@ -140,7 +140,7 @@ int count_pieces(square board[][BOARD_SIZE]){
 
 	for(int i = 0; i < BOARD_SIZE; i++)
 		for(int j = 0; j < BOARD_SIZE; j++)
-			if(board[i][j].name != EMPTY_P)
+			if(board[i][j].name != EMPTY)
 				pieces_qty++;
 	
 	return pieces_qty;
@@ -158,9 +158,9 @@ void move_piece(square board[][BOARD_SIZE], move_coord move){
 
 	board[move.from_rank][move.from_file].image = " ";
 
-	board[move.from_rank][move.from_file].name = EMPTY_P;
+	board[move.from_rank][move.from_file].name = EMPTY;
 
-	board[move.from_rank][move.from_file].color = EMPTY_C;
+	board[move.from_rank][move.from_file].color = EMPTY;
 }
 
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move){

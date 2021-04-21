@@ -3,21 +3,20 @@
 
 #define BOARD_SIZE 8
 
-typedef enum{
-	EMPTY_P,
+enum pieces{
+	EMPTY = ' ',
 	BISHOP = 'B',
 	KING = 'K',
 	KNIGHT = 'N',
 	PAWN = 'P',
 	QUEEN = 'Q',
 	ROOK = 'R'
-} Piece;
+};
 
-typedef enum{
-	EMPTY_C,
+enum colors{
 	WHITE = 'W',
 	BLACK = 'B'
-} Color;
+};
 
 enum flags{
 	ASK_RESIGN = -3,
@@ -31,8 +30,8 @@ enum flags{
 
 typedef struct{
 	char *image;
-	Piece name;
-	Color color;
+	char name;
+	char color;
 } square;
 
 typedef struct{
@@ -44,7 +43,7 @@ typedef struct{
 
 typedef struct{
 	move_coord move;
-	Color turn;
+	char turn;
 	bool is_in_check;
 } Player;
 	
@@ -54,8 +53,8 @@ typedef struct{
 } movement_squares;
 
 typedef struct{
-	Piece name;
-	Color color;
+	char name;
+	char color;
 	int8_t rank : 4;
 	int8_t file : 4;
 } h_square;

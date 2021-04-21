@@ -131,7 +131,7 @@ bool are_there_pieces_between(square rank[], char start, char end){
 	char i = start;
 
 	for(advance_to(&i, end); i != end; advance_to(&i, end))
-		if(rank[i].name != EMPTY_P)
+		if(rank[i].name != EMPTY)
 			return true;
 
 	return false;
@@ -157,12 +157,12 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 
 bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coord move){
 	return move.from_file == move.to_file &&
-	       board[move.to_rank][move.to_file].name == EMPTY_P;
+	       board[move.to_rank][move.to_file].name == EMPTY;
 }
 
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
 	return move.from_file != move.to_file &&
-	       board[move.to_rank][move.to_file].name != EMPTY_P;
+	       board[move.to_rank][move.to_file].name != EMPTY;
 }
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coord move){
@@ -193,7 +193,7 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
 		for(advance_to(&i, move.to_rank), advance_to(&j, move.to_file);
 		    i != move.to_rank || j != move.to_file;
 		    advance_to(&i, move.to_rank), advance_to(&j, move.to_file))
-			if(board[i][j].name != EMPTY_P)
+			if(board[i][j].name != EMPTY)
 				return true;
 	}
 	
