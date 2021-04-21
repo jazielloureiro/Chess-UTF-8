@@ -51,7 +51,7 @@ void play(){
 		if(is_there_promotion(board, player.move))
 			promotion(&board[player.move.to_rank][player.move.to_file], player.turn);
 
-		player.turn == WHITE? (player.turn = BLACK) : (player.turn = WHITE);
+		player.turn = (player.turn == WHITE? BLACK : WHITE);
 	}while(!is_game_done(board, &history, &player));
 
 	free_history(history.board);

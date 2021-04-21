@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -26,14 +27,12 @@ void pause_screen(){
 }
 
 void print_board(square board[][BOARD_SIZE]){
-	int i, j, k = 8;
-	
 	printf("\n\t  ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 
-	for(i = 0; i < BOARD_SIZE; i++){
-		printf("\t%d │", k--);
+	for(int8_t i = 0, k = 8; i < BOARD_SIZE; i++, k--){
+		printf("\t%d │", k);
 
-		for(j = 0; j < BOARD_SIZE; j++)
+		for(int8_t j = 0; j < BOARD_SIZE; j++)
 			printf(" %s │", board[i][j].image);
 
 		putchar('\n');
@@ -94,9 +93,9 @@ void print_top_menu(char turn, bool check){
 		       "\t  └───────────────┘   └───────────┘\n",
 		       (turn == WHITE? "White" : "Black"));
 	}else{
-		printf("\n\t\t  ┌───────────────┐\n"
-		       "\t\t  │ %s to move │\n"
-		       "\t\t  └───────────────┘\n",
+		printf("\n\t          ┌───────────────┐\n"
+		       "\t          │ %s to move │\n"
+		       "\t          └───────────────┘\n",
 		       (turn == WHITE? "White" : "Black"));
 	}
 }

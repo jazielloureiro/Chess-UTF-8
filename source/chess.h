@@ -60,7 +60,7 @@ typedef struct{
 } h_square;
 	
 typedef struct H_board{
-	int pieces_qty;
+	int8_t pieces_qty;
 	h_square *pieces;
 	Player player;
 	struct H_board *prev;
@@ -83,7 +83,7 @@ void update_history(square board[][BOARD_SIZE], History *history, Player player)
 
 void get_current_board(square board[][BOARD_SIZE], History *history);
 
-int count_pieces(square board[][BOARD_SIZE]);
+int8_t count_pieces(square board[][BOARD_SIZE]);
 
 void move_piece(square board[][BOARD_SIZE], move_coord move);
 

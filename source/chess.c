@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,10 +10,8 @@
 #include "input.h"
 
 void init_board(square board[][BOARD_SIZE]){
-	int i, j;
-
-	for(i = 0; i < 2; i++)
-		for(j = 0; j < BOARD_SIZE; j++)
+	for(int8_t i = 0; i < 2; i++)
+		for(int8_t j = 0; j < BOARD_SIZE; j++)
 			board[i][j].color = BLACK;
 
 	board[0][0].image = "♜";
@@ -39,24 +38,24 @@ void init_board(square board[][BOARD_SIZE]){
 	board[0][7].image = "♜";
 	board[0][7].piece = ROOK;
 
-	for(j = 0; j < BOARD_SIZE; j++){
+	for(int8_t j = 0; j < BOARD_SIZE; j++){
 		board[1][j].image = "♟";
 		board[1][j].piece = PAWN;
 	}
 
-	for(i = 2; i < 6; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 2; i < 6; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			board[i][j].image = " ";
 			board[i][j].piece = EMPTY;
 			board[i][j].color = EMPTY;
 		}
 	}
 
-	for(i = 6; i < BOARD_SIZE; i++)
-		for(j = 0; j < BOARD_SIZE; j++)
+	for(int8_t i = 6; i < BOARD_SIZE; i++)
+		for(int8_t j = 0; j < BOARD_SIZE; j++)
 			board[i][j].color = WHITE;
 
-	for(j = 0; j < BOARD_SIZE; j++){
+	for(int8_t j = 0; j < BOARD_SIZE; j++){
 		board[6][j].image = "♙";
 		board[6][j].piece = PAWN;
 	}
@@ -119,8 +118,8 @@ void get_current_board(square board[][BOARD_SIZE], History *history){
 
 	Hboard->pieces = malloc(sizeof(h_square) * Hboard->pieces_qty);
 
-	for(int i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
-		for(int j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].piece != EMPTY){
 				Hboard->pieces[sqr_counter].piece = board[i][j].piece;
 				Hboard->pieces[sqr_counter].color = board[i][j].color;
@@ -135,11 +134,11 @@ void get_current_board(square board[][BOARD_SIZE], History *history){
 	history->board = Hboard;
 }
 
-int count_pieces(square board[][BOARD_SIZE]){
-	int pieces_qty = 0;
+int8_t count_pieces(square board[][BOARD_SIZE]){
+	int8_t pieces_qty = 0;
 
-	for(int i = 0; i < BOARD_SIZE; i++)
-		for(int j = 0; j < BOARD_SIZE; j++)
+	for(int8_t i = 0; i < BOARD_SIZE; i++)
+		for(int8_t j = 0; j < BOARD_SIZE; j++)
 			if(board[i][j].piece != EMPTY)
 				pieces_qty++;
 	

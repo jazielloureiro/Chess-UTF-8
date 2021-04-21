@@ -51,10 +51,10 @@ bool is_checkmate(square board[][BOARD_SIZE], History history, char turn){
 }
 
 bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
-	for(int i = history.last_check.to_rank - 1;
+	for(int8_t i = history.last_check.to_rank - 1;
 	    i <= history.last_check.to_rank + 1;
 		i++){
-		for(int j = history.last_check.to_file - 1;
+		for(int8_t j = history.last_check.to_file - 1;
 		    j <= history.last_check.to_file + 1;
 			j++){
 			if(i >= 0 && i <= 7 && j >= 0 && j <= 7 &&
@@ -97,15 +97,14 @@ bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char tur
 }
 
 bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history, char turn){
-	int i, j;
 	Player piece;
 
 	piece.turn = turn;
 	piece.move.to_rank = history.last_check.from_rank;
 	piece.move.to_file = history.last_check.from_file;
 
-	for(i = 0; i < BOARD_SIZE; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 0; i < BOARD_SIZE; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == turn){
 				piece.move.from_rank = i;
 				piece.move.from_file = j;
@@ -122,10 +121,8 @@ bool can_attacking_piece_be_captured(square board[][BOARD_SIZE], History history
 }
 
 bool is_stalemate(square board[][BOARD_SIZE], History history, char turn){
-	int i, j;
-
-	for(i = 0; i < BOARD_SIZE; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 0; i < BOARD_SIZE; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == turn){
 				Player temp;
 
@@ -143,10 +140,8 @@ bool is_stalemate(square board[][BOARD_SIZE], History history, char turn){
 }
 
 bool is_there_possible_move(square board[][BOARD_SIZE], History history, Player temp){
-	int i, j;
-
-	for(i = 0; i < BOARD_SIZE; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 0; i < BOARD_SIZE; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color != temp.turn){
 				temp.move.to_rank = i;
 				temp.move.to_file = j;
@@ -169,8 +164,8 @@ bool is_threefold_repetition(square board[][BOARD_SIZE], History *history){
 		bool is_different = false;
 		int k = 0;
 
-		for(int i = 0; i < BOARD_SIZE && !is_different; i++){
-			for(int j = 0; j < BOARD_SIZE; j++){
+		for(int8_t i = 0; i < BOARD_SIZE && !is_different; i++){
+			for(int8_t j = 0; j < BOARD_SIZE; j++){
 				if(board[i][j].piece != EMPTY){
 					if(aux->pieces[k].piece != board[i][j].piece ||
 					   aux->pieces[k].color != board[i][j].color ||
@@ -195,11 +190,11 @@ bool is_threefold_repetition(square board[][BOARD_SIZE], History *history){
 }
 
 bool is_insufficient_material(square board[][BOARD_SIZE]){
-	int white_minor_pieces = 0, black_minor_pieces = 0, i, j;
+	int8_t white_minor_pieces = 0, black_minor_pieces = 0;
 	bool has_white_sufficient_material = false, has_black_sufficient_material = false;
 
-	for(i = 0; i < BOARD_SIZE; i++){
-		for(j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 0; i < BOARD_SIZE; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].piece == BISHOP || board[i][j].piece == KNIGHT){
 				if(board[i][j].color == WHITE)
 					white_minor_pieces++;

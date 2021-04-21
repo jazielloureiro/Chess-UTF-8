@@ -237,8 +237,8 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 	opponent.turn = (turn == WHITE? BLACK : WHITE);
 	
 	// Searching where the king is
-	for(int i = 0; i < BOARD_SIZE; i++){
-		for(int j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 0; i < BOARD_SIZE; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].piece == KING && board[i][j].color == turn){
 				opponent.move.to_rank = i;
 				opponent.move.to_file = j;
@@ -248,8 +248,8 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 	}
 	
 	// Verify if the opponent's pieces are threatening the king
-	for(int i = 0; i < BOARD_SIZE; i++){
-		for(int j = 0; j < BOARD_SIZE; j++){
+	for(int8_t i = 0; i < BOARD_SIZE; i++){
+		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].color == opponent.turn){
 				opponent.move.from_rank = i;
 				opponent.move.from_file = j;
