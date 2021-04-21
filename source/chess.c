@@ -16,38 +16,38 @@ void init_board(square board[][BOARD_SIZE]){
 			board[i][j].color = BLACK;
 
 	board[0][0].image = "♜";
-	board[0][0].name = ROOK;
+	board[0][0].piece = ROOK;
 
 	board[0][1].image = "♞";
-	board[0][1].name = KNIGHT;
+	board[0][1].piece = KNIGHT;
 
 	board[0][2].image = "♝";
-	board[0][2].name = BISHOP;
+	board[0][2].piece = BISHOP;
 
 	board[0][3].image = "♛";
-	board[0][3].name = QUEEN;
+	board[0][3].piece = QUEEN;
 
 	board[0][4].image = "♚";
-	board[0][4].name = KING;
+	board[0][4].piece = KING;
 
 	board[0][5].image = "♝";
-	board[0][5].name = BISHOP;
+	board[0][5].piece = BISHOP;
 
 	board[0][6].image = "♞";
-	board[0][6].name = KNIGHT;
+	board[0][6].piece = KNIGHT;
 
 	board[0][7].image = "♜";
-	board[0][7].name = ROOK;
+	board[0][7].piece = ROOK;
 
 	for(j = 0; j < BOARD_SIZE; j++){
 		board[1][j].image = "♟";
-		board[1][j].name = PAWN;
+		board[1][j].piece = PAWN;
 	}
 
 	for(i = 2; i < 6; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			board[i][j].image = " ";
-			board[i][j].name = EMPTY;
+			board[i][j].piece = EMPTY;
 			board[i][j].color = EMPTY;
 		}
 	}
@@ -58,32 +58,32 @@ void init_board(square board[][BOARD_SIZE]){
 
 	for(j = 0; j < BOARD_SIZE; j++){
 		board[6][j].image = "♙";
-		board[6][j].name = PAWN;
+		board[6][j].piece = PAWN;
 	}
 
 	board[7][0].image = "♖";
-	board[7][0].name = ROOK;
+	board[7][0].piece = ROOK;
 
 	board[7][1].image = "♘";
-	board[7][1].name = KNIGHT;
+	board[7][1].piece = KNIGHT;
 
 	board[7][2].image = "♗";
-	board[7][2].name = BISHOP;
+	board[7][2].piece = BISHOP;
 
 	board[7][3].image = "♕";
-	board[7][3].name = QUEEN;
+	board[7][3].piece = QUEEN;
 
 	board[7][4].image = "♔";
-	board[7][4].name = KING;
+	board[7][4].piece = KING;
 
 	board[7][5].image = "♗";
-	board[7][5].name = BISHOP;
+	board[7][5].piece = BISHOP;
 
 	board[7][6].image = "♘";
-	board[7][6].name = KNIGHT;
+	board[7][6].piece = KNIGHT;
 
 	board[7][7].image = "♖";
-	board[7][7].name = ROOK;
+	board[7][7].piece = ROOK;
 }
 
 void init_history(History *history){
@@ -101,8 +101,8 @@ void init_player(Player *player){
 }
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player){
-	if(board[player.move.from_rank][player.move.from_file].name == PAWN ||
-	   board[player.move.to_rank][player.move.to_file].name != EMPTY)
+	if(board[player.move.from_rank][player.move.from_file].piece == PAWN ||
+	   board[player.move.to_rank][player.move.to_file].piece != EMPTY)
 		history->moves_counter = 0;
 
 	get_current_board(board, history);
@@ -121,8 +121,8 @@ void get_current_board(square board[][BOARD_SIZE], History *history){
 
 	for(int i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
 		for(int j = 0; j < BOARD_SIZE; j++){
-			if(board[i][j].name != EMPTY){
-				Hboard->pieces[sqr_counter].name = board[i][j].name;
+			if(board[i][j].piece != EMPTY){
+				Hboard->pieces[sqr_counter].piece = board[i][j].piece;
 				Hboard->pieces[sqr_counter].color = board[i][j].color;
 				Hboard->pieces[sqr_counter].rank = i;
 				Hboard->pieces[sqr_counter].file = j;
@@ -140,7 +140,7 @@ int count_pieces(square board[][BOARD_SIZE]){
 
 	for(int i = 0; i < BOARD_SIZE; i++)
 		for(int j = 0; j < BOARD_SIZE; j++)
-			if(board[i][j].name != EMPTY)
+			if(board[i][j].piece != EMPTY)
 				pieces_qty++;
 	
 	return pieces_qty;
@@ -150,36 +150,36 @@ void move_piece(square board[][BOARD_SIZE], move_coord move){
 	board[move.to_rank][move.to_file].image =
 	board[move.from_rank][move.from_file].image;
 
-	board[move.to_rank][move.to_file].name = 
-	board[move.from_rank][move.from_file].name;
+	board[move.to_rank][move.to_file].piece = 
+	board[move.from_rank][move.from_file].piece;
 
 	board[move.to_rank][move.to_file].color = 
 	board[move.from_rank][move.from_file].color;
 
 	board[move.from_rank][move.from_file].image = " ";
 
-	board[move.from_rank][move.from_file].name = EMPTY;
+	board[move.from_rank][move.from_file].piece = EMPTY;
 
 	board[move.from_rank][move.from_file].color = EMPTY;
 }
 
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move){
 	move_squares->from.image = board[move.from_rank][move.from_file].image;
-	move_squares->from.name = board[move.from_rank][move.from_file].name;
+	move_squares->from.piece = board[move.from_rank][move.from_file].piece;
 	move_squares->from.color = board[move.from_rank][move.from_file].color;
 	
 	move_squares->to.image = board[move.to_rank][move.to_file].image;
-	move_squares->to.name = board[move.to_rank][move.to_file].name;
+	move_squares->to.piece = board[move.to_rank][move.to_file].piece;
 	move_squares->to.color = board[move.to_rank][move.to_file].color;
 }
 
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move){
 	board[move.from_rank][move.from_file].image = move_squares.from.image;
-	board[move.from_rank][move.from_file].name = move_squares.from.name;
+	board[move.from_rank][move.from_file].piece = move_squares.from.piece;
 	board[move.from_rank][move.from_file].color = move_squares.from.color;
 	
 	board[move.to_rank][move.to_file].image = move_squares.to.image;
-	board[move.to_rank][move.to_file].name = move_squares.to.name;
+	board[move.to_rank][move.to_file].piece = move_squares.to.piece;
 	board[move.to_rank][move.to_file].color = move_squares.to.color;
 }
 

@@ -79,7 +79,7 @@ bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char turn){
 	int8_t i = history.last_check.from_rank, j = history.last_check.from_file;
 
-	if(board[i][j].name != KNIGHT){
+	if(board[i][j].piece != KNIGHT){
 		do{
 			advance_to(&i, history.last_check.to_rank);
 			advance_to(&j, history.last_check.to_file);
@@ -171,8 +171,8 @@ bool is_threefold_repetition(square board[][BOARD_SIZE], History *history){
 
 		for(int i = 0; i < BOARD_SIZE && !is_different; i++){
 			for(int j = 0; j < BOARD_SIZE; j++){
-				if(board[i][j].name != EMPTY){
-					if(aux->pieces[k].name != board[i][j].name ||
+				if(board[i][j].piece != EMPTY){
+					if(aux->pieces[k].piece != board[i][j].piece ||
 					   aux->pieces[k].color != board[i][j].color ||
 					   aux->pieces[k].rank != i ||
 					   aux->pieces[k].file != j){
@@ -200,14 +200,14 @@ bool is_insufficient_material(square board[][BOARD_SIZE]){
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
-			if(board[i][j].name == BISHOP || board[i][j].name == KNIGHT){
+			if(board[i][j].piece == BISHOP || board[i][j].piece == KNIGHT){
 				if(board[i][j].color == WHITE)
 					white_minor_pieces++;
 				else
 					black_minor_pieces++;
-			}else if(board[i][j].name == QUEEN ||
-			         board[i][j].name == ROOK ||
-			         board[i][j].name == PAWN){
+			}else if(board[i][j].piece == QUEEN ||
+			         board[i][j].piece == ROOK ||
+			         board[i][j].piece == PAWN){
 				if(board[i][j].color == WHITE)
 					has_white_sufficient_material = true;
 				else

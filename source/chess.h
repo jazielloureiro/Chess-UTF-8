@@ -30,7 +30,7 @@ enum flags{
 
 typedef struct{
 	char *image;
-	char name;
+	char piece;
 	char color;
 } square;
 
@@ -53,7 +53,7 @@ typedef struct{
 } movement_squares;
 
 typedef struct{
-	char name;
+	char piece;
 	char color;
 	int8_t rank : 4;
 	int8_t file : 4;

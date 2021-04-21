@@ -31,7 +31,7 @@ bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player play
 }
 
 bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, Player player){
-	switch(board[player.move.from_rank][player.move.from_file].name){
+	switch(board[player.move.from_rank][player.move.from_file].piece){
 		case BISHOP:
 			return is_bishop_movement_valid(player.move);
 		case KING:
@@ -131,7 +131,7 @@ bool are_there_pieces_between(square rank[], char start, char end){
 	char i = start;
 
 	for(advance_to(&i, end); i != end; advance_to(&i, end))
-		if(rank[i].name != EMPTY)
+		if(rank[i].piece != EMPTY)
 			return true;
 
 	return false;
@@ -157,12 +157,12 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 
 bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coord move){
 	return move.from_file == move.to_file &&
-	       board[move.to_rank][move.to_file].name == EMPTY;
+	       board[move.to_rank][move.to_file].piece == EMPTY;
 }
 
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
 	return move.from_file != move.to_file &&
-	       board[move.to_rank][move.to_file].name != EMPTY;
+	       board[move.to_rank][move.to_file].piece != EMPTY;
 }
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coord move){
@@ -176,7 +176,7 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 	    advance2Squares = (board[move.from_rank][move.from_file].color == WHITE? 2 : -2),
 	    origin_rank = (board[move.from_rank][move.from_file].color == WHITE? 1 : 6);
 
-	return board[to_rank][to_file].name == PAWN &&
+	return board[to_rank][to_file].piece == PAWN &&
 	       from_rank + advance2Squares == to_rank &&
 	       from_rank == origin_rank &&
 	       from_file == to_file &&
@@ -187,13 +187,13 @@ bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coor
 }
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
-	if(board[move.from_rank][move.from_file].name != KNIGHT){
+	if(board[move.from_rank][move.from_file].piece != KNIGHT){
 		char i = move.from_rank, j = move.from_file;
 		
 		for(advance_to(&i, move.to_rank), advance_to(&j, move.to_file);
 		    i != move.to_rank || j != move.to_file;
 		    advance_to(&i, move.to_rank), advance_to(&j, move.to_file))
-			if(board[i][j].name != EMPTY)
+			if(board[i][j].piece != EMPTY)
 				return true;
 	}
 	
@@ -239,7 +239,7 @@ bool is_player_king_in_check(square board[][BOARD_SIZE], History *history, char 
 	// Searching where the king is
 	for(int i = 0; i < BOARD_SIZE; i++){
 		for(int j = 0; j < BOARD_SIZE; j++){
-			if(board[i][j].name == KING && board[i][j].color == turn){
+			if(board[i][j].piece == KING && board[i][j].color == turn){
 				opponent.move.to_rank = i;
 				opponent.move.to_file = j;
 				break;

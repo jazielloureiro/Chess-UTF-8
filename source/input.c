@@ -86,7 +86,7 @@ bool is_the_squares_valid(move_coord move_input){
 }
 
 bool is_there_promotion(square board[][BOARD_SIZE], move_coord move){
-	return board[move.to_rank][move.to_file].name == PAWN &&
+	return board[move.to_rank][move.to_file].piece == PAWN &&
 	       (move.to_rank == 0 || move.to_rank == 7);
 }
 
@@ -109,18 +109,18 @@ void promotion(square *piece, char turn){
 	switch(choose){
 		case '1':
 			piece->image = (turn == WHITE? "♕" : "♛");
-			piece->name = QUEEN;
+			piece->piece = QUEEN;
 			break;
 		case '2':
 			piece->image = (turn == WHITE? "♖" : "♜");
-			piece->name = ROOK;
+			piece->piece = ROOK;
 			break;
 		case '3':
 			piece->image = (turn == WHITE? "♗" : "♝");
-			piece->name = BISHOP;
+			piece->piece = BISHOP;
 			break;
 		case '4':
 			piece->image = (turn == WHITE? "♘" : "♞");
-			piece->name = KNIGHT;
+			piece->piece = KNIGHT;
 	}       
 }
