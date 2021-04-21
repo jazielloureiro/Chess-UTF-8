@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "aux.h"
@@ -22,13 +23,16 @@ void play(){
 			print_top_menu(player.turn, player.is_in_check);
 			print_board(board);
 
-			read_movement_input(&player.move);
+			player.move = read_input();
 
-			if(is_there_player_action(player)){
-				free_history(history.board);
-				return;
+			if(is_action(player)){
+				if(is_action_confirmed(player)){
+					free_history(history.board);
+					return;
+				}else
+					continue;
 			}
-		}while(!is_movement_valid(board, &history, &player));
+		}while(!is_movement_valid(board, &history, player));
 
 		update_history(board, &history, player);
 		

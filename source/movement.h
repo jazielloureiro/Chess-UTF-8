@@ -1,7 +1,7 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *player);
+bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player player);
 
 bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, Player player);
 

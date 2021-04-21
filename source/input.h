@@ -1,17 +1,15 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-void read_movement_input(move_coord *move_input);
+move_coord read_input();
 
-bool is_there_player_action(Player player);
+int8_t convert_rank(char rank);
 
-bool is_player_action_valid(char action, char turn);
+int8_t convert_file(char file);
 
-void convert_movement_input(move_coord *move);
+bool is_action(Player player);
 
-char convert_rank(char rank);
-
-char convert_file(char file);
+bool is_action_confirmed(Player player);
 
 bool is_the_squares_valid(move_coord move_input);
 

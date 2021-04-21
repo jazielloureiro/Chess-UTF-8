@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "aux.h"
@@ -76,17 +77,20 @@ bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 }
 
 bool can_piece_cover_check(square board[][BOARD_SIZE], History history, char turn){
-	char *i = &history.last_check.from_rank, *j = &history.last_check.from_file;
+	int8_t i = history.last_check.from_rank, j = history.last_check.from_file;
 
-	if(board[*i][*j].name != KNIGHT){
+	if(board[i][j].name != KNIGHT){
 		do{
-			advance_to(i, history.last_check.to_rank);
-			advance_to(j, history.last_check.to_file);
+			advance_to(&i, history.last_check.to_rank);
+			advance_to(&j, history.last_check.to_file);
+
+			history.last_check.from_rank = i;
+			history.last_check.from_file = j;
 			
-			if((*i) != history.last_check.to_rank || (*j) != history.last_check.to_file)
+			if(i != history.last_check.to_rank || j != history.last_check.to_file)
 				if(can_attacking_piece_be_captured(board, history, turn))
 					return true;
-		}while(*i != history.last_check.to_rank || *j != history.last_check.to_file);
+		}while(i != history.last_check.to_rank || j != history.last_check.to_file);
 	}
 
 	return false;

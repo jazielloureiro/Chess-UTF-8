@@ -20,7 +20,9 @@ typedef enum{
 } Color;
 
 enum flags{
-	INVALID_SQUARE = -1,
+	ASK_RESIGN = -3,
+	ASK_DRAW,
+	INVALID_SQUARE,
 	FIFTY_MOVES,
 	THREEFOLD_REP,
 	INSUFFICIENT_MAT,
@@ -34,10 +36,10 @@ typedef struct{
 } square;
 
 typedef struct{
-	char from_rank;
-	char from_file;
-	char to_rank;
-	char to_file;
+	int8_t from_rank : 4;
+	int8_t from_file : 4;
+	int8_t to_rank : 4;
+	int8_t to_file : 4;
 } move_coord;
 
 typedef struct{
@@ -54,8 +56,8 @@ typedef struct{
 typedef struct{
 	Piece name;
 	Color color;
-	char rank;
-	char file;
+	int8_t rank : 4;
+	int8_t file : 4;
 } h_square;
 	
 typedef struct H_board{

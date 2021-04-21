@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,23 +9,18 @@
 #include "input.h"
 #include "movement.h"
 
-bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player *player){
-	if(player->move.from_file == ':')
-		return false;
-
-	convert_movement_input(&player->move);
-
-	if(!is_the_squares_valid(player->move))
+bool is_movement_valid(square board[][BOARD_SIZE], History *history, Player player){
+	if(!is_the_squares_valid(player.move))
 		puts("\nYou've entered an invalid square!");
-	else if(board[player->move.from_rank][player->move.from_file].color != player->turn)
+	else if(board[player.move.from_rank][player.move.from_file].color != player.turn)
 		puts("\nYou must choose a piece of your color.");
-	else if(board[player->move.to_rank][player->move.to_file].color == player->turn)
+	else if(board[player.move.to_rank][player.move.to_file].color == player.turn)
 		puts("\nYou can't capture your own piece!");
-	else if(!is_piece_movement_compatible(board, history, *player))
+	else if(!is_piece_movement_compatible(board, history, player))
 		puts("\nThis movement is incompatible with your piece.");
-	else if(is_jump_other_pieces(board, player->move))
+	else if(is_jump_other_pieces(board, player.move))
 		puts("\nYour piece can't jump over other pieces!");
-	else if(will_king_be_in_check(board, *history, *player))
+	else if(will_king_be_in_check(board, *history, player))
 		puts("\nYour can't do this move, because your king will be in check.");
 	else
 		return true;
@@ -146,7 +142,11 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 		return false;
 
 	do{
-		advance_to(&player.move.from_file, player.move.to_file);
+		int8_t i = player.move.from_file;
+
+		advance_to(&i, player.move.to_file);
+
+		player.move.from_file = i;
 
 		if(will_king_be_in_check(board, *history, player))
 			return false;
