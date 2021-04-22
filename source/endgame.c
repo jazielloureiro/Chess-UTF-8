@@ -29,7 +29,7 @@ bool is_game_done(square board[][BOARD_SIZE], History *history, Player *player){
 	if(history->moves_counter == MAX_MOVES){
 		print_final_board(board, FIFTY_MOVES);
 		return true;
-	}else if(is_threefold_repetition(board, history, *player)){
+	}else if(is_threefold_repetition(history, *player)){
 		print_final_board(board, THREEFOLD_REP);
 		return true;
 	}else if(is_insufficient_material(board)){
@@ -158,16 +158,16 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History history, Player 
 	return false;
 }
 
-bool is_threefold_repetition(square board[][BOARD_SIZE], History *history, Player player){
-	h_board *current = get_current_board(board); 
-	int repetition_counter = 1;
+bool is_threefold_repetition(History *history, Player player){
+	uint8_t repetition_counter = 1;
 
-	for(h_board *aux = history->board;
+	for(h_board *current = history->board, *aux = history->board->prev;
 	    aux != NULL && current->pieces_qty == aux->pieces_qty;
-	    aux = aux->prev){
+	    aux = aux->prev)
+	{
 		bool is_different = false;
 
-		for(int8_t i = 0; i < current->pieces_qty && !is_different; i++)
+		for(uint8_t i = 0; i < current->pieces_qty && !is_different; i++)
 			if(player.turn != aux->player.turn ||
 			   is_squares_different(current->pieces[i], aux->pieces[i]))
 				is_different = true;
@@ -178,9 +178,6 @@ bool is_threefold_repetition(square board[][BOARD_SIZE], History *history, Playe
 		if(repetition_counter == 3)
 			break;
 	}
-
-	free(current->pieces);
-	free(current);
 
 	return repetition_counter == 3;
 }

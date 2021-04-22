@@ -75,13 +75,15 @@ typedef struct{
 
 void init_board(square board[][BOARD_SIZE]);
 
-void init_history(History *history);
+void init_history(square board[][BOARD_SIZE], History *history);
 
 void init_player(Player *player);
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player);
 
 h_board *get_current_board(square board[][BOARD_SIZE]);
+
+void add_board_to_history(square board[][BOARD_SIZE], History *history);
 
 int8_t count_pieces(square board[][BOARD_SIZE]);
 

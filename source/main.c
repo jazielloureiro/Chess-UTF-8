@@ -14,7 +14,7 @@ void play(){
 	Player player;
 
 	init_board(board);
-	init_history(&history);
+	init_history(board, &history);
 	init_player(&player);
 
 	do{
@@ -50,6 +50,8 @@ void play(){
 
 		if(is_there_promotion(board, player.move))
 			promotion(&board[player.move.to_rank][player.move.to_file], player.turn);
+
+		add_board_to_history(board, &history);
 
 		player.turn = (player.turn == WHITE? BLACK : WHITE);
 	}while(!is_game_done(board, &history, &player));

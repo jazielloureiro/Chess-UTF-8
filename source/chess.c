@@ -85,8 +85,9 @@ void init_board(square board[][BOARD_SIZE]){
 	board[7][7].piece = ROOK;
 }
 
-void init_history(History *history){
-	history->board = NULL;
+void init_history(square board[][BOARD_SIZE], History *history){
+	history->board = get_current_board(board);
+	history->board->prev = NULL;
 
 	history->has_castle_occurred = false;
 	history->has_en_passant_occurred = false;
@@ -100,11 +101,6 @@ void init_player(Player *player){
 }
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player){
-	h_board *new = get_current_board(board);
-
-	new->prev = history->board;
-	history->board = new;
-
 	history->board->player = player;
 
 	if(board[player.move.from_rank][player.move.from_file].piece == PAWN ||
@@ -112,6 +108,13 @@ void update_history(square board[][BOARD_SIZE], History *history, Player player)
 		history->moves_counter = 0;
 
 	history->moves_counter++;
+}
+
+void add_board_to_history(square board[][BOARD_SIZE], History *history){
+	h_board *new = get_current_board(board);
+
+	new->prev = history->board;
+	history->board = new;
 }
 
 h_board *get_current_board(square board[][BOARD_SIZE]){
