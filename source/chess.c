@@ -100,38 +100,40 @@ void init_player(Player *player){
 }
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player){
+	h_board *new = get_current_board(board);
+
+	new->prev = history->board;
+	history->board = new;
+
+	history->board->player = player;
+
 	if(board[player.move.from_rank][player.move.from_file].piece == PAWN ||
 	   board[player.move.to_rank][player.move.to_file].piece != EMPTY)
 		history->moves_counter = 0;
 
-	get_current_board(board, history);
-
-	history->board->player = player;
-
 	history->moves_counter++;
 }
 
-void get_current_board(square board[][BOARD_SIZE], History *history){
-	h_board *Hboard = malloc(sizeof(h_board));
+h_board *get_current_board(square board[][BOARD_SIZE]){
+	h_board *hboard = malloc(sizeof(h_board));
 
-	Hboard->pieces_qty = count_pieces(board);
+	hboard->pieces_qty = count_pieces(board);
 
-	Hboard->pieces = malloc(sizeof(h_square) * Hboard->pieces_qty);
+	hboard->pieces = malloc(sizeof(h_square) * hboard->pieces_qty);
 
 	for(int8_t i = 0, sqr_counter = 0; i < BOARD_SIZE; i++){
 		for(int8_t j = 0; j < BOARD_SIZE; j++){
 			if(board[i][j].piece != EMPTY){
-				Hboard->pieces[sqr_counter].piece = board[i][j].piece;
-				Hboard->pieces[sqr_counter].color = board[i][j].color;
-				Hboard->pieces[sqr_counter].rank = i;
-				Hboard->pieces[sqr_counter].file = j;
+				hboard->pieces[sqr_counter].piece = board[i][j].piece;
+				hboard->pieces[sqr_counter].color = board[i][j].color;
+				hboard->pieces[sqr_counter].rank = i;
+				hboard->pieces[sqr_counter].file = j;
 				sqr_counter++;
 			}
 		}
 	}
 
-	Hboard->prev = history->board;
-	history->board = Hboard;
+	return hboard;
 }
 
 int8_t count_pieces(square board[][BOARD_SIZE]){

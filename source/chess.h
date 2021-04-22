@@ -59,11 +59,11 @@ typedef struct{
 	int8_t file : 4;
 } h_square;
 	
-typedef struct H_board{
+typedef struct hist_board{
 	int8_t pieces_qty;
 	h_square *pieces;
 	Player player;
-	struct H_board *prev;
+	struct hist_board *prev;
 } h_board;
 
 typedef struct{
@@ -81,7 +81,7 @@ void init_player(Player *player);
 
 void update_history(square board[][BOARD_SIZE], History *history, Player player);
 
-void get_current_board(square board[][BOARD_SIZE], History *history);
+h_board *get_current_board(square board[][BOARD_SIZE]);
 
 int8_t count_pieces(square board[][BOARD_SIZE]);
 
