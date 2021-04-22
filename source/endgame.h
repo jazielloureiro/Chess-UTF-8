@@ -15,7 +15,9 @@ bool is_stalemate(square board[][BOARD_SIZE], History history, char turn);
 
 bool is_there_possible_move(square board[][BOARD_SIZE], History history, Player temp);
 
-bool is_threefold_repetition(square board[][BOARD_SIZE], History *history);
+bool is_threefold_repetition(square board[][BOARD_SIZE], History *history, Player player);
+
+bool is_squares_different(h_square sqr1, h_square sqr2);
 
 bool is_insufficient_material(square board[][BOARD_SIZE]);
 

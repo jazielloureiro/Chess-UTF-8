@@ -1,11 +1,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "aux.h"
 #include "chess.h"
-#include "input.h"
 #include "endgame.h"
+#include "input.h"
 #include "movement.h"
 
 bool is_game_done(square board[][BOARD_SIZE], History *history, Player *player){
@@ -28,7 +29,7 @@ bool is_game_done(square board[][BOARD_SIZE], History *history, Player *player){
 	if(history->moves_counter == MAX_MOVES){
 		print_final_board(board, FIFTY_MOVES);
 		return true;
-	}else if(is_threefold_repetition(board, history)){
+	}else if(is_threefold_repetition(board, history, *player)){
 		print_final_board(board, THREEFOLD_REP);
 		return true;
 	}else if(is_insufficient_material(board)){
@@ -157,36 +158,38 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History history, Player 
 	return false;
 }
 
-bool is_threefold_repetition(square board[][BOARD_SIZE], History *history){
+bool is_threefold_repetition(square board[][BOARD_SIZE], History *history, Player player){
+	h_board *current = get_current_board(board); 
 	int repetition_counter = 1;
 
-	for(h_board *aux = history->board; aux != NULL; aux = aux->prev){
+	for(h_board *aux = history->board;
+	    aux != NULL && current->pieces_qty == aux->pieces_qty;
+	    aux = aux->prev){
 		bool is_different = false;
-		int k = 0;
 
-		for(int8_t i = 0; i < BOARD_SIZE && !is_different; i++){
-			for(int8_t j = 0; j < BOARD_SIZE; j++){
-				if(board[i][j].piece != EMPTY){
-					if(aux->pieces[k].piece != board[i][j].piece ||
-					   aux->pieces[k].color != board[i][j].color ||
-					   aux->pieces[k].rank != i ||
-					   aux->pieces[k].file != j){
-						is_different = true;
-						break;
-					}else
-						k++;
-				}
-			}
-		}
+		for(int8_t i = 0; i < current->pieces_qty && !is_different; i++)
+			if(player.turn != aux->player.turn ||
+			   is_squares_different(current->pieces[i], aux->pieces[i]))
+				is_different = true;
 
 		if(!is_different)
 			repetition_counter++;
 
 		if(repetition_counter == 3)
-			return true;
+			break;
 	}
 
-	return false;
+	free(current->pieces);
+	free(current);
+
+	return repetition_counter == 3;
+}
+
+bool is_squares_different(h_square sqr1, h_square sqr2){
+	return sqr1.piece != sqr2.piece ||
+	       sqr1.color != sqr2.color ||
+	       sqr1.rank != sqr2.rank ||
+	       sqr1.file != sqr2.file;
 }
 
 bool is_insufficient_material(square board[][BOARD_SIZE]){
