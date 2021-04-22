@@ -118,7 +118,7 @@ bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player
 bool has_castle_pieces_moved(History *history, int rank, int rook_col){
 	const int KING_COL = 4;
 
-	for(h_board *aux = history->board; aux != NULL; aux = aux->prev)
+	for(h_board *aux = history->board->prev; aux != NULL; aux = aux->prev)
 		if((aux->player.move.from_file == KING_COL ||
 		   aux->player.move.from_file == rook_col) &&
 		   aux->player.move.from_rank == rank)
@@ -166,13 +166,13 @@ bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
 }
 
 bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coord move){
-	if(history->board == NULL)
+	if(history->board->prev == NULL)
 		return false;
 
-	int from_rank = history->board->player.move.from_rank,
-	    from_file = history->board->player.move.from_file,
-	    to_rank = history->board->player.move.to_rank,
-	    to_file = history->board->player.move.to_file,
+	int from_rank = history->board->prev->player.move.from_rank,
+	    from_file = history->board->prev->player.move.from_file,
+	    to_rank = history->board->prev->player.move.to_rank,
+	    to_file = history->board->prev->player.move.to_file,
 	    advance2Squares = (board[move.from_rank][move.from_file].color == WHITE? 2 : -2),
 	    origin_rank = (board[move.from_rank][move.from_file].color == WHITE? 1 : 6);
 
