@@ -151,40 +151,21 @@ int8_t count_pieces(square board[][BOARD_SIZE]){
 }
 
 void move_piece(square board[][BOARD_SIZE], move_coord move){
-	board[move.to_rank][move.to_file].image =
-	board[move.from_rank][move.from_file].image;
-
-	board[move.to_rank][move.to_file].piece = 
-	board[move.from_rank][move.from_file].piece;
-
-	board[move.to_rank][move.to_file].color = 
-	board[move.from_rank][move.from_file].color;
+	board[move.to_rank][move.to_file] = board[move.from_rank][move.from_file];
 
 	board[move.from_rank][move.from_file].image = " ";
-
 	board[move.from_rank][move.from_file].piece = EMPTY;
-
 	board[move.from_rank][move.from_file].color = EMPTY;
 }
 
 void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move){
-	move_squares->from.image = board[move.from_rank][move.from_file].image;
-	move_squares->from.piece = board[move.from_rank][move.from_file].piece;
-	move_squares->from.color = board[move.from_rank][move.from_file].color;
-	
-	move_squares->to.image = board[move.to_rank][move.to_file].image;
-	move_squares->to.piece = board[move.to_rank][move.to_file].piece;
-	move_squares->to.color = board[move.to_rank][move.to_file].color;
+	move_squares->from = board[move.from_rank][move.from_file];
+	move_squares->to = board[move.to_rank][move.to_file];
 }
 
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move){
-	board[move.from_rank][move.from_file].image = move_squares.from.image;
-	board[move.from_rank][move.from_file].piece = move_squares.from.piece;
-	board[move.from_rank][move.from_file].color = move_squares.from.color;
-	
-	board[move.to_rank][move.to_file].image = move_squares.to.image;
-	board[move.to_rank][move.to_file].piece = move_squares.to.piece;
-	board[move.to_rank][move.to_file].color = move_squares.to.color;
+	board[move.from_rank][move.from_file] = move_squares.from;
+	board[move.to_rank][move.to_file] = move_squares.to;
 }
 
 move_coord get_castle_rook(move_coord move){
