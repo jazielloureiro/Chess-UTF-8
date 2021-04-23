@@ -35,19 +35,19 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 		case BISHOP:
 			return is_bishop_movement_valid(player.move);
 		case KING:
-			history->has_castle_occurred = is_castle_valid(board, history, player);
+			history->is_castle = is_castle_valid(board, history, player);
 
 			return is_king_movement_valid(player.move) ||
-			       history->has_castle_occurred;
+			       history->is_castle;
 		case KNIGHT:
 			return is_knight_movement_valid(player.move);
 		case PAWN:
-			history->has_en_passant_occurred = is_en_passant_valid(board, history, player.move);
+			history->is_en_passant = is_en_passant_valid(board, history, player.move);
 
 			return is_pawn_movement_valid(player) &&
 			       (is_pawn_advance_valid(board, player.move) ||
 			       is_pawn_capture_valid(board, player.move) ||
-			       history->has_en_passant_occurred);
+			       history->is_en_passant);
 		case QUEEN:
 			return is_queen_movement_valid(player.move);
 		case ROOK:
@@ -202,7 +202,7 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
 
 bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player player){
 	bool is_check,
-	     has_special_move = history.has_castle_occurred || history.has_en_passant_occurred;
+	     has_special_move = history.is_castle || history.is_en_passant;
 	movement_squares move_squares, aux_squares;
 	move_coord aux_move;
 
@@ -211,7 +211,7 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 	move_piece(board, player.move);
 
 	if(has_special_move){
-		if(history.has_castle_occurred)
+		if(history.is_castle)
 			aux_move = get_castle_rook(player.move);
 		else
 			aux_move = history.board->player.move;

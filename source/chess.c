@@ -89,8 +89,8 @@ void init_history(square board[][BOARD_SIZE], History *history){
 	history->board = get_current_board(board);
 	history->board->prev = NULL;
 
-	history->has_castle_occurred = false;
-	history->has_en_passant_occurred = false;
+	history->is_castle = false;
+	history->is_en_passant = false;
 
 	history->moves_counter = 0;
 }

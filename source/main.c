@@ -38,14 +38,14 @@ void play(){
 		
 		move_piece(board, player.move);
 
-		if(history.has_castle_occurred){
+		if(history.is_castle){
 			move_piece(board, get_castle_rook(player.move));
-			history.has_castle_occurred = false;
+			history.is_castle = false;
 		}
 
-		if(history.has_en_passant_occurred){
+		if(history.is_en_passant){
 			move_piece(board, history.board->player.move);
-			history.has_en_passant_occurred = false;
+			history.is_en_passant = false;
 		}
 
 		if(is_there_promotion(board, player.move))

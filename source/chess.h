@@ -69,7 +69,7 @@ typedef struct hist_board{
 typedef struct{
 	h_board *board;
 	int moves_counter;
-	bool has_castle_occurred, has_en_passant_occurred;
+	bool is_castle, is_en_passant;
 	move_coord last_check;
 } History;
 
