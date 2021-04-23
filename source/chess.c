@@ -187,38 +187,21 @@ void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squar
 	board[move.to_rank][move.to_file].color = move_squares.to.color;
 }
 
-void find_castle_rook(move_coord move, move_coord *rook){
-	if(move.to_rank == 0){
-		rook->from_rank = 0;
-		rook->to_rank = 0;
-
-		if(move.to_file == 2){
-			rook->from_file = 0;
-			rook->to_file = 3;
-		}else{
-			rook->from_file = 7;
-			rook->to_file = 5;
-		}
-	}else{
-		rook->from_rank = 7;
-		rook->to_rank = 7;
-
-		if(move.to_file == 2){
-			rook->from_file = 0;
-			rook->to_file = 3;
-		}else{
-			rook->from_file = 7;
-			rook->to_file = 5;
-		}
-	}
-}
-
-void castle(square board[][BOARD_SIZE], move_coord move){
+move_coord get_castle_rook(move_coord move){
 	move_coord rook;
 
-	find_castle_rook(move, &rook);
+	rook.from_rank = move.from_rank;
+	rook.to_rank = move.to_rank;
 
-	move_piece(board, rook);
+	if(move.to_file == 2){
+		rook.from_file = 0;
+		rook.to_file = 3;
+	}else{
+		rook.from_file = 7;
+		rook.to_file = 5;
+	}
+
+	return rook;
 }
 
 void advance_to(char *from, char to){

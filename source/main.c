@@ -39,7 +39,7 @@ void play(){
 		move_piece(board, player.move);
 
 		if(history.has_castle_occurred){
-			castle(board, player.move);
+			move_piece(board, get_castle_rook(player.move));
 			history.has_castle_occurred = false;
 		}
 

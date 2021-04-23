@@ -212,7 +212,7 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 
 	if(has_special_move){
 		if(history.has_castle_occurred)
-			find_castle_rook(player.move, &aux_move);
+			aux_move = get_castle_rook(player.move);
 		else
 			aux_move = history.board->player.move;
 

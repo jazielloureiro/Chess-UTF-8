@@ -93,9 +93,7 @@ void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_square
 
 void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move_input);
 
-void find_castle_rook(move_coord move, move_coord *rook);
-
-void castle(square board[][BOARD_SIZE], move_coord move);
+move_coord get_castle_rook(move_coord move);
 
 void advance_to(char *from, char to);
 
