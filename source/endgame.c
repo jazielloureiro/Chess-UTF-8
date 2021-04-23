@@ -191,7 +191,6 @@ bool is_squares_different(h_square sqr1, h_square sqr2){
 
 bool is_insufficient_material(square board[][BOARD_SIZE]){
 	int8_t white_minor_pieces = 0, black_minor_pieces = 0;
-	bool has_white_sufficient_material = false, has_black_sufficient_material = false;
 
 	for(int8_t i = 0; i < BOARD_SIZE; i++){
 		for(int8_t j = 0; j < BOARD_SIZE; j++){
@@ -200,24 +199,15 @@ bool is_insufficient_material(square board[][BOARD_SIZE]){
 					white_minor_pieces++;
 				else
 					black_minor_pieces++;
+
+				if(white_minor_pieces == 2 || black_minor_pieces == 2)
+					return false;
 			}else if(board[i][j].piece == QUEEN ||
 			         board[i][j].piece == ROOK ||
-			         board[i][j].piece == PAWN){
-				if(board[i][j].color == WHITE)
-					has_white_sufficient_material = true;
-				else
-					has_black_sufficient_material = true;
-			}
+			         board[i][j].piece == PAWN)
+				return false;
 		}
 	}
-
-	if(white_minor_pieces >= 2)
-		has_white_sufficient_material = true;
-	if(black_minor_pieces >= 2)
-		has_black_sufficient_material = true;
-
-	if(has_white_sufficient_material || has_black_sufficient_material)
-		return false;
 
 	return true;
 }
