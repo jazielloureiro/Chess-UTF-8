@@ -71,24 +71,61 @@ bool is_king_movement_valid(move_coord move){
 }
 
 bool is_knight_movement_valid(move_coord move){
-	const int DIFF_ROW = abs(move.to_rank - move.from_rank),
-	          DIFF_COL = abs(move.to_file - move.from_file);
+	const int8_t DIFF_RANK = abs(move.to_rank - move.from_rank),
+	             DIFF_FILE = abs(move.to_file - move.from_file);
 
-	return DIFF_ROW == 2 && DIFF_COL == 1 ||
-	       DIFF_ROW == 1 && DIFF_COL == 2;
+	return DIFF_RANK == 2 && DIFF_FILE == 1 ||
+	       DIFF_RANK == 1 && DIFF_FILE == 2;
 }
 
 bool is_pawn_movement_valid(Player player){
-	const int ORIGIN_ROW = (player.turn == WHITE? 6 : 1),
-	          TWO_SQUARES = (player.turn == WHITE? -2 : 2),
-	          ONE_SQUARE = (player.turn == WHITE? -1 : 1);
+	int8_t start_rank, two_squares, one_square;
 
-	return player.move.from_rank + ONE_SQUARE == player.move.to_rank &&
+	if(player.turn == WHITE){
+		start_rank = 6;
+		two_squares = -2;
+		one_square = -1;
+	}else{
+		start_rank = 1;
+		two_squares = 2;
+		one_square = 1;
+	}
+
+	return player.move.from_rank + one_square == player.move.to_rank &&
 	       player.move.from_file - 1 <= player.move.to_file &&
 	       player.move.from_file + 1 >= player.move.to_file ||
-	       player.move.from_rank == ORIGIN_ROW &&
-	       player.move.from_rank + TWO_SQUARES == player.move.to_rank &&
+	       player.move.from_rank == start_rank &&
+	       player.move.from_rank + two_squares == player.move.to_rank &&
 	       player.move.from_file == player.move.to_file;
+}
+
+bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coord move){
+	return move.from_file == move.to_file &&
+	       board[move.to_rank][move.to_file].piece == EMPTY;
+}
+
+bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
+	return move.from_file != move.to_file &&
+	       board[move.to_rank][move.to_file].piece != EMPTY;
+}
+
+bool is_en_passant_valid(square board[][BOARD_SIZE], move_coord last_move, move_coord move){
+	int8_t two_squares, start_rank;
+
+	if(board[move.from_rank][move.from_file].color == WHITE){
+		two_squares = 2;
+		start_rank = 1;
+	}else{
+		two_squares = -2;
+		start_rank = 6;
+	}
+
+	return board[last_move.to_rank][last_move.to_file].piece == PAWN &&
+	       last_move.from_rank + two_squares == last_move.to_rank &&
+	       last_move.from_rank == start_rank &&
+	       last_move.to_rank == move.from_rank &&
+	       abs(last_move.to_file - move.from_file) == 1 &&
+	       last_move.to_file == move.to_file;
 }
 
 bool is_queen_movement_valid(move_coord move){
@@ -156,35 +193,6 @@ bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
 	}while(player.move.from_file != player.move.to_file);
 
 	return true;
-}
-
-bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coord move){
-	return move.from_file == move.to_file &&
-	       board[move.to_rank][move.to_file].piece == EMPTY;
-}
-
-bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
-	return move.from_file != move.to_file &&
-	       board[move.to_rank][move.to_file].piece != EMPTY;
-}
-
-bool is_en_passant_valid(square board[][BOARD_SIZE], move_coord last_move, move_coord move){
-	int8_t two_squares, start_rank;
-
-	if(board[move.from_rank][move.from_file].color == WHITE){
-		two_squares = 2;
-		start_rank = 1;
-	}else{
-		two_squares = -2;
-		start_rank = 6;
-	}
-
-	return board[last_move.to_rank][last_move.to_file].piece == PAWN &&
-	       last_move.from_rank + two_squares == last_move.to_rank &&
-	       last_move.from_rank == start_rank &&
-	       last_move.to_rank == move.from_rank &&
-	       abs(last_move.to_file - move.from_file) == 1 &&
-	       last_move.to_file == move.to_file;
 }
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
