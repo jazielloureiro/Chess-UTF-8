@@ -48,11 +48,6 @@ typedef struct{
 } Player;
 	
 typedef struct{
-	square from;
-	square to;
-} movement_squares;
-
-typedef struct{
 	char piece;
 	char color;
 	int8_t rank : 4;
@@ -88,10 +83,6 @@ void add_board_to_history(square board[][BOARD_SIZE], History *history);
 int8_t count_pieces(square board[][BOARD_SIZE]);
 
 void move_piece(square board[][BOARD_SIZE], move_coord move);
-
-void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move_input);
-
-void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move_input);
 
 move_coord get_castle_rook(move_coord move);
 

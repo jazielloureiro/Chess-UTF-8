@@ -201,12 +201,14 @@ bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
 }
 
 bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player player){
-	bool is_check,
-	     has_special_move = history.is_castle || history.is_en_passant;
-	movement_squares move_squares, aux_squares;
+	bool has_special_move = history.is_castle || history.is_en_passant;
 	move_coord aux_move;
+	struct{
+		square from, to, aux_from, aux_to;
+	} move_sqrs;
 
-	save_move_squares(board, &move_squares, player.move);
+	move_sqrs.from = board[player.move.from_rank][player.move.from_file];
+	move_sqrs.to = board[player.move.to_rank][player.move.to_file];
 
 	move_piece(board, player.move);
 
@@ -216,17 +218,21 @@ bool will_king_be_in_check(square board[][BOARD_SIZE], History history, Player p
 		else
 			aux_move = history.board->player.move;
 
-		save_move_squares(board, &aux_squares, aux_move);
+		move_sqrs.aux_from = board[aux_move.from_rank][aux_move.from_file];
+		move_sqrs.aux_to = board[aux_move.to_rank][aux_move.to_file];
 
 		move_piece(board, aux_move);
 	}
 
-	is_check = is_player_king_in_check(board, &history, player.turn);
+	bool is_check = is_player_king_in_check(board, &history, player.turn);
 
-	return_move_squares(board, move_squares, player.move);
+	board[player.move.from_rank][player.move.from_file] = move_sqrs.from;
+	board[player.move.to_rank][player.move.to_file] = move_sqrs.to;
 
-	if(has_special_move)
-		return_move_squares(board, aux_squares, aux_move);
+	if(has_special_move){
+		board[aux_move.from_rank][aux_move.from_file] = move_sqrs.aux_from;
+		board[aux_move.to_rank][aux_move.to_file] = move_sqrs.aux_to;
+	}
 
 	return is_check;
 }

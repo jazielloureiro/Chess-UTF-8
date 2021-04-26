@@ -158,16 +158,6 @@ void move_piece(square board[][BOARD_SIZE], move_coord move){
 	board[move.from_rank][move.from_file].color = EMPTY;
 }
 
-void save_move_squares(square board[][BOARD_SIZE], movement_squares *move_squares, move_coord move){
-	move_squares->from = board[move.from_rank][move.from_file];
-	move_squares->to = board[move.to_rank][move.to_file];
-}
-
-void return_move_squares(square board[][BOARD_SIZE], movement_squares move_squares, move_coord move){
-	board[move.from_rank][move.from_file] = move_squares.from;
-	board[move.to_rank][move.to_file] = move_squares.to;
-}
-
 move_coord get_castle_rook(move_coord move){
 	move_coord rook;
 
