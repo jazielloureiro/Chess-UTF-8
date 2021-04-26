@@ -29,7 +29,7 @@ bool is_pawn_advance_valid(square board[][BOARD_SIZE], move_coord move);
 
 bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move);
 
-bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coord move);
+bool is_en_passant_valid(square board[][BOARD_SIZE], move_coord last_move, move_coord move);
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move);
 

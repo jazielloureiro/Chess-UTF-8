@@ -42,7 +42,10 @@ bool is_piece_movement_compatible(square board[][BOARD_SIZE], History *history, 
 		case KNIGHT:
 			return is_knight_movement_valid(player.move);
 		case PAWN:
-			history->is_en_passant = is_en_passant_valid(board, history, player.move);
+			if(history->board->prev != NULL)
+				history->is_en_passant = is_en_passant_valid(board,
+				                                             history->board->prev->player.move,
+				                                             player.move);
 
 			return is_pawn_movement_valid(player) &&
 			       (is_pawn_advance_valid(board, player.move) ||
@@ -165,25 +168,23 @@ bool is_pawn_capture_valid(square board[][BOARD_SIZE], move_coord move){
 	       board[move.to_rank][move.to_file].piece != EMPTY;
 }
 
-bool is_en_passant_valid(square board[][BOARD_SIZE], History *history, move_coord move){
-	if(history->board->prev == NULL)
-		return false;
+bool is_en_passant_valid(square board[][BOARD_SIZE], move_coord last_move, move_coord move){
+	int8_t two_squares, start_rank;
 
-	int from_rank = history->board->prev->player.move.from_rank,
-	    from_file = history->board->prev->player.move.from_file,
-	    to_rank = history->board->prev->player.move.to_rank,
-	    to_file = history->board->prev->player.move.to_file,
-	    advance2Squares = (board[move.from_rank][move.from_file].color == WHITE? 2 : -2),
-	    origin_rank = (board[move.from_rank][move.from_file].color == WHITE? 1 : 6);
+	if(board[move.from_rank][move.from_file].color == WHITE){
+		two_squares = 2;
+		start_rank = 1;
+	}else{
+		two_squares = -2;
+		start_rank = 6;
+	}
 
-	return board[to_rank][to_file].piece == PAWN &&
-	       from_rank + advance2Squares == to_rank &&
-	       from_rank == origin_rank &&
-	       from_file == to_file &&
-	       to_rank == move.from_rank &&
-	       (to_file - move.from_file == 1 ||
-	       to_file - move.from_file == -1) &&
-	       to_file == move.to_file;
+	return board[last_move.to_rank][last_move.to_file].piece == PAWN &&
+	       last_move.from_rank + two_squares == last_move.to_rank &&
+	       last_move.from_rank == start_rank &&
+	       last_move.to_rank == move.from_rank &&
+	       abs(last_move.to_file - move.from_file) == 1 &&
+	       last_move.to_file == move.to_file;
 }
 
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
