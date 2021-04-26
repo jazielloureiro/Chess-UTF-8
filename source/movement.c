@@ -70,6 +70,63 @@ bool is_king_movement_valid(move_coord move){
 	       move.from_file + 1 >= move.to_file;
 }
 
+bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player){
+	const int8_t START_KING_FILE = 4,
+	             START_ROOK_FILE = (START_KING_FILE - 2 == player.move.to_file? 0 : 7),
+	             START_RANK = (player.turn == WHITE? 7 : 0);
+
+	if(START_RANK != player.move.from_rank ||
+	   START_RANK != player.move.to_rank ||
+	   START_KING_FILE != player.move.from_file ||
+	   START_KING_FILE - 2 != player.move.to_file &&
+	   START_KING_FILE + 2 != player.move.to_file)
+		return false;
+
+	return !has_castle_pieces_moved(history, START_RANK, START_KING_FILE) &&
+	       !are_there_pieces_between(board[START_RANK], START_KING_FILE, START_ROOK_FILE) &&
+	       is_king_safe(board, history, player);
+}
+
+bool has_castle_pieces_moved(History *history, int8_t rank, int8_t rook_file){
+	const int8_t KING_FILE = 4;
+
+	for(h_board *aux = history->board->prev; aux != NULL; aux = aux->prev)
+		if((aux->player.move.from_file == KING_FILE ||
+		   aux->player.move.from_file == rook_file) &&
+		   aux->player.move.from_rank == rank)
+			return true;
+
+	return false;
+}
+
+bool are_there_pieces_between(square rank[], int8_t start, int8_t end){
+	int8_t i = start;
+
+	for(advance_to(&i, end); i != end; advance_to(&i, end))
+		if(rank[i].piece != EMPTY)
+			return true;
+
+	return false;
+}
+
+bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
+	if(is_player_king_in_check(board, history, player.turn))
+		return false;
+
+	do{
+		int8_t i = player.move.from_file;
+
+		advance_to(&i, player.move.to_file);
+
+		player.move.from_file = i;
+
+		if(will_king_be_in_check(board, *history, player))
+			return false;
+	}while(player.move.from_file != player.move.to_file);
+
+	return true;
+}
+
 bool is_knight_movement_valid(move_coord move){
 	const int8_t DIFF_RANK = abs(move.to_rank - move.from_rank),
 	             DIFF_FILE = abs(move.to_file - move.from_file);
@@ -138,66 +195,9 @@ bool is_rook_movement_valid(move_coord move){
 	       move.from_file == move.to_file;
 }
 
-bool is_castle_valid(square board[][BOARD_SIZE], History *history, Player player){
-	const int START_ROW = (player.turn == WHITE? 7 : 0);
-	const int START_KING_COL = 4;
-	const int START_ROOK_COL = (START_KING_COL - 2 == player.move.to_file? 0 : 7);
-
-	if(START_ROW != player.move.from_rank ||
-	   START_ROW != player.move.to_rank ||
-	   START_KING_COL != player.move.from_file ||
-	   START_KING_COL - 2 != player.move.to_file &&
-	   START_KING_COL + 2 != player.move.to_file)
-		return false;
-
-	return !has_castle_pieces_moved(history, START_ROW, START_KING_COL) &&
-	       !are_there_pieces_between(board[START_ROW], START_KING_COL, START_ROOK_COL) &&
-	       is_king_safe(board, history, player);
-}
-
-bool has_castle_pieces_moved(History *history, int rank, int rook_col){
-	const int KING_COL = 4;
-
-	for(h_board *aux = history->board->prev; aux != NULL; aux = aux->prev)
-		if((aux->player.move.from_file == KING_COL ||
-		   aux->player.move.from_file == rook_col) &&
-		   aux->player.move.from_rank == rank)
-			return true;
-
-	return false;
-}
-
-bool are_there_pieces_between(square rank[], char start, char end){
-	char i = start;
-
-	for(advance_to(&i, end); i != end; advance_to(&i, end))
-		if(rank[i].piece != EMPTY)
-			return true;
-
-	return false;
-}
-
-bool is_king_safe(square board[][BOARD_SIZE], History *history, Player player){
-	if(is_player_king_in_check(board, history, player.turn))
-		return false;
-
-	do{
-		int8_t i = player.move.from_file;
-
-		advance_to(&i, player.move.to_file);
-
-		player.move.from_file = i;
-
-		if(will_king_be_in_check(board, *history, player))
-			return false;
-	}while(player.move.from_file != player.move.to_file);
-
-	return true;
-}
-
 bool is_jump_other_pieces(square board[][BOARD_SIZE], move_coord move){
 	if(board[move.from_rank][move.from_file].piece != KNIGHT){
-		char i = move.from_rank, j = move.from_file;
+		int8_t i = move.from_rank, j = move.from_file;
 		
 		for(advance_to(&i, move.to_rank), advance_to(&j, move.to_file);
 		    i != move.to_rank || j != move.to_file;
