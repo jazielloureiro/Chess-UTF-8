@@ -29,7 +29,7 @@ bool is_game_done(square board[][BOARD_SIZE], History *history, Player *player){
 	if(history->moves_counter == MAX_MOVES){
 		print_final_board(board, FIFTY_MOVES);
 		return true;
-	}else if(is_threefold_repetition(history, *player)){
+	}else if(is_threefold_repetition(history, player->turn)){
 		print_final_board(board, THREEFOLD_REP);
 		return true;
 	}else if(is_insufficient_material(board)){
@@ -54,12 +54,16 @@ bool is_checkmate(square board[][BOARD_SIZE], History history, char turn){
 bool can_king_move(square board[][BOARD_SIZE], History history, char turn){
 	for(int8_t i = history.last_check.to_rank - 1;
 	    i <= history.last_check.to_rank + 1;
-		i++){
+	    i++)
+	{
 		for(int8_t j = history.last_check.to_file - 1;
 		    j <= history.last_check.to_file + 1;
-			j++){
+		    j++)
+		{
 			if(i >= 0 && i <= 7 && j >= 0 && j <= 7 &&
-			   board[i][j].color != board[history.last_check.to_rank][history.last_check.to_file].color){
+			   board[i][j].color !=
+			   board[history.last_check.to_rank][history.last_check.to_file].color)
+			{
 				Player temp;
 
 				temp.turn = turn;
@@ -158,7 +162,7 @@ bool is_there_possible_move(square board[][BOARD_SIZE], History history, Player 
 	return false;
 }
 
-bool is_threefold_repetition(History *history, Player player){
+bool is_threefold_repetition(History *history, char turn){
 	uint8_t repetition_counter = 1;
 
 	for(h_board *current = history->board, *aux = history->board->prev;
@@ -168,7 +172,7 @@ bool is_threefold_repetition(History *history, Player player){
 		bool is_different = false;
 
 		for(uint8_t i = 0; i < current->pieces_qty && !is_different; i++)
-			if(player.turn != aux->player.turn ||
+			if(turn != aux->player.turn ||
 			   is_squares_different(current->pieces[i], aux->pieces[i]))
 				is_different = true;
 
@@ -176,10 +180,10 @@ bool is_threefold_repetition(History *history, Player player){
 			repetition_counter++;
 
 		if(repetition_counter == 3)
-			break;
+			return true;
 	}
 
-	return repetition_counter == 3;
+	return false;
 }
 
 bool is_squares_different(h_square sqr1, h_square sqr2){
