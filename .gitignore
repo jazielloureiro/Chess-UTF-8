@@ -2,7 +2,7 @@ a.out
 *.exe
 *.bat
 *.swp
-.objects
+.obj
 chess
 input
 tests

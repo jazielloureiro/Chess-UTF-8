@@ -11,8 +11,8 @@ RM = rm -rf
 BIN = chess
 
 # Directories
-SOURCE_DIR = source
-OBJECTS_DIR = .objects
+SOURCE_DIR = src
+OBJECTS_DIR = .obj
 
 # Files
 SOURCE_C = $(wildcard $(SOURCE_DIR)/*.c)
