@@ -4,22 +4,26 @@ Chess game using UTF-8 characters.
 
 ![gameplay](https://i.ibb.co/MgnxS1n/chess.gif)
 
-## Install
+## Installation
 
 1. Clone this repository:
 
-`$ git clone https://github.com/jazielloureiro/Chess-UTF-8`
+```sh
+git clone https://github.com/jazielloureiro/Chess-UTF-8
+```
 
-2. Go into the respository directory:
+2. Go into the new directory and run the Makefile:
 
-`$ cd Chess-UTF-8`
-
-3. And then, run the Makefile:
-
-`$ make chess`
+```sh
+cd Chess-UTF-8 && make chess
+```
 
 ## Contributors
 
 [Iago Aquino](https://github.com/iagoaquino)
 
 [Pedro Willian](https://github.com/Coriast)
+
+## License
+
+[MIT](https://github.com/jazielloureiro/Chess-UTF-8/blob/master/LICENSE)
